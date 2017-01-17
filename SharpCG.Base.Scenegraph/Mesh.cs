@@ -257,12 +257,13 @@ namespace SharpCG.Base.Scenegraph
                 }
                 if (aiMaterial.HasTextureNormal)
                 {
-                    m.NormalMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureDiffuse.FilePath, true);
+                    m.NormalMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureNormal.FilePath, true);
                 }
                 if (aiMaterial.HasTextureSpecular)
                 {
-                    m.SpecularMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureDiffuse.FilePath, true);
+                    m.SpecularMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
                 }
+                //if(aiMaterial.HasTexture)
                 //    if (aiMaterial.HasTextureDisplacement)
                 //    {
                 //        //     Console.WriteLine("Displacement");

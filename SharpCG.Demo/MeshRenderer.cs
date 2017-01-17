@@ -36,11 +36,14 @@ class MeshRenderer : Component, Renderable
         material.WvpMatrix          = material.ProjectionMatrix * material.ViewMatrix * material.WorldMatrix;
         material.NormalMatrix       = sceneObject.Transform.NormalMatrix;
 
+        material.NormalMappingEnabled = true;
+
         // Set lighting parameters
         material.ViewPosition       = camera.Transform.Position;
-        material.LightDirection     = camera.Transform.Forward;
+        
+        material.LightDirection     = new vec3(0, -1, 0);
         material.LightColor         = new vec3(0.7f, 0.7f, 0.6f);
-        material.LightAmbientColor  = new vec3(0.25f, 0.25f, 0.25f);
+        material.LightAmbientColor  = new vec3(0.4f, 0.4f, 0.4f);
         
         uint unit = 0;
         material.Bind(ref unit);

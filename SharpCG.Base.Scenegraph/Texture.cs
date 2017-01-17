@@ -36,9 +36,9 @@ namespace SharpCG.Base.Scenegraph
             handle = -1;
         }
 
-        public void Bind(ref uint unit)
-        {
-            GL.ActiveTexture(TextureUnit.Texture0 + (int)unit);
+        public void Bind(TextureUnit unit)
+        {           
+            GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
         }
 

@@ -36,22 +36,6 @@ layout (location = 0) out vec4 fragColor;
 
 
 //--------------------------------------------------------------------------------------
-// Phong Lighting Reflection Model
-//--------------------------------------------------------------------------------------
-// Returns the sum of the diffuse and specular terms in the Phong reflection model
-// The specular and diffuse reflection constants for the currently loaded material (k_d and k_s) as well
-// as other material properties are defined in Material.fx.
-vec3 calcBlinnPhongLighting( vec3 vLightColor, vec3 vDiffuseColor, vec3 vSpecularColor, vec3 N, vec3 L, vec3 H)
-{
-	vec3 Id = vDiffuseColor * clamp( dot(N,L), 0.0, 1.0 );
-	vec3 Is = vSpecularColor * pow( clamp(dot(N,H), 0.0, 1.0), fMaterialShininess );
-    return  ( Id + Is) * vLightColor;
-}
-
-
-
-
-//--------------------------------------------------------------------------------------
 // Normal mapping
 //--------------------------------------------------------------------------------------
 // This function returns the normal of the perturbed surface in world coordinates.
@@ -79,31 +63,22 @@ void main()
 	vec3 N = calcNormal(normalize(pWorldNormal), normalize(pWorldTangent), normalize(pWorldBitangent));
 	
 	// Get diffuse color from texture
-	vec4 vDiffuseColor	= vec4(vMaterialDiffuse, 1);
-	if (bHasDiffuseMap) 
-	{
-		 vDiffuseColor *= texture(texDiffuseMap, pTexcoords);
-	}
-
+	vec4 vDiffuseColor	= (bHasDiffuseMap) ? texture(texDiffuseMap, pTexcoords) : vec4(1);
 	// Get specular color from texture
-	vec4 vSpecularColor = vec4(vMaterialSpecular, 1);
-	if (bHasSpecularMap)
-	{
-		vSpecularColor *= texture(texSpecularMap, pTexcoords);
-	}
+	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
 
 	// Calculate Directional Lighting
 	vec3 L = normalize(-vLightDirection);
 	vec3 V = normalize(vViewPosition - pWorldPosition);
 	vec3 H = normalize(V + L);
 
-
-	fragColor.rgb	= vMaterialEmissive;
-	fragColor.rgb	+= vMaterialAmbient * vLightAmbient * vDiffuseColor.rgb;
-	fragColor.rgb	+= calcBlinnPhongLighting( vLightColor, vDiffuseColor.rgb, vSpecularColor.rgb, N, L, H);
-	fragColor.a		= vDiffuseColor.a;
+	vec3 emissiveColor	= vMaterialEmissive;
+	vec3 ambientColor	= vDiffuseColor.rgb		* vLightAmbient * vMaterialAmbient; 
+	vec3 diffuseColor	= vDiffuseColor.rgb		* vLightColor	* vMaterialDiffuse	* clamp(dot(L, N), 0.0, 1.0);		
+	vec3 specularColor	= vSpecularColor.rgb	* vLightColor	* vMaterialSpecular * pow (clamp (dot (N, H), 0.0, 1.0), fMaterialShininess);
 	
-	//fragColor = vSpecularColor;
-	//fragColor = vec4(1,0,0,1);
-	//fragColor.xyz = N;
+	
+	fragColor.rgb = diffuseColor + emissiveColor + ambientColor + specularColor;
+	//fragColor.rgb = N;
+	fragColor.a = vDiffuseColor.a;
 }

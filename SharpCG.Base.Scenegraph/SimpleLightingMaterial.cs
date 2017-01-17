@@ -20,7 +20,7 @@ namespace SharpCG.Base.Scenegraph
         private Texture normalMapTexture;
         private Texture specularMapTexture;
 
-        private float specularExponent = 32.0f;
+        private float specularExponent = 128.0f;
 
         private vec3 ambientAmount  = new vec3(1,1,1);
         private vec3 diffuseAmount  = new vec3(1,1,1);
@@ -214,14 +214,17 @@ namespace SharpCG.Base.Scenegraph
             GL.Uniform3(uniformLocations["vViewPosition"], 1, ViewPosition.Values);
 
 
-            diffuseMapTexture.Bind(ref textureUnit);
-            GL.Uniform1(uniformLocations["texDiffuseMap"], textureUnit++);
+            GL.Uniform1(uniformLocations["texDiffuseMap"], 0);
+            diffuseMapTexture.Bind(TextureUnit.Texture0);
 
-            normalMapTexture.Bind(ref textureUnit);
-            GL.Uniform1(uniformLocations["texNormalMap"], textureUnit++);
 
-            specularMapTexture.Bind(ref textureUnit);
-            GL.Uniform1(uniformLocations["texSpecularMap"], textureUnit++);          
+            GL.Uniform1(uniformLocations["texNormalMap"], 1);
+            normalMapTexture.Bind(TextureUnit.Texture1);
+
+
+            GL.Uniform1(uniformLocations["texSpecularMap"], 2);
+            specularMapTexture.Bind(TextureUnit.Texture2);
+
         }       
     }
 }
