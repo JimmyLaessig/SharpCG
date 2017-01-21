@@ -25,15 +25,8 @@ namespace SharpCG.Base.Scenegraph
 
         public string Name
         {
-            get
-            {
-                return name;
-            }
-
-            set
-            {
-                name = value;
-            }
+            get { return name; }
+            set { name = value; }
         }
 
         public SceneObject SceneObject

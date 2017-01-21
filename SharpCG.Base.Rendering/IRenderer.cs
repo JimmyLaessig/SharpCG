@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace SharpCG.Base
 {
-    public interface Renderable
+    public interface IRenderer
     {
+
+        
         void Render();
     }
 }

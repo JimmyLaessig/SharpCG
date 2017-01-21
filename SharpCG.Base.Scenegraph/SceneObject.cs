@@ -14,11 +14,14 @@ namespace SharpCG.Base.Scenegraph
 
         public List<SceneObject> Children;
 
+        private string name;
+
         public SceneObject()
         {
             transform   = new Transform();
             components  = new List<Component>();
             Children    = new List<SceneObject>();
+            Name = "";
         }
 
         public T AddComponent<T> (T component) where T: Component
@@ -51,8 +54,10 @@ namespace SharpCG.Base.Scenegraph
             set{ transform = value; }
         }
 
-
-
-
+        public string Name
+        {
+            get{ return name; }
+            set{ name = value; }
+        }
     }
 }

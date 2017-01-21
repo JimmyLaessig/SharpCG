@@ -54,6 +54,7 @@ namespace SharpCG.Base
         private Window(int width, int height) : base(width, height)
         {
             root = new SceneObject();
+            root.Name = "root";
         }
 
 
@@ -64,19 +65,13 @@ namespace SharpCG.Base
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            Traverse(root, c => c.OnStart());          
+            Traverse<Component>(root, c => c.OnStart());          
         }
 
-        private static void Traverse(SceneObject obj, Action<Component> action)
-        {
-            // Execute Action for each SceneObject
-            obj.Components.ForEach(action);
-
-            // Traverse deeper
-            if (obj.Children.Count > 0)
-            {
-                obj.Children.ForEach(c => Traverse(c, action));
-            }          
+        private static void Traverse<T>(SceneObject obj, Action<T> action) where T : Component
+        {         
+            obj.Components.OfType<T>().ToList().ForEach(action);
+            obj.Children.ForEach(c => Traverse(c, action));           
         }
 
         protected override void OnKeyPress(OpenTK.KeyPressEventArgs e)
@@ -113,13 +108,10 @@ namespace SharpCG.Base
                 GL.Clear(mask);
             }
 
-            
+
 
             // Draw all renderobjects
-            renderControl.renderObjects.ForEach(delegate (RenderObject obj)
-            {
-                obj.renderable.Render();
-            });
+            renderControl.renderObjects.ForEach(obj => obj.renderable.Render());
 
 
             this.SwapBuffers();
@@ -144,7 +136,24 @@ namespace SharpCG.Base
         /// <param name="e"></param>
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            Traverse(root, c => c.Update(e.Time));
+            // Update GPU Resources for textures
+            Traverse<Material>(root,
+                m => m.GetMaterialTextures()
+                .Where(t => t.IsDirty()).ToList()
+                .ForEach(t => t.UpdateGPUResources())
+                );
+
+            // Update GPU Resources for meshes
+            Traverse<Mesh>(root, delegate (Mesh m)
+            {
+                if (m.IsDirty())
+                {
+                    m.UpdateGPUResources();
+                }
+            });
+                
+
+            Traverse<Component>(root, c => c.Update(e.Time));          
         }
 
 
@@ -167,8 +176,8 @@ namespace SharpCG.Base
         public void AddSceneObject(SceneObject obj)
         {
             // Get renderables from sceneobject
-            var renderables     = Collect<Renderable>(obj);
-            var renderObjects   = renderables.Select(r => new RenderObject((Renderable)r, ""));
+            var renderables     = Collect<IRenderer>(obj);
+            var renderObjects   = renderables.Select(r => new RenderObject((IRenderer)r, ""));
 
             renderControl.renderObjects.AddRange(renderObjects);
             root.Children.Add(obj);

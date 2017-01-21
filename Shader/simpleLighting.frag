@@ -67,18 +67,20 @@ void main()
 	// Get specular color from texture
 	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
 
-	// Calculate Directional Lighting
+
+	// calculate Phong lighting parameter
 	vec3 L = normalize(-vLightDirection);
 	vec3 V = normalize(vViewPosition - pWorldPosition);
 	vec3 H = normalize(V + L);
 
+	// Calculate Directional Lighting
 	vec3 emissiveColor	= vMaterialEmissive;
-	vec3 ambientColor	= vDiffuseColor.rgb		* vLightAmbient * vMaterialAmbient; 
-	vec3 diffuseColor	= vDiffuseColor.rgb		* vLightColor	* vMaterialDiffuse	* clamp(dot(L, N), 0.0, 1.0);		
-	vec3 specularColor	= vSpecularColor.rgb	* vLightColor	* vMaterialSpecular * pow (clamp (dot (N, H), 0.0, 1.0), fMaterialShininess);
+	vec3 ambientColor	= vDiffuseColor.rgb	 * vLightAmbient * vMaterialAmbient; 
+	vec3 diffuseColor	= vDiffuseColor.rgb	 * vLightColor	 * vMaterialDiffuse	* clamp(dot(L, N), 0.0, 1.0);		
+	vec3 specularColor	= vSpecularColor.rgb * vLightColor	 * vMaterialSpecular * pow (clamp (dot (N, H), 0.0, 1.0), fMaterialShininess);
 	
 	
-	fragColor.rgb = diffuseColor + emissiveColor + ambientColor + specularColor;
-	//fragColor.rgb = N;
+	fragColor.rgb = diffuseColor + emissiveColor + ambientColor + specularColor;	
 	fragColor.a = vDiffuseColor.a;
+	
 }

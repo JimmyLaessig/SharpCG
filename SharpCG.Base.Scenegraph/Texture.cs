@@ -4,17 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-using System.Drawing.Imaging;
+using SharpCG.Base.Rendering;
 using OpenTK.Graphics.OpenGL4;
 
 namespace SharpCG.Base.Scenegraph
 {
-    public class Texture
+    public abstract class Texture : GLObject
     {
-        private int handle;
-        private Bitmap data;
-        private int width;
-        private int height;
+        protected int handle = -1;
+        protected int width;
+        protected int height;
+
+        protected bool useMipmaps;
+
+        protected bool isDirty;
+
+        private string name;
 
         public int Width
         {
@@ -31,46 +36,33 @@ namespace SharpCG.Base.Scenegraph
             get{return handle;}
         }
 
-        public Texture()
+        public bool IsDirty()
         {
-            handle = -1;
+            return isDirty;
         }
 
-        public void Bind(TextureUnit unit)
-        {           
-            GL.ActiveTexture(unit);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
-        }
-
-        public static Texture Load(string path, bool genMipMaps)
+        public string Name
         {
-            Bitmap bmp = Bitmap.FromFile(path) as Bitmap;
-            int handle = -1;
-
-            GL.GenTextures(1, out handle);
-            GL.BindTexture(TextureTarget.Texture2D, handle);
-
-            BitmapData data;
-            data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            bmp.UnlockBits(data);
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapR, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-
-            Texture texture = new Texture();
-
-            texture.width   = bmp.Width;
-            texture.height  = bmp.Height;
-            texture.handle  = handle;
-            texture.data    = bmp;
-            return texture;
+            get{ return name; }
+            set { name = value; }
         }
+
+        public bool UseMipmaps
+        {
+            get
+            {
+                return useMipmaps;
+            }
+
+            set
+            {
+                useMipmaps = value;
+            }
+        }
+
+        public abstract void Bind(TextureUnit unit);
+        public abstract void UpdateGPUResources();
+        public abstract void FreeGPUResources();
+        public abstract void Dispose();
     }
 }

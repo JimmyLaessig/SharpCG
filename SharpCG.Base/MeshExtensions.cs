@@ -51,7 +51,7 @@ namespace SharpCG.Base
                 Mesh mesh       = new Mesh();
                 mesh.Name       = "Cube";
                 mesh.Enabled    = true;
-                mesh.Indices    = indices;
+                mesh.Indices    = indices;               
                 mesh.SetAttribute(DefaultAttributeName.Position, positions, 3, 0);
 
                 return mesh;

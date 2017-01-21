@@ -12,7 +12,7 @@ namespace SharpCG.Base.Rendering
 
     public class RenderObject
     {
-        public RenderObject(Renderable renderable, string name)
+        public RenderObject(IRenderer renderable, string name)
         {
             this.renderable = renderable;
             this.name       = name;
@@ -20,7 +20,7 @@ namespace SharpCG.Base.Rendering
 
         public long id;
         public string name;
-        public Renderable renderable;
+        public IRenderer renderable;
     }
 
     public class RenderControl

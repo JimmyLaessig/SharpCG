@@ -16,9 +16,9 @@ namespace SharpCG.Base.Scenegraph
     /// </summary>
     public class SimpleLightingMaterial : Material
     {
-        private Texture diffuseMapTexture;
-        private Texture normalMapTexture;
-        private Texture specularMapTexture;
+        private Texture2D diffuseMapTexture;
+        private Texture2D normalMapTexture;
+        private Texture2D specularMapTexture;
 
         private float specularExponent = 128.0f;
 
@@ -34,6 +34,7 @@ namespace SharpCG.Base.Scenegraph
 
         
         private bool normalMappingEnabled = false;
+
         public bool HasDiffuseMap
         {
             get { return (diffuseMapTexture != null); }
@@ -49,19 +50,19 @@ namespace SharpCG.Base.Scenegraph
             get { return (SpecularMapTexture != null); }
         }
 
-        public Texture DiffuseMapTexture
+        public Texture2D DiffuseMapTexture
         {
             get{ return diffuseMapTexture; }
             set{ diffuseMapTexture = value; }
         }
 
-        public Texture NormalMapTexture
+        public Texture2D NormalMapTexture
         {
             get{ return normalMapTexture; }
             set{ normalMapTexture = value; }
         }
 
-        public Texture SpecularMapTexture
+        public Texture2D SpecularMapTexture
         {
             get{ return specularMapTexture; }
             set{ specularMapTexture = value; }
@@ -99,67 +100,32 @@ namespace SharpCG.Base.Scenegraph
 
         public bool NormalMappingEnabled
         {
-            get
-            {
-                return normalMappingEnabled;
-            }
-
-            set
-            {
-                normalMappingEnabled = value;
-            }
+            get{return normalMappingEnabled;}
+            set{ normalMappingEnabled = value;}
         }
 
         public vec3 ViewPosition
         {
-            get
-            {
-                return viewPosition;
-            }
-
-            set
-            {
-                viewPosition = value;
-            }
+            get{return viewPosition; }
+            set{viewPosition = value; }
         }
 
         public vec3 LightColor
         {
-            get
-            {
-                return lightColor;
-            }
-
-            set
-            {
-                lightColor = value;
-            }
+            get{return lightColor;}
+            set{lightColor = value;}
         }
 
         public vec3 LightAmbientColor
         {
-            get
-            {
-                return lightAmbientColor;
-            }
-
-            set
-            {
-                lightAmbientColor = value;
-            }
+            get{return lightAmbientColor;}
+            set{lightAmbientColor = value;}
         }
 
         public vec3 LightDirection
         {
-            get
-            {
-                return lightDirection;
-            }
-
-            set
-            {
-                lightDirection = value;
-            }
+            get{ return lightDirection;}
+            set{lightDirection = value;}
         }
 
         protected override void InitUniformLocations()
@@ -187,11 +153,7 @@ namespace SharpCG.Base.Scenegraph
 
             base.InitUniformLocations();
         }
-
-        /// <summary>
-        /// Binds the material properties to the given shader. 
-        /// TextureUnit contains the next unactive texture.
-        /// </summary>
+      
         public override void Bind(ref uint textureUnit)
         {
             base.Bind(ref textureUnit);
@@ -225,6 +187,16 @@ namespace SharpCG.Base.Scenegraph
             GL.Uniform1(uniformLocations["texSpecularMap"], 2);
             specularMapTexture.Bind(TextureUnit.Texture2);
 
-        }       
+        }
+
+        public override List<Texture> GetMaterialTextures()
+        {
+            var list = base.GetMaterialTextures();
+            if(diffuseMapTexture != null)   list.Add(diffuseMapTexture);
+            if(specularMapTexture != null)  list.Add(specularMapTexture);
+            if(NormalMapTexture != null)    list.Add(NormalMapTexture);
+            return list;
+        }
+
     }
 }

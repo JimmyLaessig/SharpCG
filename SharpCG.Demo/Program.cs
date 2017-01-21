@@ -30,6 +30,7 @@ namespace SharpCG.Demo
 
 
             SceneObject cameraObject = Camera.Main.SceneObject;
+            cameraObject.Name = "Camera";
             var controller = cameraObject.AddComponent<CameraController>();
             controller.MoveSpeed = 2;
             controller.RotationSpeed = 0.2f;
@@ -37,12 +38,23 @@ namespace SharpCG.Demo
             window.AddSceneObject(cameraObject);
 
 
+
             SceneObject skybox = new SceneObject();
-            skybox.AddComponent(new SkyboxComponent());
+            skybox.Name = "Skybox";
+            skybox.AddComponent(MeshExtensions.UnitCube);
+            var material = skybox.AddComponent<SkyboxMaterial>();
+            material.CubeMapTexture = CubeMapTexture.Load("Assets/skybox/skybox_left2048.png",
+                                                            "Assets/skybox/skybox_right2048.png",
+                                                            "Assets/skybox/skybox_top2048.png",
+                                                            "Assets/skybox/skybox_bottom2048.png",
+                                                            "Assets/skybox/skybox_front2048.png",
+                                                            "Assets/skybox/skybox_back2048.png");
+            skybox.AddComponent<SkyboxRenderer>();
             window.AddSceneObject(skybox);
 
 
             SceneObject container = Mesh.Load("Assets/model/container.fbx");
+            container.Name = "Container";
             container.Children[0].AddComponent<MeshRenderer>();
             container.Children[0].Transform.Position = new vec3(0, 0, -3);
             container.Children[0].Transform.Scale = vec3.Ones;

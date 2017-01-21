@@ -1,13 +1,14 @@
 #version 440 core
 
-layout (location = 0) in vec3 position;
 
-uniform mat4 wvpMatrix;
+layout (location = 0) in vec3 vPosition;
+
+uniform mat4 mWVP;
 
 out vec3 texcoords;
 
 void main(void)
 {
-    gl_Position = wvpMatrix * vec4(position, 1);
-    texcoords = normalize(position);
+    gl_Position = mWVP * vec4(vPosition, 1);
+    texcoords = normalize(vPosition);
 }

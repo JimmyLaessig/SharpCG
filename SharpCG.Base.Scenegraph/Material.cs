@@ -9,10 +9,26 @@ using GlmSharp;
 
 namespace SharpCG.Base.Scenegraph
 {
+
     public abstract class Material : Component
     {
+        public struct RenderConfig
+        {
+            bool cullFaceEnabled;
+            CullFaceMode cullFace;
+            BlendEquationMode BlendEquationMode;
+            BlendingFactorSrc serc;                   
+            BlendingFactorDest dst;
+
+            DepthFunction depthFunction;
+            bool DepthMask;                       
+        }
+
+
         protected Shader shader;
         protected Dictionary<string, int> uniformLocations = new Dictionary<string, int>();
+
+        private RenderConfig renderConfig;
 
         private mat4 viewMatrix;
         private mat4 projectionMatrix;
@@ -109,13 +125,31 @@ namespace SharpCG.Base.Scenegraph
             uniformLocations["mView"]   = GL.GetUniformLocation(Shader.ProgramHandle, "mView");
             uniformLocations["mProj"]   = GL.GetUniformLocation(Shader.ProgramHandle, "mProj");
             uniformLocations["mNormal"] = GL.GetUniformLocation(Shader.ProgramHandle, "mNormal");
-            uniformLocations["mWVP"]    = GL.GetUniformLocation(Shader.ProgramHandle, "mWVP");
+            uniformLocations["mWVP"]    = GL.GetUniformLocation(Shader.ProgramHandle, "mWVP");          
         }
 
         /// <summary>
-        /// Binds the shader and uniforms for this material.
+        /// Returns all texture used in this material as a list. 
+        /// This method is used by the render control to collect all textures and perform resource updates on them. 
+        /// If textures are not returned with this function, updates must be performed manually. 
         /// </summary>
-        /// <param name="textureUnit"></param>
+        /// <returns></returns>
+        public virtual List<Texture> GetMaterialTextures()
+        {
+            return new List<Texture>();
+        }
+
+
+        public void BindRenderConfig()
+        {
+          //
+        }
+
+        /// <summary>
+        /// Binds the material properties and the shader
+        /// TextureUnit contains the next unactive texture.
+        /// </summary>
+
         public virtual void Bind(ref uint textureUnit)
         {
             Shader.bind();            

@@ -10,7 +10,7 @@ using SharpCG.Base.Rendering;
 using SharpCG.Base.Scenegraph;
 
 
-class MeshRenderer : Component, Renderable
+class MeshRenderer : Component, IRenderer
 {
     private Mesh mesh;
     private SimpleLightingMaterial material;

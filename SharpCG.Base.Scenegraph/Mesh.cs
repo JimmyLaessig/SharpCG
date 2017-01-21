@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL4;
 using Assimp;
 using GlmSharp;
 using System.Drawing;
+using SharpCG.Base.Rendering;
 
 namespace SharpCG.Base.Scenegraph
 {
@@ -32,7 +33,7 @@ namespace SharpCG.Base.Scenegraph
         public int VBO;
     }
 
-    public class Mesh : Component
+    public class Mesh : Component , GLObject
     {      
         
         private Dictionary<string, AttributeInfo> attributes;
@@ -43,7 +44,7 @@ namespace SharpCG.Base.Scenegraph
 
         private int VAO = -1;
 
-        public Texture texture;
+        private bool isDirty;
 
         public Mesh()
         {
@@ -79,40 +80,9 @@ namespace SharpCG.Base.Scenegraph
                 return;
 
             // Create VAO
-            if (VAO < 0){ CreateVAO();}
+            //if (VAO < 0){ CreateVAO();}
 
             if (VAO >= 0) GL.BindVertexArray(VAO);
-        }
-
-        public void CreateVAO()
-        {
-            // Create VAO for the mesh
-            VAO = GL.GenVertexArray();
-            GL.BindVertexArray(VAO);
-
-            // Create VBO for the indices if it has indices         
-            if (HasIndices)
-            {
-                GL.GenBuffers(1, out indexVBO);
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexVBO);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(sizeof(uint) * indices.Length), indices, BufferUsageHint.StaticDraw);
-            }
-
-
-            // Create VBO for each attribute
-            foreach(var pair in attributes)
-            {
-                var info = pair.Value;
-
-                GL.GenBuffers(1, out info.VBO);
-                GL.BindBuffer(BufferTarget.ArrayBuffer, info.VBO);
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * info.data.Length), info.data, BufferUsageHint.StaticDraw);
-
-                // Link to the given location with the given per vertex size
-                GL.EnableVertexAttribArray(info.location);
-                GL.VertexAttribPointer(info.location, info.perVertexSize, VertexAttribPointerType.Float, false, 0, 0);    
-                
-            }
         }
 
         public void SetAttribute(string name, float[] data, int perVertexSize, int location)
@@ -130,12 +100,17 @@ namespace SharpCG.Base.Scenegraph
                 info.location       = location;
                 info.VBO            = -1;
                 attributes[name]    = info;
+                isDirty = true;
             }
         }
 
         public uint[] Indices
         {
-            set{indices = value;}
+            set
+            {
+                indices = value;
+                isDirty = true;
+            }
         }
         
         public void SetAttribute(string name, vec2[] data, int location)
@@ -144,6 +119,8 @@ namespace SharpCG.Base.Scenegraph
             var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
 
             SetAttribute(name, data2, 2, location);
+            isDirty = true;
+            
         }
 
         public void SetAttribute(string name, vec3[] data, int location)
@@ -151,6 +128,7 @@ namespace SharpCG.Base.Scenegraph
             var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
 
             SetAttribute(name, data2, 3, location);
+            isDirty = true;
         }
 
         public void SetAttribute(string name, vec4[] data, int location)
@@ -158,19 +136,54 @@ namespace SharpCG.Base.Scenegraph
             var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
 
             SetAttribute(name, data2, 4, location);
+            isDirty = true;
         }
 
         public void RemoveAttribute(string name)
         {
             GL.DeleteBuffer(attributes[name].VBO);
-            attributes.Remove(name);            
+            attributes.Remove(name);
+            isDirty = true;
         }
 
-        public void DisposeHandle()
+        
+        public void UpdateGPUResources()
+        {
+            // Create VAO for the mesh
+            VAO = GL.GenVertexArray();
+            GL.BindVertexArray(VAO);
+
+            // Create VBO for the indices if it has indices         
+            if (HasIndices)
+            {
+                GL.GenBuffers(1, out indexVBO);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexVBO);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(sizeof(uint) * indices.Length), indices, BufferUsageHint.StaticDraw);
+            }
+
+
+            // Create VBO for each attribute
+            foreach (var pair in attributes)
+            {
+                var info = pair.Value;
+
+                GL.GenBuffers(1, out info.VBO);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, info.VBO);
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * info.data.Length), info.data, BufferUsageHint.StaticDraw);
+
+                // Link to the given location with the given per vertex size
+                GL.EnableVertexAttribArray(info.location);
+                GL.VertexAttribPointer(info.location, info.perVertexSize, VertexAttribPointerType.Float, false, 0, 0);
+
+            }
+            isDirty = false;
+        }
+
+        public void FreeGPUResources()
         {
             // Delete Buffers from GPU and clear collection
 
-            foreach(var pair in attributes)
+            foreach (var pair in attributes)
             {
                 var info = pair.Value;
                 GL.DeleteBuffer(info.VBO);
@@ -178,9 +191,8 @@ namespace SharpCG.Base.Scenegraph
             }
 
 
-           
             // Delete Index Buffer if exists
-            if(indexVBO != -1)
+            if (indexVBO != -1)
             {
                 GL.DeleteBuffer(indexVBO);
                 indexVBO = -1;
@@ -189,13 +201,18 @@ namespace SharpCG.Base.Scenegraph
             // Delete Vertex Array Obect from GPU and clear handle
             GL.DeleteVertexArray(VAO);
             VAO = -1;
+
+            isDirty = false;
         }
 
         public override void Dispose()
         {
-            DisposeHandle();
-            attributes.Clear();           
+            FreeGPUResources();
+            attributes.Clear();
+            isDirty = false;
         }
+
+
 
         public static SceneObject Load(string path)
         {
@@ -207,6 +224,7 @@ namespace SharpCG.Base.Scenegraph
             string directory = path.Substring(0, path.LastIndexOf('/'));
             return Traverse(scene, scene.RootNode, directory);
         }
+
 
         private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory)
         {           
@@ -253,17 +271,17 @@ namespace SharpCG.Base.Scenegraph
                 }
                 if (aiMaterial.HasTextureDiffuse)
                 {
-                    m.DiffuseMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureDiffuse.FilePath, true);      
+                    m.DiffuseMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureDiffuse.FilePath, true);      
                 }
                 if (aiMaterial.HasTextureNormal)
                 {
-                    m.NormalMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureNormal.FilePath, true);
+                    m.NormalMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureNormal.FilePath, true);
                 }
                 if (aiMaterial.HasTextureSpecular)
                 {
-                    m.SpecularMapTexture = Texture.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
+                    m.SpecularMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
                 }
-                //if(aiMaterial.HasTexture)
+                
                 //    if (aiMaterial.HasTextureDisplacement)
                 //    {
                 //        //     Console.WriteLine("Displacement");
@@ -383,25 +401,9 @@ namespace SharpCG.Base.Scenegraph
            
             }
 
-        
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="key"></param>
-        ///// <returns></returns>
-        //public static Mesh Find(string key)
-        //{
-        //    foreach (Mesh mesh in Meshes)
-        //    {
-        //        if (mesh.name == key)
-        //            return mesh;
-        //    }
-        //    return null;
-        //}
-
-
-
-
+        public bool IsDirty()
+        {
+            return isDirty;
+        }
     }
 }
