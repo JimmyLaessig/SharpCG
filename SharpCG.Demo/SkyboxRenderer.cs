@@ -39,7 +39,7 @@ namespace SharpCG.Demo
             GL.DepthMask(false);
 
 
-            uint unit = 0;
+            
 
             mat4 W = mat4.Translate(camera.Transform.Position);
             mat4 V = camera.ViewMatrix;
@@ -52,6 +52,7 @@ namespace SharpCG.Demo
             material.WvpMatrix = P * V * W;
 
 
+            uint unit = 0;
             material.Bind(ref unit);
 
             mesh.Bind();

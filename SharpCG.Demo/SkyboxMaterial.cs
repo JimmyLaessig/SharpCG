@@ -23,8 +23,11 @@ namespace SharpCG.Demo
 
         public override void Bind(ref uint textureUnit)
         {
-            base.Bind(ref textureUnit);
+           // base.Bind(ref textureUnit);
 
+            shader.bind();
+
+            GL.UniformMatrix4(uniformLocations["mWVP"], 1, false, this.WvpMatrix.Values1D);
             GL.Uniform1(uniformLocations["texCubeMap"], 0);
             cubeMapTexture.Bind(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0);
         }
