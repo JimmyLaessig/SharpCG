@@ -38,7 +38,7 @@ namespace SharpCG.Base.Rendering
         public bool isDirty;
 
 
-        public List<RenderObject> renderObjects = new List<RenderObject>();
+        public SortedList<double, RenderObject> renderObjects = new SortedList<double, RenderObject>();
 
         public Rectangle Viewport
         {

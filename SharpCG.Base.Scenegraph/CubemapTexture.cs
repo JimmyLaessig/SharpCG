@@ -22,7 +22,7 @@ namespace SharpCG.Base.Scenegraph
 
         public override void Bind(TextureUnit unit)
         {
-            GL.ActiveTexture(unit);
+            //GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.TextureCubeMap, Handle);
         }
       
@@ -72,7 +72,8 @@ namespace SharpCG.Base.Scenegraph
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
 
             TextureMinFilter textureMinFilter = (useMipmaps) ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear;
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)textureMinFilter);
+
+            GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)textureMinFilter);
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
 
@@ -91,7 +92,7 @@ namespace SharpCG.Base.Scenegraph
                                             string negYPath,
                                             string posZPath,
                                             string negZPath,
-                                            bool useMipmaps = true)
+                                            bool useMipmaps = false)
         {
 
 

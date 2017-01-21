@@ -28,6 +28,9 @@ namespace SharpCG.Demo
             Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 10000);
             //Camera.Main.LookAt(vec3.Zero, vec3.UnitZ, vec3.UnitY);
 
+           
+            RenderPass skyBoxPass = RenderPass.Before(RenderPass.Main, "SkyboxRenderPass");
+
 
             SceneObject cameraObject = Camera.Main.SceneObject;
             cameraObject.Name = "Camera";
@@ -49,13 +52,15 @@ namespace SharpCG.Demo
                                                             "Assets/skybox/skybox_bottom2048.png",
                                                             "Assets/skybox/skybox_front2048.png",
                                                             "Assets/skybox/skybox_back2048.png");
-            skybox.AddComponent<SkyboxRenderer>();
+            var r1 = skybox.AddComponent<SkyboxRenderer>();
+            r1.RenderPass = skyBoxPass;
             window.AddSceneObject(skybox);
 
 
             SceneObject container = Mesh.Load("Assets/model/container.fbx");
             container.Name = "Container";
-            container.Children[0].AddComponent<MeshRenderer>();
+            var r2 = container.Children[0].AddComponent<MeshRenderer>();
+            r2.RenderPass = RenderPass.Main;
             container.Children[0].Transform.Position = new vec3(0, 0, -3);
             container.Children[0].Transform.Scale = vec3.Ones;
             container.Children[0].AddComponent<Rotator>();
@@ -66,45 +71,6 @@ namespace SharpCG.Demo
             window.Run();
 
         }
-
-
-
-        public void MethodBodyExample(object arg)
-        {
-            // Define some local variables. In addition to these variables,
-            // the local variable list includes the variables scoped to 
-            // the catch clauses.
-            int var1 = 42;
-            string var2 = "Forty-two";
-
-            try
-            {
-                // Depending on the input value, throw an ArgumentException or 
-                // an ArgumentNullException to test the Catch clauses.
-                if (arg == null)
-                {
-                    throw new ArgumentNullException("The argument cannot be null.");
-                }
-                if (arg.GetType() == typeof(string))
-                {
-                    throw new ArgumentException("The argument cannot be a string.");
-                }
-            }
-
-            // There is no Filter clause in this code example. See the Visual 
-            // Basic code for an example of a Filter clause.
-
-            // This catch clause handles the ArgumentException class, and
-            // any other class derived from Exception.
-            catch (Exception ex)
-            {
-                Console.WriteLine("Ordinary exception-handling clause caught: {0}", ex.GetType());
-            }
-            finally
-            {
-                var1 = 3033;
-                var2 = "Another string.";
-            }
-        }
+       
     }  
 }

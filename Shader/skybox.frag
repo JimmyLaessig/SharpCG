@@ -10,5 +10,4 @@ out vec4 fragColor;
 void main(void)
 {
     fragColor = textureCube(texCubeMap, texcoords);
-	
 }

@@ -25,6 +25,16 @@ namespace SharpCG.Demo
         private Mesh mesh;
         private SkyboxMaterial material;
 
+
+        private RenderPass renderPass;
+
+
+        public RenderPass RenderPass
+        {
+            get { return renderPass; }
+            set { renderPass = value; }
+        }
+
         public override void OnStart()
         {
             mesh = (Mesh)sceneObject.Components.Find(c => c is Mesh);
@@ -37,8 +47,6 @@ namespace SharpCG.Demo
 
             GL.Disable(EnableCap.CullFace);
             GL.DepthMask(false);
-
-
             
 
             mat4 W = mat4.Translate(camera.Transform.Position);
@@ -63,6 +71,11 @@ namespace SharpCG.Demo
             GL.Enable(EnableCap.CullFace);
             GL.DepthMask(true);
 
+        }
+
+        public RenderPass GetRenderPass()
+        {
+            return renderPass;
         }
     }
 }

@@ -111,8 +111,10 @@ namespace SharpCG.Base
 
 
             // Draw all renderobjects
-            renderControl.renderObjects.ForEach(obj => obj.renderable.Render());
-
+            foreach(var obj in renderControl.renderObjects)
+            {
+                obj.Value.renderable.Render();
+            }            
 
             this.SwapBuffers();
         }
@@ -176,22 +178,18 @@ namespace SharpCG.Base
         public void AddSceneObject(SceneObject obj)
         {
             // Get renderables from sceneobject
-            var renderables     = Collect<IRenderer>(obj);
-            var renderObjects   = renderables.Select(r => new RenderObject((IRenderer)r, ""));
+            var renderers     = Collect<IRenderer>(obj);
 
-            renderControl.renderObjects.AddRange(renderObjects);
+            renderers.ForEach(r => renderControl.renderObjects.Add((r.GetRenderPass().SortKey), new RenderObject(r, "")));
+            
             root.Children.Add(obj);
         }
 
         // Collects Components of type T
-        public static List<Component> Collect<T>(SceneObject obj)
+        public static List<T> Collect<T>(SceneObject obj)
         {
-            var ls = obj.Components.Where(c => c is T).ToList();
-
-            if (obj.Children.Count > 0)
-            {
-                obj.Children.ForEach(child => ls.AddRange(Collect<T>(child)));
-            }
+            var ls = obj.Components.OfType<T>().ToList();
+            obj.Children.ForEach(child => ls.AddRange(Collect<T>(child)));            
             return ls;
         }
     }

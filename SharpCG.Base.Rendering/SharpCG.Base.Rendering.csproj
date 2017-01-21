@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,6 +61,7 @@
     <Compile Include="IRenderer.cs" />
     <Compile Include="RenderConfig.cs" />
     <Compile Include="RenderControl.cs" />
+    <Compile Include="RenderPass.cs" />
     <Compile Include="Shader.cs" />
   </ItemGroup>
   <ItemGroup>

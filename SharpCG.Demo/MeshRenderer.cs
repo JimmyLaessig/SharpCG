@@ -15,6 +15,15 @@ class MeshRenderer : Component, IRenderer
     private Mesh mesh;
     private SimpleLightingMaterial material;
 
+
+    private RenderPass renderPass;
+
+    public RenderPass RenderPass
+    {
+        get{return renderPass;}
+        set{renderPass = value;}
+    }
+
     public override void OnStart()
     {
         mesh = (Mesh)sceneObject.Components.Find(c => c is Mesh);
@@ -56,6 +65,12 @@ class MeshRenderer : Component, IRenderer
 
         //GL.Enable(EnableCap.CullFace);
         //GL.DepthMask(true);
+    }
+
+
+    public RenderPass GetRenderPass()
+    {
+        return renderPass;
     }
 }
 

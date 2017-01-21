@@ -129,12 +129,14 @@ namespace SharpCG.Base.Rendering
                 Console.WriteLine("Failed to create Shader Program");
                 return false;
             }
+            
             // Create new Shader Object
             Shader shader = new Shader();
             shader.programHandle = programhandle;
 
             // Load Shader Programs
             string path = SHADER_FILE_DIRECTORY + "/" + name;
+            Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
             Console.WriteLine("------ Loading Shader: " + name + " ------");
 
             // Search the directory for Vertex Shader
