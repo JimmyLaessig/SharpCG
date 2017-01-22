@@ -22,7 +22,6 @@ namespace SharpCG.Base.Scenegraph
 
         private float specularExponent = 128.0f;
 
-        private vec3 ambientAmount  = new vec3(1,1,1);
         private vec3 diffuseAmount  = new vec3(1,1,1);
         private vec3 specularAmount = new vec3(1,1,1);
         private vec3 emissiveAmount = new vec3(0,0,0);
@@ -66,13 +65,7 @@ namespace SharpCG.Base.Scenegraph
         {
             get{ return specularMapTexture; }
             set{ specularMapTexture = value; }
-        }
-
-        public vec3 AmbientAmount
-        {
-            get{ return ambientAmount; }
-            set{ ambientAmount = value; }
-        }
+        }      
 
         public vec3 DiffuseAmount
         {
@@ -163,7 +156,6 @@ namespace SharpCG.Base.Scenegraph
             GL.Uniform1(uniformLocations["bHasNormalMap"], HasNormapMap ? 1 : 0);
             GL.Uniform1(uniformLocations["bHasSpecularMap"], HasSpecularMap ? 1 : 0);
 
-            GL.Uniform3(uniformLocations["vMaterialAmbient"], 1, ambientAmount.Values);
             GL.Uniform3(uniformLocations["vMaterialDiffuse"], 1, diffuseAmount.Values);
             GL.Uniform3(uniformLocations["vMaterialEmissive"], 1, emissiveAmount.Values);
             GL.Uniform3(uniformLocations["vMaterialSpecular"], 1, specularAmount.Values);

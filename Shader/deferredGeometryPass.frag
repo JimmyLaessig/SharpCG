@@ -20,18 +20,15 @@ uniform sampler2D texSpecularMap;
 uniform vec3 vMaterialDiffuse;
 uniform vec3 vMaterialSpecular;
 uniform vec3 vMaterialEmissive;
+uniform vec3 vMaterialAmbient;
 uniform float fMaterialShininess;
-
-
-uniform vec3 vLightDirection;
-uniform vec3 vLightColor;
-uniform vec3 vLightAmbient;
-uniform vec3 vViewPosition;
 
 uniform bool bNormalMappingEnabled = true;
 
-layout (location = 0) out vec4 fragColor;
-
+layout (location = 0) out vec4 gWorldPosition;
+layout (location = 1) out vec4 gWorldNormal;
+layout (location = 2) out vec4 gDiffuseAlbedo;
+layout (location = 3) out vec4 gSpecularAlbedo;
 
 
 //--------------------------------------------------------------------------------------
@@ -57,29 +54,22 @@ vec3 calcNormal(vec3 normal, vec3 tangent, vec3 bitangent)
 
 void main()
 {
-	
+    gWorldPosition.xyz = pWorldPosition;
+	gWorldPosition.w = 1;
+
 	// Calculate pertubed normal  
-	vec3 N = calcNormal(normalize(pWorldNormal), normalize(pWorldTangent), normalize(pWorldBitangent));
+	gWorldNormal.xyz = calcNormal(	normalize(pWorldNormal), 
+									normalize(pWorldTangent), 
+									normalize(pWorldBitangent));
+	gWorldNormal.w = 1;		
 	
 	// Get diffuse color from texture
-	vec4 vDiffuseColor	= (bHasDiffuseMap) ? texture(texDiffuseMap, pTexcoords) : vec4(1);
+	vec4 vDiffuseColor	= (bHasDiffuseMap)	? texture(texDiffuseMap, pTexcoords) : vec4(1);
 	// Get specular color from texture
 	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
 
-
-	// calculate Phong lighting parameter
-	vec3 L = normalize(-vLightDirection);
-	vec3 V = normalize(vViewPosition - pWorldPosition);
-	vec3 H = normalize(V + L);
-
-	// Calculate Directional Lighting
-	vec3 emissiveColor	= vMaterialEmissive;
-	vec3 ambientColor	= vDiffuseColor.rgb	 * vLightAmbient; 
-	vec3 diffuseColor	= vDiffuseColor.rgb	 * vLightColor	 * vMaterialDiffuse	* clamp(dot(L, N), 0.0, 1.0);		
-	vec3 specularColor	= vSpecularColor.rgb * vLightColor	 * vMaterialSpecular * pow (clamp (dot (N, H), 0.0, 1.0), fMaterialShininess);
-	
-	
-	fragColor.rgb = diffuseColor + emissiveColor + ambientColor + specularColor;	
-	fragColor.a = vDiffuseColor.a;
-	
+	gDiffuseAlbedo.rgb = vDiffuseColor.rgb * vMaterialDiffuse;
+	gDiffuseAlbedo.a = vDiffuseColor.a;
+	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular;
+	gSpecularAlbedo.a = fMaterialShininess;		
 }

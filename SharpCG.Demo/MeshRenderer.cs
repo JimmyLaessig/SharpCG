@@ -18,17 +18,20 @@ class MeshRenderer : Component, IRenderer
 
     private RenderPass renderPass;
 
+
     public RenderPass RenderPass
     {
         get{return renderPass;}
         set{renderPass = value;}
     }
 
+
     public override void OnStart()
     {
         mesh = (Mesh)sceneObject.Components.Find(c => c is Mesh);
         material = (SimpleLightingMaterial)sceneObject.Components.Find(c => c is SimpleLightingMaterial);
     }
+
 
     public void Render()
     {

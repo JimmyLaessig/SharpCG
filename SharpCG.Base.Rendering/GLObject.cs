@@ -10,8 +10,15 @@ namespace SharpCG.Base.Rendering
     {
         void UpdateGPUResources();
 
+
         void FreeGPUResources();
 
-        bool IsDirty();
+
+        bool IsDirty
+        {
+            get;               
+        }
+
+
     }
 }

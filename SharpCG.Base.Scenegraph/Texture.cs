@@ -10,59 +10,60 @@ using OpenTK.Graphics.OpenGL4;
 namespace SharpCG.Base.Scenegraph
 {
     public abstract class Texture : GLObject
-    {
-        protected int handle = -1;
-        protected int width;
-        protected int height;
-
-        protected bool useMipmaps;
+    {     
 
         protected bool isDirty;
+        protected bool useMipMaps;
+        protected string name;
 
-        private string name;
-
-        public int Width
-        {
-            get { return width; }
-        }
-
-        public int Height
-        {
-            get { return height; }
-        }
-
-        public int Handle
-        {
-            get{return handle;}
-        }
-
-        public bool IsDirty()
-        {
-            return isDirty;
-        }
 
         public string Name
         {
-            get{ return name; }
+            get { return name; }
             set { name = value; }
         }
 
-        public bool UseMipmaps
-        {
-            get
-            {
-                return useMipmaps;
-            }
 
-            set
-            {
-                useMipmaps = value;
-            }
+        public abstract uint Width
+        {
+            get;
         }
 
+
+        public abstract uint Height
+        {
+            get;
+        }
+
+
+        public abstract int Handle
+        {
+            get;
+        }
+
+        
         public abstract void Bind(TextureUnit unit);
+
+
         public abstract void UpdateGPUResources();
+
+
         public abstract void FreeGPUResources();
+
+
         public abstract void Dispose();
+
+
+        public virtual bool UseMipMaps
+        {
+            get { return useMipMaps; }
+        }
+
+
+        public virtual bool IsDirty
+        {
+            get { return isDirty; }
+        }
+
     }
 }

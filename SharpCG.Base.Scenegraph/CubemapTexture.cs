@@ -9,28 +9,75 @@ using System.Drawing.Imaging;
 
 namespace SharpCG.Base.Scenegraph
 {
+
+    public enum CubeMapFace
+    {
+        PosX = TextureTarget.TextureCubeMapPositiveX,
+        NegX = TextureTarget.TextureCubeMapNegativeX,
+        PosY = TextureTarget.TextureCubeMapPositiveY,
+        NegY = TextureTarget.TextureCubeMapNegativeY,
+        PosZ = TextureTarget.TextureCubeMapPositiveZ,
+        NegZ = TextureTarget.TextureCubeMapNegativeZ
+    }
+
     public class CubeMapTexture : Texture
     {
-        private Bitmap posX;
-        private Bitmap negX;
-        private Bitmap posY;
-        private Bitmap negY;
-        private Bitmap posZ;
-        private Bitmap negZ;
+        private int handle;
+        private Dictionary<CubeMapFace, Image> images;
 
+
+        private CubeMapTexture()
+        {
+            images = new Dictionary<CubeMapFace, Image>();
+        }
+
+
+        public void SetImage(Image image, CubeMapFace face)
+        {
+            // TODO Assert images have same size
+            images[face] = image;
+        }
+
+
+        public override uint Width
+        {
+            get
+            {
+                if (images.Count > 0) return images.First().Value.Width;            
+                else return 0;                  
+            }
+        }
+
+
+        public override uint Height
+        {
+            get
+            {
+                if (images.Count > 0) return images.First().Value.Height;
+                else return 0;
+            }
+        }
+
+
+        public override int Handle
+        {
+            get{return handle;}
+        }
 
 
         public override void Bind(TextureUnit unit)
         {
-            //GL.ActiveTexture(unit);
+            GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.TextureCubeMap, Handle);
         }
       
+
         public override void FreeGPUResources()
         {
             if (handle > -1) GL.DeleteTexture(handle);
             handle = -1;
         }
+
 
         public override void UpdateGPUResources()
         {
@@ -39,39 +86,25 @@ namespace SharpCG.Base.Scenegraph
             GL.GenTextures(1, out handle);
             GL.BindTexture(TextureTarget.TextureCubeMap, handle);
 
-            BitmapData data;
+            images.ToList().ForEach(pair =>            
+                GL.TexImage2D((TextureTarget)pair.Key, 
+                0, 
+                PixelInternalFormat.Rgba, 
+                (int)pair.Value.Width,
+                (int)pair.Value.Width,
+                0, 
+                OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, 
+                PixelType.UnsignedByte, 
+                pair.Value.Data)
+            );         
 
-            data = posX.LockBits(new Rectangle(0, 0, posX.Width, posX.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveX, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            posX.UnlockBits(data);
-
-            data = negX.LockBits(new Rectangle(0, 0, negX.Width, negX.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapNegativeX, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            negX.UnlockBits(data);
-
-            data = posY.LockBits(new Rectangle(0, 0, posY.Width, posY.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveY, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            posY.UnlockBits(data);
-
-            data = negY.LockBits(new Rectangle(0, 0, negY.Width, negY.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapNegativeY, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            negY.UnlockBits(data);
-
-            data = posZ.LockBits(new Rectangle(0, 0, posZ.Width, posZ.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapPositiveZ, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            posZ.UnlockBits(data);
-
-            data = negZ.LockBits(new Rectangle(0, 0, negZ.Width, negZ.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.TextureCubeMapNegativeZ, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            negZ.UnlockBits(data);
-
-            if (useMipmaps) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            if (UseMipMaps) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
 
-            TextureMinFilter textureMinFilter = (useMipmaps) ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear;
+            TextureMinFilter textureMinFilter = (UseMipMaps) ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear;
 
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)textureMinFilter);
             GL.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
@@ -79,6 +112,7 @@ namespace SharpCG.Base.Scenegraph
 
             isDirty = false;
         }
+
 
         public override void Dispose()
         {
@@ -94,32 +128,20 @@ namespace SharpCG.Base.Scenegraph
                                             string negZPath,
                                             bool useMipmaps = false)
         {
-
-
-            Bitmap posX = Bitmap.FromFile(posXPath) as Bitmap;
-            Bitmap negX = Bitmap.FromFile(negXPath) as Bitmap;
-            Bitmap posY = Bitmap.FromFile(posYPath) as Bitmap;
-            Bitmap negY = Bitmap.FromFile(negYPath) as Bitmap;
-            Bitmap posZ = Bitmap.FromFile(posZPath) as Bitmap;
-            Bitmap negZ = Bitmap.FromFile(negZPath) as Bitmap;
-
-
             CubeMapTexture texture = new CubeMapTexture();
 
-            texture.width = posX.Width;
-            texture.height = posX.Height;
+            texture.SetImage(Image.FromFile(posXPath), CubeMapFace.PosX);
+            texture.SetImage(Image.FromFile(negXPath), CubeMapFace.NegX);
+            texture.SetImage(Image.FromFile(posYPath), CubeMapFace.PosY);
+            texture.SetImage(Image.FromFile(negYPath), CubeMapFace.NegY);
+            texture.SetImage(Image.FromFile(posZPath), CubeMapFace.PosZ);
+            texture.SetImage(Image.FromFile(negZPath), CubeMapFace.NegZ);
 
-            texture.posX = posX;
-            texture.negX = negX;
-            texture.posY = posY;
-            texture.negY = negY;
-            texture.posZ = posZ;
-            texture.negZ = negZ;
+            texture.Name        = posXPath;
+            texture.isDirty     = true;
+            texture.useMipMaps  = useMipmaps;
 
-            texture.Name = posXPath;
-            texture.isDirty = true;
-            texture.useMipmaps = useMipmaps;
             return texture;
-        }
+        }      
     }
 }

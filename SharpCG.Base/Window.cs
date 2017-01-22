@@ -141,14 +141,14 @@ namespace SharpCG.Base
             // Update GPU Resources for textures
             Traverse<Material>(root,
                 m => m.GetMaterialTextures()
-                .Where(t => t.IsDirty()).ToList()
+                .Where(t => t.IsDirty).ToList()
                 .ForEach(t => t.UpdateGPUResources())
                 );
 
             // Update GPU Resources for meshes
             Traverse<Mesh>(root, delegate (Mesh m)
             {
-                if (m.IsDirty())
+                if (m.IsDirty)
                 {
                     m.UpdateGPUResources();
                 }

@@ -44,7 +44,9 @@ namespace SharpCG.Base.Scenegraph
 
         private int VAO = -1;
 
+
         private bool isDirty;
+
 
         public Mesh()
         {
@@ -52,10 +54,12 @@ namespace SharpCG.Base.Scenegraph
             indices = new uint[0];
         }
 
+
         public bool HasIndices
         {
             get{return indices.Length > 0;}
         }
+
 
         public int Handle
         {
@@ -65,6 +69,7 @@ namespace SharpCG.Base.Scenegraph
             }          
         }
      
+
         public int TriangleCount
         {
             get
@@ -72,6 +77,7 @@ namespace SharpCG.Base.Scenegraph
                 return indices.Length / 3;
             }
         }
+
 
         public void Bind()
         {
@@ -84,6 +90,7 @@ namespace SharpCG.Base.Scenegraph
 
             if (VAO >= 0) GL.BindVertexArray(VAO);
         }
+
 
         public void SetAttribute(string name, float[] data, int perVertexSize, int location)
         {
@@ -104,6 +111,7 @@ namespace SharpCG.Base.Scenegraph
             }
         }
 
+
         public uint[] Indices
         {
             set
@@ -112,7 +120,14 @@ namespace SharpCG.Base.Scenegraph
                 isDirty = true;
             }
         }
-        
+
+
+        public bool IsDirty
+        {
+            get{return isDirty;}
+        }
+
+         
         public void SetAttribute(string name, vec2[] data, int location)
         {
             // TODO quicker?
@@ -123,6 +138,7 @@ namespace SharpCG.Base.Scenegraph
             
         }
 
+
         public void SetAttribute(string name, vec3[] data, int location)
         {
             var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
@@ -130,6 +146,7 @@ namespace SharpCG.Base.Scenegraph
             SetAttribute(name, data2, 3, location);
             isDirty = true;
         }
+
 
         public void SetAttribute(string name, vec4[] data, int location)
         {
@@ -139,6 +156,7 @@ namespace SharpCG.Base.Scenegraph
             isDirty = true;
         }
 
+
         public void RemoveAttribute(string name)
         {
             GL.DeleteBuffer(attributes[name].VBO);
@@ -146,7 +164,7 @@ namespace SharpCG.Base.Scenegraph
             isDirty = true;
         }
 
-        
+      
         public void UpdateGPUResources()
         {
             // Create VAO for the mesh
@@ -179,6 +197,7 @@ namespace SharpCG.Base.Scenegraph
             isDirty = false;
         }
 
+
         public void FreeGPUResources()
         {
             // Delete Buffers from GPU and clear collection
@@ -205,13 +224,13 @@ namespace SharpCG.Base.Scenegraph
             isDirty = false;
         }
 
+
         public override void Dispose()
         {
             FreeGPUResources();
             attributes.Clear();
             isDirty = false;
         }
-
 
 
         public static SceneObject Load(string path)
@@ -400,10 +419,5 @@ namespace SharpCG.Base.Scenegraph
             this.SetAttribute(DefaultAttributeName.Texcoord0, texcoords0, 2 , 5);
            
             }
-
-        public bool IsDirty()
-        {
-            return isDirty;
-        }
     }
 }

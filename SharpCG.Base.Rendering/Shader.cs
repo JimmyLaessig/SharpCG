@@ -269,6 +269,8 @@ namespace SharpCG.Base.Rendering
 
             if (!LoadShader("skybox")) return false;          
             if (!LoadShader("simpleLighting")) return false;
+            if (!LoadShader("deferredGeometryPass")) return false;
+            
             return true;
         }
     }
