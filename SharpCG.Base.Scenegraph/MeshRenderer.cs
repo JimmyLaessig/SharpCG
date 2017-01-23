@@ -10,11 +10,12 @@ using SharpCG.Base.Rendering;
 using SharpCG.Base.Scenegraph;
 
 
-class MeshRenderer : Component, IRenderer
+public class MeshRenderer : Component, IRenderer
 {
     private Mesh mesh;
     private SimpleLightingMaterial material;
 
+    private Framebuffer framebuffer;
 
     private RenderPass renderPass;
 
@@ -25,6 +26,11 @@ class MeshRenderer : Component, IRenderer
         set{renderPass = value;}
     }
 
+    public Framebuffer Framebuffer
+    {
+        get{return framebuffer;}
+        set{framebuffer = value;}
+    }
 
     public override void OnStart()
     {
@@ -35,6 +41,7 @@ class MeshRenderer : Component, IRenderer
 
     public void Render()
     {
+
         Camera camera = Camera.Main;
 
         GL.Enable(EnableCap.CullFace);

@@ -7,7 +7,7 @@ using SharpCG.Base.Rendering;
 using OpenTK.Graphics.OpenGL4;
 
 using GlmSharp;
-namespace SharpCG.Base.Scenegraph
+namespace SharpCG.Base.Rendering
 {
 
     public struct RenderTarget
@@ -25,14 +25,14 @@ namespace SharpCG.Base.Scenegraph
         private int handle;
 
 
-        private List<RenderTarget> colorTargets;
+        private List<RenderTarget> attachments;
 
         private RenderTarget depthBuffer;
 
 
         public Framebuffer()
         {
-            colorTargets = new List<RenderTarget>();
+            attachments = new List<RenderTarget>();
         }
 
 
@@ -54,20 +54,18 @@ namespace SharpCG.Base.Scenegraph
             if (attachment == FramebufferAttachment.Depth)
                 depthBuffer = target;
             else
-                colorTargets.Add(target);
+                attachments.Add(target);
+
+            isDirty = true;
            
         }
 
 
         public void Clear()
         {
-            //GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);
-            //var error = GL.GetError();
-            //var drawBuffers = colorTargets.ConvertAll(ct => ct.attachment).Cast<DrawBuffersEnum>().ToArray();              
-            //GL.DrawBuffers(drawBuffers.Length, drawBuffers);
-            //error = GL.GetError();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);
 
-            colorTargets.ForEach(ct => 
+            attachments.ForEach(ct => 
             {
                 GL.DrawBuffer((DrawBufferMode)ct.attachment);              
                 var c = ct.ClearColor;
@@ -81,19 +79,32 @@ namespace SharpCG.Base.Scenegraph
 
         public void BindForWriting()
         {
+            if (attachments.Count > 0)
+            {
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, this.handle);
+
+                var buffers = attachments.ConvertAll(a =>(DrawBuffersEnum) a.attachment).ToArray();
+                GL.DrawBuffers(buffers.Length, buffers);                
+                
+                int width = (int)attachments.First().Texture.Width;
+                int height = (int)attachments.First().Texture.Height;
+                GL.Viewport(0, 0, width, height);
+            }
+
+            //glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 
         }
 
 
         public Texture2D GetTexture(FramebufferAttachment attachement)
         {
-            return colorTargets.First(ct => ct.attachment == attachement).Texture;
+            return attachments.First(ct => ct.attachment == attachement).Texture;
         }
 
 
         public List<Texture2D> GetTextures()
         {
-            return colorTargets.ConvertAll(ct => ct.Texture);
+            return attachments.ConvertAll(ct => ct.Texture);
         }
 
 
@@ -105,12 +116,12 @@ namespace SharpCG.Base.Scenegraph
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);
 
 
-            colorTargets.ForEach(ct => 
+            attachments.ForEach(ct => 
                 ct.Texture.InitGL()
             );
 
 
-            colorTargets.ToList().ForEach(ct =>
+            attachments.ToList().ForEach(ct =>
             {
                 ct.Texture.Bind(TextureUnit.Texture10);
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, ct.attachment, TextureTarget.Texture2D, ct.Texture.Handle, 0);
@@ -118,6 +129,8 @@ namespace SharpCG.Base.Scenegraph
             );
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            isDirty = false;
         }        
 
 
@@ -125,7 +138,7 @@ namespace SharpCG.Base.Scenegraph
         {
             GL.DeleteFramebuffer(handle);
 
-            colorTargets.ForEach(ct => ct.Texture.DeInitGL());            
+            attachments.ForEach(ct => ct.Texture.DeInitGL());            
         }
 
         public void Dispose()

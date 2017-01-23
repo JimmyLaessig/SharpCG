@@ -9,7 +9,12 @@ using GlmSharp;
 
 namespace SharpCG.Base.Scenegraph
 {
+    //public struct UniformAttribute<T> where T: struct
+    //{
+    //    public T uniform;
+    //    public int location;
 
+    //}
     public abstract class Material : Component
     {
         //public struct RenderConfig
@@ -38,41 +43,20 @@ namespace SharpCG.Base.Scenegraph
 
         public mat4 ViewMatrix
         {
-            get
-            {
-                return viewMatrix;
-            }
-
-            set
-            {
-                viewMatrix = value;
-            }
+            get{return viewMatrix;}
+            set{viewMatrix = value;}
         }
 
         public mat4 ProjectionMatrix
         {
-            get
-            {
-                return projectionMatrix;
-            }
-
-            set
-            {
-                projectionMatrix = value;
-            }
+            get{return projectionMatrix;}
+            set{projectionMatrix = value;}
         }
 
         public mat4 WorldMatrix
         {
-            get
-            {
-                return worldMatrix;
-            }
-
-            set
-            {
-                worldMatrix = value;
-            }
+            get{ return worldMatrix;}
+            set{ worldMatrix = value;}
         }
 
         public mat4 WvpMatrix

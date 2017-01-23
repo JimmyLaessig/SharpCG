@@ -39,12 +39,26 @@ namespace SharpCG.Base.Rendering
         public bool isDirty;
 
 
-        public SortedList<double, RenderObject> renderObjects = new SortedList<double, RenderObject>();
+        public SortedList<double, List<RenderObject>> renderObjects = new SortedList<double, List<RenderObject>>();
 
         public Rectangle Viewport
         {
             get {return viewport;}
             set { isDirty = true; viewport = value;}
+        }
+
+
+        public void AddRenderObject(double key, RenderObject obj)
+        {
+            if (renderObjects.ContainsKey(key))
+            {
+                renderObjects[key].Add(obj);
+            }
+            else {
+                var ls = new List<RenderObject>();
+                ls.Add(obj);
+                renderObjects[key] = ls;
+            }
         }
 
         public Color4 ClearColor

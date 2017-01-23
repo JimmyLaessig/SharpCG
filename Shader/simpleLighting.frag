@@ -17,10 +17,9 @@ uniform sampler2D texNormalMap;
 uniform sampler2D texSpecularMap;
 
 
-uniform vec3 vMaterialDiffuse;
-uniform vec3 vMaterialSpecular;
+uniform vec4 vMaterialDiffuse;
+uniform vec4 vMaterialSpecular;
 uniform vec3 vMaterialEmissive;
-uniform float fMaterialShininess;
 
 
 uniform vec3 vLightDirection;
@@ -64,8 +63,7 @@ void main()
 	// Get diffuse color from texture
 	vec4 vDiffuseColor	= (bHasDiffuseMap) ? texture(texDiffuseMap, pTexcoords) : vec4(1);
 	// Get specular color from texture
-	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
-
+	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords): vec4(1, 1, 1, 128);
 
 	// calculate Phong lighting parameter
 	vec3 L = normalize(-vLightDirection);
@@ -75,8 +73,8 @@ void main()
 	// Calculate Directional Lighting
 	vec3 emissiveColor	= vMaterialEmissive;
 	vec3 ambientColor	= vDiffuseColor.rgb	 * vLightAmbient; 
-	vec3 diffuseColor	= vDiffuseColor.rgb	 * vLightColor	 * vMaterialDiffuse	* clamp(dot(L, N), 0.0, 1.0);		
-	vec3 specularColor	= vSpecularColor.rgb * vLightColor	 * vMaterialSpecular * pow (clamp (dot (N, H), 0.0, 1.0), fMaterialShininess);
+	vec3 diffuseColor	= vDiffuseColor.rgb	 * vLightColor	 * vMaterialDiffuse.rgb	* clamp(dot(L, N), 0.0, 1.0);		
+	vec3 specularColor	= vSpecularColor.rgb * vLightColor	 * vMaterialSpecular.rgb * pow (clamp (dot (N, H), 0.0, 1.0), vMaterialSpecular.a);
 	
 	
 	fragColor.rgb = diffuseColor + emissiveColor + ambientColor + specularColor;	

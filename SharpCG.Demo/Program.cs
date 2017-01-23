@@ -31,58 +31,82 @@ namespace SharpCG.Demo
            
             RenderPass skyBoxPass = RenderPass.Before(RenderPass.Main, "SkyboxRenderPass");
 
+            {
+                SceneObject cameraObject = Camera.Main.SceneObject;
+                cameraObject.Name = "Camera";
+                var controller = cameraObject.AddComponent<CameraController>();
+                controller.MoveSpeed = 2;
+                controller.RotationSpeed = 0.2f;
+                controller.Camera = Camera.Main;
+                window.AddSceneObject(cameraObject);
+            }
 
-            SceneObject cameraObject = Camera.Main.SceneObject;
-            cameraObject.Name = "Camera";
-            var controller = cameraObject.AddComponent<CameraController>();
-            controller.MoveSpeed = 2;
-            controller.RotationSpeed = 0.2f;
-            controller.Camera = Camera.Main;
-            window.AddSceneObject(cameraObject);
-
-
-
-            SceneObject skybox = new SceneObject();
-            skybox.Name = "Skybox";
-            skybox.AddComponent(MeshExtensions.UnitCube);
-            var material = skybox.AddComponent<SkyboxMaterial>();
-            material.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
-                                                            "Assets/skybox/skybox_right2048.png",
-                                                            "Assets/skybox/skybox_top2048.png",
-                                                            "Assets/skybox/skybox_bottom2048.png",
-                                                            "Assets/skybox/skybox_front2048.png",
-                                                            "Assets/skybox/skybox_back2048.png");
-            var r1 = skybox.AddComponent<SkyboxRenderer>();
-            r1.RenderPass = skyBoxPass;
-            window.AddSceneObject(skybox);
+            // Create GBuffer
+            
+            Framebuffer gBuffer = new Framebuffer();
+            gBuffer.AddRenderTarget(Texture2D.Empty((uint)window.Width, (uint)window.Height), OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment0, new vec4(0, 0, 0, 0));    // Pos
+            gBuffer.AddRenderTarget(Texture2D.Empty((uint)window.Width, (uint)window.Height), OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment1, new vec4(0, 0, 0, 0));    // Normals
+            gBuffer.AddRenderTarget(Texture2D.Empty((uint)window.Width, (uint)window.Height), OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment2, new vec4(0, 0, 0, 0));    // Diffuse
+            gBuffer.AddRenderTarget(Texture2D.Empty((uint)window.Width, (uint)window.Height), OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment3, new vec4(0, 0, 0, 0));    // Specular
+            gBuffer.InitGL();
+            
+            gBuffer.Clear();
 
 
-            SceneObject container = MeshExtensions.Load("Assets/model/container.fbx");
-            container.Name = "Container";
-            var r2 = container.Children[0].AddComponent<MeshRenderer>();
-            r2.RenderPass = RenderPass.Main;
-            container.Children[0].Transform.Position = new vec3(0, 0, -3);
-            container.Children[0].Transform.Scale = vec3.Ones;
-            container.Children[0].AddComponent<Rotator>();
-            window.AddSceneObject(container);
+            {
+                //SceneObject skybox = new SceneObject();
+                //skybox.Name = "Skybox";
+                //skybox.AddComponent(MeshExtensions.UnitCube);
+                //var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
+                //skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
+                //                                                "Assets/skybox/skybox_right2048.png",
+                //                                                "Assets/skybox/skybox_top2048.png",
+                //                                                "Assets/skybox/skybox_bottom2048.png",
+                //                                                "Assets/skybox/skybox_front2048.png",
+                //                                                "Assets/skybox/skybox_back2048.png");
+                //var renderer = skybox.AddComponent<SkyboxRenderer>();
+                //renderer.RenderPass = skyBoxPass;
 
-            Framebuffer fb = new Framebuffer();
-            var color0 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
-            var color1 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
-            var color2 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
-            var color3 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
+                
+                //window.AddSceneObject(skybox);
+            }
+            {
+                SceneObject container1 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
+                container1.Name = "Container1";
 
-            fb.AddRenderTarget(color0, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment0, new vec4(1, 0, 0, 1));
-            fb.AddRenderTarget(color1, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment1, new vec4(0, 1, 0, 1));
-            fb.AddRenderTarget(color2, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment2, new vec4(0, 0, 1, 1));
-            fb.AddRenderTarget(color3, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment3, new vec4(1, 1, 1, 1));
+                var r2 = container1.Children[0].AddComponent<DeferredRenderer>();
+                r2.Framebuffer = gBuffer;
+                r2.RenderPass = RenderPass.Main;
+                r2.Stage = Stage.Geometry;
 
-            fb.InitGL();
-            fb.Clear();
-            window.Run();
+                //var renderer = container1.Children[0].AddComponent<MeshRenderer>();
+                //renderer.RenderPass = RenderPass.Main;
 
-            fb.Clear();
+                container1.Children[0].Transform.Position = new vec3(-1.5f, 0f, -3f);
+                container1.Children[0].Transform.Scale = vec3.Ones;
+                container1.Children[0].AddComponent<Rotator>();
+                window.AddSceneObject(container1);
+            }
+            {
+                SceneObject container2 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
+                container2.Name = "Container2";
 
+                //var renderer = container2.Children[0].AddComponent<MeshRenderer>();
+                //renderer.RenderPass = RenderPass.After(RenderPass.Main, "tmp");
+
+                var renderer = container2.Children[0].AddComponent<DeferredRenderer>();
+                renderer.Framebuffer = gBuffer;
+                renderer.RenderPass = RenderPass.Main;
+                renderer.Stage = Stage.Geometry;
+
+
+                container2.Children[0].Transform.Position = new vec3(1.5f, 0f, -3f);
+                container2.Children[0].Transform.Scale = vec3.Ones;
+                container2.Children[0].AddComponent<Rotator>();
+                window.AddSceneObject(container2);
+            }
+
+            window.Run();            
         }
        
     }  

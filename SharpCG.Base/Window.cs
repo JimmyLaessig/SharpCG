@@ -108,13 +108,32 @@ namespace SharpCG.Base
                 GL.Clear(mask);
             }
 
-
+           
 
             // Draw all renderobjects
-            foreach(var obj in renderControl.renderObjects)
+            foreach(var objects in renderControl.renderObjects)
             {
-                obj.Value.renderer.Render();
+                var key = objects.Key;
+                var renderObjects = objects.Value;
+
+                renderObjects.ForEach(obj =>
+                {
+                    var fb = obj.renderer.Framebuffer;
+                    // Bind Framebuffer
+                    if (fb != null)
+                    {
+                        fb.BindForWriting();
+                    }
+                    // Bind Default (Back) Buffer
+                    else
+                    {
+                        GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                    }
+                    obj.renderer.Render();
+                });             
             }
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             var err = GL.GetError();
             this.SwapBuffers();
         }
@@ -173,7 +192,7 @@ namespace SharpCG.Base
             // Get renderables from sceneobject
             var renderers     = Collect<IRenderer>(obj);
 
-            renderers.ForEach(r => renderControl.renderObjects.Add((r.RenderPass.SortKey), new RenderObject(r, "")));
+            renderers.ForEach(r => renderControl.AddRenderObject(r.RenderPass.SortKey, new RenderObject(r, "")));
             
             root.Children.Add(obj);
         }

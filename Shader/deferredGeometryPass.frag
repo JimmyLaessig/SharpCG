@@ -7,9 +7,9 @@ in vec3 pWorldBitangent;
 in vec2 pTexcoords;
 
 
-uniform bool bHasDiffuseMap;
-uniform bool bHasNormalMap;
-uniform bool bHasSpecularMap;
+uniform bool bHasDiffuseMap		= true;
+uniform bool bHasNormalMap		= true;
+uniform bool bHasSpecularMap	= true;
 
 
 uniform sampler2D texDiffuseMap;
@@ -17,13 +17,10 @@ uniform sampler2D texNormalMap;
 uniform sampler2D texSpecularMap;
 
 
-uniform vec3 vMaterialDiffuse;
-uniform vec3 vMaterialSpecular;
 uniform vec3 vMaterialEmissive;
-uniform vec3 vMaterialAmbient;
-uniform float fMaterialShininess;
+uniform vec4 vMaterialDiffuse;
+uniform vec4 vMaterialSpecular;
 
-uniform bool bNormalMappingEnabled = true;
 
 layout (location = 0) out vec4 gWorldPosition;
 layout (location = 1) out vec4 gWorldNormal;
@@ -41,13 +38,12 @@ layout (location = 3) out vec4 gSpecularAlbedo;
 // The RGB values in this texture need to be normalized from (0, +1) to (-1, +1).
 vec3 calcNormal(vec3 normal, vec3 tangent, vec3 bitangent)
 {
-	if(bHasNormalMap && bNormalMappingEnabled)
+	if(bHasNormalMap)
 	{	
-		vec3 perturbedNormal = normalize(texture(texNormalMap, pTexcoords).xyz * 2.0 -1.0);
-		mat3 mTBN = mat3(tangent, bitangent, normal);
+		vec3 perturbedNormal	= normalize(texture(texNormalMap, pTexcoords).xyz * 2.0 -1.0);
+		mat3 mTBN				= mat3(tangent, bitangent, normal);
 		return normalize(mTBN * perturbedNormal);
 	}
-
 	return normal;	
 }
 
@@ -68,8 +64,7 @@ void main()
 	// Get specular color from texture
 	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
 
-	gDiffuseAlbedo.rgb = vDiffuseColor.rgb * vMaterialDiffuse;
-	gDiffuseAlbedo.a = vDiffuseColor.a;
-	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular;
-	gSpecularAlbedo.a = fMaterialShininess;		
+	gDiffuseAlbedo		= vDiffuseColor * vMaterialDiffuse;
+	gSpecularAlbedo		= vec4 (vSpecularColor.rgb * vMaterialSpecular.rgb, vMaterialSpecular.a);
+
 }

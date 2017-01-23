@@ -20,19 +20,23 @@ namespace SharpCG.Demo
     public class SkyboxRenderer : Component, IRenderer
     {
 
-        int cubeMapTexture;
-
         private Mesh mesh;
         private SkyboxMaterial material;
 
 
         private RenderPass renderPass;
-
+        private Framebuffer framebuffer;
 
         public RenderPass RenderPass
         {
             get { return renderPass; }
             set { renderPass = value; }
+        }
+
+        public Framebuffer Framebuffer
+        {
+            get{ return framebuffer; }
+            set { framebuffer = value; }
         }
 
         public override void OnStart()

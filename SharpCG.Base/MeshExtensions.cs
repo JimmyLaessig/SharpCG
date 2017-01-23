@@ -8,8 +8,6 @@ using SharpCG.Base.Rendering;
 using GlmSharp;
 using OpenTK.Graphics.OpenGL4;
 
-
-
 namespace SharpCG.Base
 {
     public static class MeshExtensions
@@ -125,8 +123,12 @@ namespace SharpCG.Base
             return mesh;
         }
 
+        public enum Materials
+        {
+            SimpleLighting, Deferred
+        }
 
-        public static SceneObject Load(string path)
+        public static SceneObject Load(string path, Materials materialType)
         {
             Assimp.AssimpContext assimp = new Assimp.AssimpContext();
             Assimp.Scene scene = assimp.ImportFile(path,
@@ -134,11 +136,11 @@ namespace SharpCG.Base
                                                             | Assimp.PostProcessSteps.JoinIdenticalVertices
                                                             | Assimp.PostProcessSteps.CalculateTangentSpace);
             string directory = path.Substring(0, path.LastIndexOf('/'));
-            return Traverse(scene, scene.RootNode, directory);
+            return Traverse(scene, scene.RootNode, directory, materialType);
         }
 
 
-        private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory)
+        private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory, Materials materialType)
         {
             SceneObject obj = new SceneObject();
             // Decompose Transform
@@ -153,7 +155,7 @@ namespace SharpCG.Base
             // Traverse children
             if (node.HasChildren)
             {
-                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory)).Where(c => c != null);
+                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null);
                 obj.Children.AddRange(children);
             }
 
@@ -165,45 +167,15 @@ namespace SharpCG.Base
                 ConvertMesh(aiMesh, mesh);
 
                 Assimp.Material aiMaterial = scene.Materials[aiMesh.MaterialIndex];
-
-                var m = obj.AddComponent<SimpleLightingMaterial>();
-
-                if (aiMaterial.HasColorDiffuse)
+                if (materialType == Materials.SimpleLighting)
                 {
-                    // m.MaterialColor = new Vector4(aiMaterial.ColorDiffuse.R, aiMaterial.ColorDiffuse.G, aiMaterial.ColorDiffuse.B, 1);
+                    obj.AddComponent(MaterialExtensions.Create(aiMaterial, directory));
                 }
-                if (aiMaterial.HasOpacity)
+                else if (materialType == Materials.Deferred)
                 {
-
-                    //mesh.material.diffuseAmount.W = aiMaterial.Opacity;
+                    obj.AddComponent(MaterialExtensions.Create2(aiMaterial, directory));
                 }
-                if (aiMaterial.HasShininess)
-                {
-                    m.SpecularExponent = aiMaterial.Shininess;
-                }
-                if (aiMaterial.HasTextureDiffuse)
-                {
-                    m.DiffuseMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureDiffuse.FilePath, true);
-                }
-                if (aiMaterial.HasTextureNormal)
-                {
-                    m.NormalMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureNormal.FilePath, true);
-                }
-                if (aiMaterial.HasTextureSpecular)
-                {
-                    m.SpecularMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
-                }
-
-                //    if (aiMaterial.HasTextureDisplacement)
-                //    {
-                //        //     Console.WriteLine("Displacement");
-                //    }
-                //    if (aiMaterial.HasTextureHeight)
-                //    {
-                //        //    Console.WriteLine("Height");
-                //    }
-                //}
-                //return meshes;
+               
             }
             // Remove unwanted (empty) scene objects
             if (!node.HasMeshes && !node.HasChildren)

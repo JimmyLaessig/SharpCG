@@ -68,6 +68,7 @@
     <Compile Include="Shader.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="Texture2D.cs" />
+    <Compile Include="UniformValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpCG\SharpCG.csproj">

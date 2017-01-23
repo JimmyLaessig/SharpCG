@@ -9,7 +9,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace SharpCG.Demo
 {
-    class SkyboxMaterial : Material
+    public class SkyboxMaterial : Material
     {
 
         private TextureCubeMap cubeMapTexture;

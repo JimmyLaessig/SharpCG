@@ -1,12 +1,17 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
+layout (location = 0) in vec3 vPosition;
 
 
-out vec2 TexUV;
+uniform mat4 mWVP;
+
+
+out vec2 vTexcoords;
+
 
 void main() 
 {
-    gl_Position = vec4(position, 1.0f);
-    TexUV = position.xy * 0.5 + 0.5;
+	vec4 position	= mWVP * vec4(vPosition, 1.0f);
+	vTexcoords		= position.xy * 0.5 + 0.5;
+    gl_Position		= position;
 }

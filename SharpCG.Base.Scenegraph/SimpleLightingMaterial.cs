@@ -19,12 +19,10 @@ namespace SharpCG.Base.Scenegraph
         private Texture2D diffuseMapTexture;
         private Texture2D normalMapTexture;
         private Texture2D specularMapTexture;
-
-        private float specularExponent = 128.0f;
-
-        private vec3 diffuseAmount  = new vec3(1,1,1);
-        private vec3 specularAmount = new vec3(1,1,1);
-        private vec3 emissiveAmount = new vec3(0,0,0);
+     
+        private vec4 diffuseAmount      = new vec4(1,1,1,1);
+        private vec3 emissiveAmount     = new vec3(0, 0, 0);
+        private vec4 specularAmount     = new vec4(1,1,1, 128);      
 
         private vec3 viewPosition       = new vec3(0, 0, 0);
         private vec3 lightColor         = new vec3(1, 1, 1);
@@ -67,7 +65,7 @@ namespace SharpCG.Base.Scenegraph
             set{ specularMapTexture = value; }
         }      
 
-        public vec3 DiffuseAmount
+        public vec4 DiffuseAmount
         {
             get{ return diffuseAmount; }
             set{ diffuseAmount = value; }
@@ -75,8 +73,8 @@ namespace SharpCG.Base.Scenegraph
 
         public vec3 SpecularAmount
         {
-            get{ return specularAmount; }
-            set{ specularAmount = value; }
+            get{ return specularAmount.rgb; }
+            set{ specularAmount.rgb = value; }
         }
 
         public vec3 EmissiveAmount
@@ -87,8 +85,8 @@ namespace SharpCG.Base.Scenegraph
 
         public float SpecularExponent
         {
-            get{ return specularExponent; }
-            set{ specularExponent = value; }
+            get{ return specularAmount.a; }
+            set{ specularAmount.a = value; }
         }
 
         public bool NormalMappingEnabled
@@ -137,7 +135,6 @@ namespace SharpCG.Base.Scenegraph
             uniformLocations["vMaterialDiffuse"]    = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialDiffuse");
             uniformLocations["vMaterialEmissive"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialEmissive");
             uniformLocations["vMaterialSpecular"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialSpecular");
-            uniformLocations["fMaterialShininess"]  = GL.GetUniformLocation(Shader.ProgramHandle, "fMaterialShininess");
 
             uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
             uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
@@ -156,10 +153,10 @@ namespace SharpCG.Base.Scenegraph
             GL.Uniform1(uniformLocations["bHasNormalMap"], HasNormapMap ? 1 : 0);
             GL.Uniform1(uniformLocations["bHasSpecularMap"], HasSpecularMap ? 1 : 0);
 
-            GL.Uniform3(uniformLocations["vMaterialDiffuse"], 1, diffuseAmount.Values);
             GL.Uniform3(uniformLocations["vMaterialEmissive"], 1, emissiveAmount.Values);
-            GL.Uniform3(uniformLocations["vMaterialSpecular"], 1, specularAmount.Values);
-            GL.Uniform1(uniformLocations["fMaterialShininess"], specularExponent);
+            GL.Uniform4(uniformLocations["vMaterialDiffuse"], 1, diffuseAmount.Values);
+            GL.Uniform4(uniformLocations["vMaterialSpecular"], 1, specularAmount.Values);
+
             GL.Uniform1(uniformLocations["bNormalMappingEnabled"], normalMappingEnabled ? 1 : 0);
 
             GL.Uniform3(uniformLocations["vLightDirection"], 1, LightDirection.Values);

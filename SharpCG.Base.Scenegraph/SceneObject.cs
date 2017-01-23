@@ -54,6 +54,33 @@ namespace SharpCG.Base.Scenegraph
             set{ transform = value; }
         }
 
+
+        public T FindComponent<T>() where T: Component
+        {
+            var c = components.OfType<T>();
+            
+            if (c.Count() > 0)
+                return c.First();
+            else
+                return null;
+        }
+
+        public List<T> FindComponentsInChildren<T>() where T : Component
+        {
+            var list = components.OfType<T>().ToList();
+
+            Children.ForEach(c => list.AddRange(c.FindComponentsInChildren<T>()));
+
+            return list;
+        }
+
+
+        public void RemoveComponent(Component component)
+        {
+            components.Remove(component);
+        }
+
+
         public string Name
         {
             get{ return name; }

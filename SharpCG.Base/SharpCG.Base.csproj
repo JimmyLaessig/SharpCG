@@ -60,6 +60,7 @@
     <Compile Include="IKeyboard.cs" />
     <Compile Include="IMouse.cs" />
     <Compile Include="Keyboard.cs" />
+    <Compile Include="MaterialExtensions.cs" />
     <Compile Include="MeshExtensions.cs" />
     <Compile Include="Mouse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
