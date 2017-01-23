@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
-using Assimp;
+
 using GlmSharp;
 using System.Drawing;
 using SharpCG.Base.Rendering;
@@ -25,39 +25,37 @@ namespace SharpCG.Base.Scenegraph
     }
 
 
-    public struct AttributeInfo
+    struct AttributeInfo<T> where T : struct
     {
-        public float[] data;
-        public int perVertexSize;
+        public ArrayBuffer<T> buffer;
         public int location;
-        public int VBO;
     }
 
     public class Mesh : Component , GLObject
     {      
         
-        private Dictionary<string, AttributeInfo> attributes;
+        private Dictionary<string, AttributeInfo<float>> attributes;
 
-        private uint[] indices;
-
-        private int indexVBO = -1;
+        private ArrayBuffer<uint> indices;
 
         private int VAO = -1;
 
+        private PrimitiveType primitiveType = PrimitiveType.Triangles;
 
         private bool isDirty;
 
 
         public Mesh()
         {
-            attributes = new Dictionary<string, AttributeInfo>();
-            indices = new uint[0];
+            allMeshes.Add(this);          
+            attributes = new Dictionary<string, AttributeInfo<float>>();
+            
         }
 
 
         public bool HasIndices
         {
-            get{return indices.Length > 0;}
+            get{return indices != null;}
         }
 
 
@@ -68,31 +66,37 @@ namespace SharpCG.Base.Scenegraph
                 return VAO;
             }          
         }
-     
+
 
         public int TriangleCount
         {
             get
             {
-                return indices.Length / 3;
+                if (indices != null)
+                {
+                    return indices.Data.Length / 3;
+                }
+                if (attributes.Values.Count > 0)
+                {
+                    var buffer = attributes.Values.First().buffer;
+                    return buffer.Length / buffer.Stride;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
+   
 
 
         public void Bind()
-        {
-            // No Attributes
-            if (attributes.Count <= 0)
-                return;
-
-            // Create VAO
-            //if (VAO < 0){ CreateVAO();}
-
+        {            
             if (VAO >= 0) GL.BindVertexArray(VAO);
         }
 
 
-        public void SetAttribute(string name, float[] data, int perVertexSize, int location)
+        public void SetAttribute(string name, ArrayBuffer<float> buffer, int location)
         {
             // Remove old attribute if exists
             if(attributes.ContainsKey(name))
@@ -101,19 +105,27 @@ namespace SharpCG.Base.Scenegraph
             }
             // Add new Attribute
             {
-                var info            = new AttributeInfo();
-                info.data           = data;
-                info.perVertexSize  = perVertexSize;
-                info.location       = location;
-                info.VBO            = -1;
+                var info = new AttributeInfo<float>();
+                info.buffer     = buffer;
+                info.location   = location;
+
                 attributes[name]    = info;
-                isDirty = true;
+                isDirty             = true;
             }
         }
 
 
-        public uint[] Indices
+        public void RemoveAttribute(string name)
         {
+            attributes[name].buffer.DeInitGL();          
+            attributes.Remove(name);
+            isDirty = true;
+        }
+
+
+        public ArrayBuffer<uint> Indices
+        {
+            get { return indices; }
             set
             {
                 indices = value;
@@ -127,297 +139,119 @@ namespace SharpCG.Base.Scenegraph
             get{return isDirty;}
         }
 
-         
-        public void SetAttribute(string name, vec2[] data, int location)
-        {
-            // TODO quicker?
-            var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
-
-            SetAttribute(name, data2, 2, location);
-            isDirty = true;
-            
-        }
-
-
-        public void SetAttribute(string name, vec3[] data, int location)
-        {
-            var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
-
-            SetAttribute(name, data2, 3, location);
-            isDirty = true;
-        }
-
-
-        public void SetAttribute(string name, vec4[] data, int location)
-        {
-            var data2 = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
-
-            SetAttribute(name, data2, 4, location);
-            isDirty = true;
-        }
-
-
-        public void RemoveAttribute(string name)
-        {
-            GL.DeleteBuffer(attributes[name].VBO);
-            attributes.Remove(name);
-            isDirty = true;
-        }
-
       
-        public void UpdateGPUResources()
+        public void InitGL()
         {
-            // Create VAO for the mesh
+
             VAO = GL.GenVertexArray();
             GL.BindVertexArray(VAO);
 
-            // Create VBO for the indices if it has indices         
-            if (HasIndices)
+            if (indices != null) indices.InitGL();
+            
+
+
+            //if (HasIndices)
+            //    indices.Bind();
+
+            // Bind each Attribute Array and set Pointer
+            attributes.Values.ToList().ForEach(info =>
+
             {
-                GL.GenBuffers(1, out indexVBO);
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexVBO);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(sizeof(uint) * indices.Length), indices, BufferUsageHint.StaticDraw);
-            }
+                info.buffer.InitGL();
 
+                var buffer = info.buffer;
+                var location = info.location;
 
-            // Create VBO for each attribute
-            foreach (var pair in attributes)
-            {
-                var info = pair.Value;
-
-                GL.GenBuffers(1, out info.VBO);
-                GL.BindBuffer(BufferTarget.ArrayBuffer, info.VBO);
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(sizeof(float) * info.data.Length), info.data, BufferUsageHint.StaticDraw);
-
+                buffer.Bind();
                 // Link to the given location with the given per vertex size
-                GL.EnableVertexAttribArray(info.location);
-                GL.VertexAttribPointer(info.location, info.perVertexSize, VertexAttribPointerType.Float, false, 0, 0);
+                GL.EnableVertexAttribArray(location);
+                GL.VertexAttribPointer(location, buffer.Stride, VertexAttribPointerType.Float, false, 0, 0);
 
-            }
+            });
+
+            GL.BindVertexArray(0);
+
             isDirty = false;
         }
 
+        public void AfterUpdateGPUResources()
+        {
+            //string s = this.name;
+            ////private string n = ;
 
-        public void FreeGPUResources()
+            //// Create VAO for the mesh
+            
+
+            //// Bind IndexArray if it exists
+            //if (HasIndices)
+            //    indices.Bind();
+
+            //// Bind each Attribute Array and set Pointer
+            //attributes.Values.ToList().ForEach(info => 
+         
+            //{
+            //    var buffer      = info.buffer;
+            //    var location    = info.location;
+
+            //    buffer.Bind();             
+            //    // Link to the given location with the given per vertex size
+            //    GL.EnableVertexAttribArray(location);
+            //    GL.VertexAttribPointer(location, buffer.Stride, VertexAttribPointerType.Float, false, 0, 0);
+
+            //});
+
+            //isDirty = false;
+
+        }
+
+
+        public void DeInitGL()
         {
             // Delete Buffers from GPU and clear collection
+           //A
+           // foreach (at)
+           // {
+           //     var info = pair.Value;
+           //     GL.DeleteBuffer(info.VBO);
+           //     info.VBO = -1;
+           // }
 
-            foreach (var pair in attributes)
-            {
-                var info = pair.Value;
-                GL.DeleteBuffer(info.VBO);
-                info.VBO = -1;
-            }
 
+           // // Delete Index Buffer if exists
+           // if (indexVBO != -1)
+           // {
+           //     GL.DeleteBuffer(indexVBO);
+           //     indexVBO = -1;
+           // }
 
-            // Delete Index Buffer if exists
-            if (indexVBO != -1)
-            {
-                GL.DeleteBuffer(indexVBO);
-                indexVBO = -1;
-            }
+           // // Delete Vertex Array Obect from GPU and clear handle
+           // GL.DeleteVertexArray(VAO);
+           // VAO = -1;
 
-            // Delete Vertex Array Obect from GPU and clear handle
-            GL.DeleteVertexArray(VAO);
-            VAO = -1;
-
-            isDirty = false;
+           // isDirty = false;
         }
 
 
         public override void Dispose()
         {
-            FreeGPUResources();
+            DeInitGL();
             attributes.Clear();
             isDirty = false;
         }
+        
 
-
-        public static SceneObject Load(string path)
+        public PrimitiveType PrimitiveType
         {
-            Assimp.AssimpContext assimp = new AssimpContext();
-            Assimp.Scene scene          = assimp.ImportFile(path, 
-                                                              PostProcessSteps.Triangulate 
-                                                            | PostProcessSteps.JoinIdenticalVertices 
-                                                            | PostProcessSteps.CalculateTangentSpace);
-            string directory = path.Substring(0, path.LastIndexOf('/'));
-            return Traverse(scene, scene.RootNode, directory);
+            get{return primitiveType; }
+            set{ primitiveType = value;}
         }
 
 
-        private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory)
-        {           
-            SceneObject obj = new SceneObject();
-            // Decompose Transform
-            Vector3D t; Vector3D s; Quaternion r;
-            node.Transform.Decompose(out s, out r, out t);
+        private static List<Mesh> allMeshes = new List<Mesh>();
 
-            // Add Transform to scene object
-            obj.Transform.Position = new vec3(t.X, t.Y, t.Z);
-            obj.Transform.Scale = new vec3(s.X, s.Y, s.Z);
-            obj.Transform.Rotation = new quat(r.X, r.Y, r.Z, r.W);
-
-            // Traverse children
-            if (node.HasChildren)
-            {
-                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory)).Where(c => c != null);
-                obj.Children.AddRange(children);
-            }
-
-            // Create Mesh Component if it has some (For now, assume each node has max one mesh)
-            if (node.HasMeshes)
-            {
-                var mesh = obj.AddComponent<Mesh>();
-                var aiMesh = scene.Meshes[node.MeshIndices[0]];
-                mesh.CreateMesh(aiMesh);
-                
-                Assimp.Material aiMaterial = scene.Materials[aiMesh.MaterialIndex];
-
-                var m = obj.AddComponent<SimpleLightingMaterial>();
-                
-                if (aiMaterial.HasColorDiffuse)
-                {
-                   // m.MaterialColor = new Vector4(aiMaterial.ColorDiffuse.R, aiMaterial.ColorDiffuse.G, aiMaterial.ColorDiffuse.B, 1);
-                }
-                if (aiMaterial.HasOpacity)
-                {
-
-                    //mesh.material.diffuseAmount.W = aiMaterial.Opacity;
-                }
-                if (aiMaterial.HasShininess)
-                {
-                    m.SpecularExponent = aiMaterial.Shininess;
-                }
-                if (aiMaterial.HasTextureDiffuse)
-                {
-                    m.DiffuseMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureDiffuse.FilePath, true);      
-                }
-                if (aiMaterial.HasTextureNormal)
-                {
-                    m.NormalMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureNormal.FilePath, true);
-                }
-                if (aiMaterial.HasTextureSpecular)
-                {
-                    m.SpecularMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
-                }
-                
-                //    if (aiMaterial.HasTextureDisplacement)
-                //    {
-                //        //     Console.WriteLine("Displacement");
-                //    }
-                //    if (aiMaterial.HasTextureHeight)
-                //    {
-                //        //    Console.WriteLine("Height");
-                //    }
-                //}
-                //return meshes;
-            }
-            // Remove unwanted (empty) scene objects
-            if (!node.HasMeshes && !node.HasChildren)
-            {
-                obj = null;
-            }
-               
-             
-            // Return composed scene object
-            return obj;
+        public static List<Mesh> All
+        {
+            get { return allMeshes; }
         }
-
-        private void CreateMesh(Assimp.Mesh aiMesh)
-        {                     
-            uint[] indices  = aiMesh.GetUnsignedIndices();
-            int numIndices  = indices.Length;
-            int numVertices = aiMesh.VertexCount;
-
-            float[] positions   = new float[numVertices * 3];
-            float[] colors      = new float[numVertices * 4];
-            float[] normals     = new float[numVertices * 3];
-            float[] tangents    = new float[numVertices * 3];
-            float[] bitangents  = new float[numVertices * 3];
-            float[] texcoords0  = new float[numVertices * 2];
-
-            // Read vertex information
-            if (aiMesh.HasVertices)
-            {                                 
-                int i = 0;
-                foreach (var vertex in aiMesh.Vertices)
-                {
-                    positions[i++] = vertex.X;
-                    positions[i++] = vertex.Y;
-                    positions[i++] = vertex.Z;
-                }
-            }
-
-            // Read normal information
-            if (aiMesh.HasNormals)
-            {
-                Console.WriteLine("Loading Normals...");
-                var i = 0;
-                foreach (var normal in aiMesh.Normals)
-                {
-                    normals[i++] = normal.X;
-                    normals[i++] = normal.Y;
-                    normals[i++] = normal.Z;
-                }
-            }
-
-            // Read Tangents and Bitangents
-            if (aiMesh.HasTangentBasis)
-            {
-                Console.WriteLine("Loading Tangents and Bitangents...");
-                int i = 0;
-                foreach (var tangent in aiMesh.Tangents)
-                {
-                    tangents[i++] = tangent.X;
-                    tangents[i++] = tangent.Y;
-                    tangents[i++] = tangent.Z;
-                }
-
-                i = 0;
-                foreach (var bitangent in aiMesh.Tangents)
-                {
-                    bitangents[i++] = bitangent.X;
-                    bitangents[i++] = bitangent.Y;
-                    bitangents[i++] = bitangent.Z;
-                }
-            }
-
-            // Read Texture coordinates           
-            if (aiMesh.HasTextureCoords(0))              
-            {
-                Console.WriteLine("Loading Texture coordinates...");
-                var i = 0;
-                foreach (var uv in aiMesh.TextureCoordinateChannels[0])
-                {
-                    texcoords0[i++] = uv.X;
-                    texcoords0[i++] = uv.Y;
-                }
-            }
-          
-            // Read color information               
-            if (aiMesh.HasVertexColors(0))
-            {
-                Console.WriteLine("Loading Colors...");
-                int i = 0;
-                foreach (var color in aiMesh.VertexColorChannels[0])
-                {                   
-                    colors[i + 0] = color.R;
-                    colors[i + 1] = color.G;
-                    colors[i + 2] = color.B;
-                    colors[i + 3] = color.A;
-                }
-            }
-
-            // Compose mesh structure
-            this.Name       = aiMesh.Name;
-            this.indices    = indices;
-            this.SetAttribute(DefaultAttributeName.Position , positions , 3 , 0);
-            this.SetAttribute(DefaultAttributeName.Normal   , normals   , 3 , 1);
-            this.SetAttribute(DefaultAttributeName.Tangent  , tangents  , 3 , 2);
-            this.SetAttribute(DefaultAttributeName.Bitangent, bitangents, 3 , 3);
-            this.SetAttribute(DefaultAttributeName.Color    , colors    , 4 , 4);
-            this.SetAttribute(DefaultAttributeName.Texcoord0, texcoords0, 2 , 5);
-           
-            }
     }
 }

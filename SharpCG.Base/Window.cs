@@ -113,9 +113,9 @@ namespace SharpCG.Base
             // Draw all renderobjects
             foreach(var obj in renderControl.renderObjects)
             {
-                obj.Value.renderable.Render();
-            }            
-
+                obj.Value.renderer.Render();
+            }
+            var err = GL.GetError();
             this.SwapBuffers();
         }
 
@@ -139,21 +139,14 @@ namespace SharpCG.Base
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             // Update GPU Resources for textures
-            Traverse<Material>(root,
-                m => m.GetMaterialTextures()
-                .Where(t => t.IsDirty).ToList()
-                .ForEach(t => t.UpdateGPUResources())
-                );
+            Texture.All.ForEach ( t => { if (t.IsDirty) t.InitGL();});           
+           // ArrayBuffer<float>.All.ForEach(b => { if (b.IsDirty) b.UpdateGPUResources(); });
+            Mesh.All.ForEach(m => { if (m.IsDirty) m.InitGL(); });
 
-            // Update GPU Resources for meshes
-            Traverse<Mesh>(root, delegate (Mesh m)
-            {
-                if (m.IsDirty)
-                {
-                    m.UpdateGPUResources();
-                }
-            });
-                
+            // After GPU Resource Update
+            Texture.All.ForEach (t => { if (t.IsDirty) t.AfterUpdateGPUResources(); });          
+           // ArrayBuffer<float>.All.ForEach(b => { if (b.IsDirty) b.AfterUpdateGPUResources(); });
+            Mesh.All.ForEach(m => { if (m.IsDirty) m.AfterUpdateGPUResources(); });
 
             Traverse<Component>(root, c => c.Update(e.Time));          
         }
@@ -180,7 +173,7 @@ namespace SharpCG.Base
             // Get renderables from sceneobject
             var renderers     = Collect<IRenderer>(obj);
 
-            renderers.ForEach(r => renderControl.renderObjects.Add((r.GetRenderPass().SortKey), new RenderObject(r, "")));
+            renderers.ForEach(r => renderControl.renderObjects.Add((r.RenderPass.SortKey), new RenderObject(r, "")));
             
             root.Children.Add(obj);
         }

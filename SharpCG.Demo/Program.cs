@@ -46,7 +46,7 @@ namespace SharpCG.Demo
             skybox.Name = "Skybox";
             skybox.AddComponent(MeshExtensions.UnitCube);
             var material = skybox.AddComponent<SkyboxMaterial>();
-            material.CubeMapTexture = CubeMapTexture.Load("Assets/skybox/skybox_left2048.png",
+            material.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
                                                             "Assets/skybox/skybox_right2048.png",
                                                             "Assets/skybox/skybox_top2048.png",
                                                             "Assets/skybox/skybox_bottom2048.png",
@@ -57,7 +57,7 @@ namespace SharpCG.Demo
             window.AddSceneObject(skybox);
 
 
-            SceneObject container = Mesh.Load("Assets/model/container.fbx");
+            SceneObject container = MeshExtensions.Load("Assets/model/container.fbx");
             container.Name = "Container";
             var r2 = container.Children[0].AddComponent<MeshRenderer>();
             r2.RenderPass = RenderPass.Main;
@@ -66,9 +66,22 @@ namespace SharpCG.Demo
             container.Children[0].AddComponent<Rotator>();
             window.AddSceneObject(container);
 
+            Framebuffer fb = new Framebuffer();
+            var color0 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
+            var color1 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
+            var color2 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
+            var color3 = Texture2D.Empty((uint)window.Width, (uint)window.Height);
 
-           
+            fb.AddRenderTarget(color0, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment0, new vec4(1, 0, 0, 1));
+            fb.AddRenderTarget(color1, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment1, new vec4(0, 1, 0, 1));
+            fb.AddRenderTarget(color2, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment2, new vec4(0, 0, 1, 1));
+            fb.AddRenderTarget(color3, OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment3, new vec4(1, 1, 1, 1));
+
+            fb.InitGL();
+            fb.Clear();
             window.Run();
+
+            fb.Clear();
 
         }
        

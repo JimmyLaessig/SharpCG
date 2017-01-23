@@ -56,6 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayBuffer.cs" />
+    <Compile Include="TextureCubeMap.cs" />
+    <Compile Include="Framebuffer.cs" />
     <Compile Include="GLObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IRenderer.cs" />
@@ -63,6 +66,8 @@
     <Compile Include="RenderControl.cs" />
     <Compile Include="RenderPass.cs" />
     <Compile Include="Shader.cs" />
+    <Compile Include="Texture.cs" />
+    <Compile Include="Texture2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpCG\SharpCG.csproj">

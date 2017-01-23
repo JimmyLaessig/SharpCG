@@ -26,9 +26,9 @@ namespace SharpCG.Rendering.Deferred
 
          
 
-        public RenderPass GetRenderPass()
+        public RenderPass RenderPass
         {
-            return renderPass;
+            get { return renderPass; }
         }
 
         public void Render()
@@ -74,9 +74,11 @@ namespace SharpCG.Rendering.Deferred
     public class DeferredRendererComposer : Component, IRenderer
     {
         private RenderPass renderPass;
-        public RenderPass GetRenderPass()
+
+
+        public RenderPass RenderPass
         {
-            return renderPass;
+            get { return renderPass; }
         }
 
         public void Render()

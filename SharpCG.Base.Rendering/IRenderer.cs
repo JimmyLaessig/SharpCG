@@ -9,7 +9,10 @@ namespace SharpCG.Base.Rendering
     public interface IRenderer
     {
 
-        RenderPass GetRenderPass();
+        RenderPass RenderPass
+        {
+            get;
+        }
         
         void Render();
     }

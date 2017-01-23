@@ -12,15 +12,16 @@ namespace SharpCG.Base.Rendering
 
     public class RenderObject
     {
-        public RenderObject(IRenderer renderable, string name)
+        public RenderObject(IRenderer renderer, string name)
         {
-            this.renderable = renderable;
+            this.renderer = renderer;
             this.name       = name;
         }
 
         public long id;
         public string name;
-        public IRenderer renderable;
+        public IRenderer renderer;
+       // public FrameBuffer framebuffer;
     }
 
     public class RenderControl

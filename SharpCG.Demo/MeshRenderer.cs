@@ -38,7 +38,7 @@ class MeshRenderer : Component, IRenderer
         Camera camera = Camera.Main;
 
         GL.Enable(EnableCap.CullFace);
-        
+
         //GL.DepthMask(true);
 
         // Uniforms for matrices
@@ -51,18 +51,27 @@ class MeshRenderer : Component, IRenderer
         material.NormalMappingEnabled = true;
 
         // Set lighting parameters
-        material.ViewPosition       = camera.Transform.Position;
-        
-        material.LightDirection     = new vec3(0, -1, 0);
-        material.LightColor         = new vec3(0.7f, 0.7f, 0.6f);
-        material.LightAmbientColor  = new vec3(0.4f, 0.4f, 0.4f);
-        
+        material.ViewPosition = camera.Transform.Position;
+
+        material.LightDirection = new vec3(0, -1, 0);
+        material.LightColor = new vec3(0.7f, 0.7f, 0.6f);
+        material.LightAmbientColor = new vec3(0.4f, 0.4f, 0.4f);
+
         uint unit = 0;
         material.Bind(ref unit);
-
+        
         mesh.Bind();
-        GL.DrawElements(BeginMode.Triangles, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
-        GL.BindVertexArray(0);
+        if (mesh.HasIndices)
+        {
+            GL.DrawElements(mesh.PrimitiveType, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
+        }
+        else
+        {
+            var x = BeginMode.Triangles;
+            var y = PrimitiveType.Triangles;
+            GL.DrawArrays(mesh.PrimitiveType, 0, mesh.TriangleCount * 3);
+        }
+        //GL.BindVertexArray(0);
 
         material.Shader.release();
 

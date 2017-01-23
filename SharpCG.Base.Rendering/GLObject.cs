@@ -8,10 +8,14 @@ namespace SharpCG.Base.Rendering
 {
     public interface GLObject : IDisposable
     {
-        void UpdateGPUResources();
+
+        void InitGL();
 
 
-        void FreeGPUResources();
+        void AfterUpdateGPUResources();
+
+
+        void DeInitGL();
 
 
         bool IsDirty

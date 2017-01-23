@@ -180,15 +180,5 @@ namespace SharpCG.Base.Scenegraph
             specularMapTexture.Bind(TextureUnit.Texture2);
 
         }
-
-        public override List<Texture> GetMaterialTextures()
-        {
-            var list = base.GetMaterialTextures();
-            if(diffuseMapTexture != null)   list.Add(diffuseMapTexture);
-            if(specularMapTexture != null)  list.Add(specularMapTexture);
-            if(NormalMapTexture != null)    list.Add(NormalMapTexture);
-            return list;
-        }
-
     }
 }

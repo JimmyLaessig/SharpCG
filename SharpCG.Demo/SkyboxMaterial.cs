@@ -12,9 +12,9 @@ namespace SharpCG.Demo
     class SkyboxMaterial : Material
     {
 
-        private CubeMapTexture cubeMapTexture;
+        private TextureCubeMap cubeMapTexture;
 
-        public CubeMapTexture CubeMapTexture
+        public TextureCubeMap CubeMapTexture
         {
             get{return cubeMapTexture;}
             set{cubeMapTexture = value;}
@@ -31,13 +31,7 @@ namespace SharpCG.Demo
             GL.Uniform1(uniformLocations["texCubeMap"], 0);
             cubeMapTexture.Bind(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0);
         }
-
-        public override List<Texture> GetMaterialTextures()
-        {
-            var ls = base.GetMaterialTextures();
-            if(cubeMapTexture != null) ls.Add(cubeMapTexture);
-            return ls;
-        }    
+  
 
         protected override void InitUniformLocations()
         {

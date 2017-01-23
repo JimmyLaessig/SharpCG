@@ -12,17 +12,17 @@ namespace SharpCG.Base.Scenegraph
 
     public abstract class Material : Component
     {
-        public struct RenderConfig
-        {
-            bool cullFaceEnabled;
-            CullFaceMode cullFace;
-            BlendEquationMode BlendEquationMode;
-            BlendingFactorSrc serc;                   
-            BlendingFactorDest dst;
+        //public struct RenderConfig
+        //{
+        //    bool cullFaceEnabled;
+        //    CullFaceMode cullFace;
+        //    BlendEquationMode BlendEquationMode;
+        //    BlendingFactorSrc serc;                   
+        //    BlendingFactorDest dst;
 
-            DepthFunction depthFunction;
-            bool DepthMask;                       
-        }
+        //    DepthFunction depthFunction;
+        //    bool DepthMask;                       
+        //}
 
 
         protected Shader shader;
@@ -126,17 +126,6 @@ namespace SharpCG.Base.Scenegraph
             uniformLocations["mProj"]   = GL.GetUniformLocation(Shader.ProgramHandle, "mProj");
             uniformLocations["mNormal"] = GL.GetUniformLocation(Shader.ProgramHandle, "mNormal");
             uniformLocations["mWVP"]    = GL.GetUniformLocation(Shader.ProgramHandle, "mWVP");          
-        }
-
-        /// <summary>
-        /// Returns all texture used in this material as a list. 
-        /// This method is used by the render control to collect all textures and perform resource updates on them. 
-        /// If textures are not returned with this function, updates must be performed manually. 
-        /// </summary>
-        /// <returns></returns>
-        public virtual List<Texture> GetMaterialTextures()
-        {
-            return new List<Texture>();
         }
 
 
