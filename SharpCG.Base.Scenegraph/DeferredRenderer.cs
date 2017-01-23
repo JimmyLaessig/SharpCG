@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SharpCG.Base.Rendering;
 using SharpCG.Base.Scenegraph;
 using OpenTK.Graphics.OpenGL4;
+using GlmSharp;
 
 namespace SharpCG.Base.Scenegraph
 {
@@ -25,6 +26,7 @@ namespace SharpCG.Base.Scenegraph
         private LightingPassMaterial lightingPassMaterial;
 
         private Mesh mesh;
+        private Light light;
 
         private Framebuffer gBuffer;
         private Framebuffer framebuffer;
@@ -38,7 +40,7 @@ namespace SharpCG.Base.Scenegraph
                     geometryPassMaterial = sceneObject.FindComponent<GeometryPassMaterial>();
                     break;
                 case Stage.Lighting:
-                    // TODO FIND LIGHT ATTACHED TO THIS SCENEOBJECT
+                    light = sceneObject.FindComponent<Light>();
                     lightingPassMaterial = sceneObject.FindComponent<LightingPassMaterial>();
                     break;
             }
@@ -97,6 +99,18 @@ namespace SharpCG.Base.Scenegraph
             }
         }
 
+        public Framebuffer GBuffer
+        {
+            get
+            {
+                return gBuffer;
+            }
+
+            set
+            {
+                gBuffer = value;
+            }
+        }
 
         public void Render()
         {
@@ -149,6 +163,59 @@ namespace SharpCG.Base.Scenegraph
 
         private void RenderLight()
         {
+
+            GL.Viewport(0, 0, 1024, 768);
+            Camera camera = Camera.Main;
+
+            GL.Disable(EnableCap.CullFace);
+            GL.DepthMask(false);
+            GL.Disable(EnableCap.DepthTest);
+
+            // Uniforms for matrices
+
+            var W = sceneObject.Transform.WorldMatrix;
+            var V = camera.ViewMatrix;
+            var P = camera.ProjectionMatrix;
+
+            if (light.LightType == 0)
+            {
+                lightingPassMaterial.WorldMatrix        = mat4.Identity;
+                lightingPassMaterial.ViewMatrix         = mat4.Identity;
+                lightingPassMaterial.ProjectionMatrix   = mat4.Identity;
+                lightingPassMaterial.WvpMatrix          = mat4.Identity;
+                lightingPassMaterial.NormalMatrix       = mat3.Identity;
+            }
+           
+
+            lightingPassMaterial.WorldPositionTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
+            lightingPassMaterial.WorldNormalTexture     = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
+            lightingPassMaterial.DiffuseAlbedoTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
+            lightingPassMaterial.SpecularAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment3);
+
+
+            lightingPassMaterial.LightType          = light.LightType;
+            lightingPassMaterial.LightPosition      = light.Position;
+            lightingPassMaterial.LightDirection     = light.Direction;
+            lightingPassMaterial.LightColor         = light.Color;
+            lightingPassMaterial.LightAttenuation   = light.Attenuation;
+
+            lightingPassMaterial.CameraPosition     = camera.Transform.Position;
+
+            uint unit = 0;
+            lightingPassMaterial.Bind(ref unit);
+
+            light.LightGeometry.Bind();
+            GL.DrawElements(BeginMode.Triangles, light.LightGeometry.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
+            GL.BindVertexArray(0);
+
+            lightingPassMaterial.Shader.release();
+
+            //GL.Enable(EnableCap.CullFace);
+            //GL.DepthMask(true);
+
+            GL.Enable(EnableCap.CullFace);
+            GL.DepthMask(true);
+            GL.Enable(EnableCap.DepthTest);
 
         }
     }

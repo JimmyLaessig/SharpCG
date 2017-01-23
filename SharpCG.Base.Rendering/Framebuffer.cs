@@ -61,6 +61,18 @@ namespace SharpCG.Base.Rendering
         }
 
 
+        public Texture2D GetRenderTarget(FramebufferAttachment attachment)
+        {
+            var ls = attachments.Where(a => a.attachment == attachment);
+
+            if (ls.Count() > 0)
+                return ls.First().Texture;
+
+            return null;
+             
+        }
+
+
         public void Clear()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);

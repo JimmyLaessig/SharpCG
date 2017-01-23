@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpCG.Base.Scenegraph;
 using SharpCG.Base.Rendering;
 using GlmSharp;
 using OpenTK.Graphics.OpenGL4;
 
-namespace SharpCG.Base
+namespace SharpCG.Base.Scenegraph
 {
     public static class MeshExtensions
     {
@@ -64,10 +63,10 @@ namespace SharpCG.Base
         {
             get {
                 float[] positions = {
-                    -1.0f, -1.0f, 1.0f,
-                     1.0f, -1.0f, 1.0f,
-                     1.0f,  1.0f, 1.0f,
-                    -1.0f,  1.0f, 1.0f,
+                    -1.0f, -1.0f, 0.0f,
+                     1.0f, -1.0f, 0.0f, 
+                     1.0f,  1.0f, 0.0f, 
+                    -1.0f,  1.0f, 0.0f, 
                 };               
                    
                 uint[] indices = {
@@ -87,7 +86,7 @@ namespace SharpCG.Base
                 mesh.Enabled    = true;
                 mesh.Indices = ArrayBuffer<uint>.Create(OpenTK.Graphics.OpenGL4.BufferTarget.ElementArrayBuffer, indices);
                 mesh.SetAttribute(DefaultAttributeName.Position, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, positions, 3), 0);
-                mesh.SetAttribute(DefaultAttributeName.Texcoord0, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, uvs, 2), 0);
+                mesh.SetAttribute(DefaultAttributeName.Texcoord0, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, uvs, 2), 1);
                 return mesh;
             }
         }

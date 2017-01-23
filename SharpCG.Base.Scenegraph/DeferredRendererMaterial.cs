@@ -28,6 +28,13 @@ namespace SharpCG.Base.Scenegraph
         private bool normalMappingEnabled = false;
 
 
+        public override void OnStart()
+        {
+            Shader = Shader.Find("deferredGeometryPass");
+
+            base.OnStart();
+        }
+
         public bool HasDiffuseMap
         {
             get { return (diffuseMapTexture != null); }
@@ -104,7 +111,7 @@ namespace SharpCG.Base.Scenegraph
 
         protected override void InitUniformLocations()
         {
-            Shader = Shader.Find("deferredGeometryPass");
+            
            
             uniformLocations["bHasDiffuseMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "bHasDiffuseMap");          
             uniformLocations["bHasSpecularMap"]     = GL.GetUniformLocation(Shader.ProgramHandle, "bHasSpecularMap");
@@ -152,6 +159,149 @@ namespace SharpCG.Base.Scenegraph
 
     public class LightingPassMaterial : Material
     {
+        private Texture2D worldPositionTexture;
+        private Texture2D worldNormalTexture;
+        private Texture2D diffuseAlbedoTexture;
+        private Texture2D specularAlbedoTexture;
+
+
+        private vec3 cameraPosition;
+
+        private vec3 lightDirection;
+        private vec3 lightPosition;
+        private vec3 lightColor;
+        private vec3 lightAttenuation;
+
+        private int lightType;
+
+
+        public override void OnStart()
+        {
+            Shader = Shader.Find("deferredLightingPass");
+            base.OnStart();
+        }
+
+
+        public Texture2D WorldPositionTexture
+        {
+            get{return worldPositionTexture;}
+            set{worldPositionTexture = value;}
+        }
+
+
+        public Texture2D WorldNormalTexture
+        {
+            get{ return worldNormalTexture; }
+            set{worldNormalTexture = value;}
+        }
+
+
+        public Texture2D DiffuseAlbedoTexture
+        {
+            get{return diffuseAlbedoTexture;}
+            set{diffuseAlbedoTexture = value;}
+        }
+
+
+        public Texture2D SpecularAlbedoTexture
+        {
+            get{return specularAlbedoTexture;}
+            set{ specularAlbedoTexture = value;}
+        }
+
+
+        public vec3 CameraPosition
+        {
+            get { return cameraPosition;}
+
+            set{cameraPosition = value;}
+        }
+
+
+        public vec3 LightDirection
+        {
+            get{ return lightDirection;}
+            set{lightDirection = value;}
+        }
+
+
+        public vec3 LightPosition
+        {
+            get{return lightPosition;}
+            set{lightPosition = value;}
+        }
+
+
+        public vec3 LightColor
+        {
+            get{return lightColor; }
+
+            set{ lightColor = value;}
+        }
+
+
+        public vec3 LightAttenuation
+        {
+            get{return lightAttenuation;}
+            set{lightAttenuation = value;}
+        }
+
+
+        public int LightType
+        {
+            get{ return lightType;}
+            set{lightType = value;}
+        }
+
+
+        protected override void InitUniformLocations()
+        {
+            base.InitUniformLocations();
+
+            uniformLocations["texWorldPosition"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldPosition");
+            uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
+            uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
+            uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
+
+            uniformLocations["vCameraPosition"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vCameraPosition");
+
+            uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
+            uniformLocations["vLightPosition"]      = GL.GetUniformLocation(Shader.ProgramHandle, "vLightPosition");
+            uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
+            uniformLocations["vLightAttenuation"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vLightAttenuation");
+            uniformLocations["iLightType"]          = GL.GetUniformLocation(Shader.ProgramHandle, "iLightType");
+
+        }
+
+
+        public override void Bind(ref uint textureUnit)
+        {
+            
+            Shader.bind();
+            GL.Uniform1(uniformLocations["texWorldPosition"], 0);
+            worldPositionTexture.Bind(TextureUnit.Texture0);
+
+            GL.Uniform1(uniformLocations["texWorldNormal"], 1);
+            worldNormalTexture.Bind(TextureUnit.Texture0);
+
+            GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 2);
+            diffuseAlbedoTexture.Bind(TextureUnit.Texture0);
+
+            GL.Uniform1(uniformLocations["texSpecularAlbedo"], 3);
+            specularAlbedoTexture.Bind(TextureUnit.Texture0);
+
+            GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
+
+            GL.Uniform1(uniformLocations["iLightType"], lightType);
+
+            GL.Uniform3(uniformLocations["vLightDirection"], 1, lightDirection.Values);
+            GL.Uniform3(uniformLocations["vLightPosition"], 1, lightPosition.Values);            
+            GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
+            GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
+
+
+            base.Bind(ref textureUnit);
+        }
 
     }
 }

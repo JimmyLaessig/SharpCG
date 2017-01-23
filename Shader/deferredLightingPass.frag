@@ -11,21 +11,19 @@ uniform sampler2D texSpecularAlbedo;
 
 uniform vec3 vCameraPosition;
 
-uniform vec3 vLightDirection;
-uniform vec3 vLightColor;
-uniform vec3 vLightAttenuation;
-
-
-uniform int lightType = 0;	
+uniform int iLightType = 0;	
 // 0 ... Ambient
 // 1 ... Directional
 // 2 ... Point
 // 3 ... Spot
 
+uniform vec3 vLightPosition;
+uniform vec3 vLightDirection;
+uniform vec3 vLightColor;
+uniform vec3 vLightAttenuation;
+
 
 out vec4 fragColor;
-
-
 
 float attenuation(float linear, float quadratic, float distance)
 {
@@ -46,8 +44,7 @@ void main()
     vec4 vSpecularColor = texture(texSpecularAlbedo, vTexcoords);
 
 	
+	fragColor = vSpecularColor;
 
-	
-	fragColor = vDiffuseColor;
-	
+	//fragColor = vec4(1, 0, 0, 1);	
 }

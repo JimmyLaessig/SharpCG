@@ -9,7 +9,7 @@ using SharpCG.Base.Rendering;
 using GlmSharp;
 using OpenTK.Graphics.OpenGL4;
 
-namespace SharpCG.Base
+namespace SharpCG.Base.Scenegraph
 {
     public static class MaterialExtensions
     {

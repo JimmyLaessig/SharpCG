@@ -29,8 +29,9 @@ namespace SharpCG.Demo
             //Camera.Main.LookAt(vec3.Zero, vec3.UnitZ, vec3.UnitY);
 
            
-            RenderPass skyBoxPass = RenderPass.Before(RenderPass.Main, "SkyboxRenderPass");
-
+            RenderPass skyBoxPass   = RenderPass.Before(RenderPass.Main, "SkyboxRenderPass");
+            RenderPass geometryPass = RenderPass.After(RenderPass.Main, "GeometryPass");
+            RenderPass lightingPass = RenderPass.After(geometryPass, "LightingPass");
             {
                 SceneObject cameraObject = Camera.Main.SceneObject;
                 cameraObject.Name = "Camera";
@@ -75,9 +76,10 @@ namespace SharpCG.Demo
                 container1.Name = "Container1";
 
                 var r2 = container1.Children[0].AddComponent<DeferredRenderer>();
-                r2.Framebuffer = gBuffer;
-                r2.RenderPass = RenderPass.Main;
-                r2.Stage = Stage.Geometry;
+                r2.Framebuffer  = gBuffer;
+                r2.RenderPass   = geometryPass;
+                r2.Stage        = Stage.Geometry;
+
 
                 //var renderer = container1.Children[0].AddComponent<MeshRenderer>();
                 //renderer.RenderPass = RenderPass.Main;
@@ -96,7 +98,7 @@ namespace SharpCG.Demo
 
                 var renderer = container2.Children[0].AddComponent<DeferredRenderer>();
                 renderer.Framebuffer = gBuffer;
-                renderer.RenderPass = RenderPass.Main;
+                renderer.RenderPass = geometryPass;
                 renderer.Stage = Stage.Geometry;
 
 
@@ -104,6 +106,20 @@ namespace SharpCG.Demo
                 container2.Children[0].Transform.Scale = vec3.Ones;
                 container2.Children[0].AddComponent<Rotator>();
                 window.AddSceneObject(container2);
+            }
+            // Add A Light
+            {
+                SceneObject lightObject = new SceneObject();
+                var light           = lightObject.AddComponent<AmbientLight>();
+                light.Color         = new vec3(0.25f, 0.25f, 0.25f);
+                var renderer        = lightObject.AddComponent<DeferredRenderer>();
+                renderer.RenderPass = lightingPass;
+                renderer.Stage      = Stage.Lighting;
+                renderer.GBuffer    = gBuffer;
+                var material        = lightObject.AddComponent<LightingPassMaterial>();
+
+
+                window.AddSceneObject(lightObject);
             }
 
             window.Run();            

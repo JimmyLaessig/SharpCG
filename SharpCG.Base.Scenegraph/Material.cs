@@ -41,6 +41,14 @@ namespace SharpCG.Base.Scenegraph
         private mat4 wvpMatrix;
         private mat3 normalMatrix;
 
+
+        public override void OnStart()
+        {
+            base.OnStart();
+
+            InitUniformLocations();
+        }
+
         public mat4 ViewMatrix
         {
             get{return viewMatrix;}
@@ -100,7 +108,7 @@ namespace SharpCG.Base.Scenegraph
 
         public Material()
         {
-            InitUniformLocations();
+           
         }
 
         protected virtual void InitUniformLocations()

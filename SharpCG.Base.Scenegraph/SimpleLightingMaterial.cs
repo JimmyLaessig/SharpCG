@@ -19,18 +19,27 @@ namespace SharpCG.Base.Scenegraph
         private Texture2D diffuseMapTexture;
         private Texture2D normalMapTexture;
         private Texture2D specularMapTexture;
-     
-        private vec4 diffuseAmount      = new vec4(1,1,1,1);
-        private vec3 emissiveAmount     = new vec3(0, 0, 0);
-        private vec4 specularAmount     = new vec4(1,1,1, 128);      
 
-        private vec3 viewPosition       = new vec3(0, 0, 0);
-        private vec3 lightColor         = new vec3(1, 1, 1);
-        private vec3 lightAmbientColor  = new vec3(1, 1, 1);
-        private vec3 lightDirection     = new vec3(1, 0, 0);
+        private vec4 diffuseAmount = new vec4(1, 1, 1, 1);
+        private vec3 emissiveAmount = new vec3(0, 0, 0);
+        private vec4 specularAmount = new vec4(1, 1, 1, 128);
 
-        
+        private vec3 viewPosition = new vec3(0, 0, 0);
+        private vec3 lightColor = new vec3(1, 1, 1);
+        private vec3 lightAmbientColor = new vec3(1, 1, 1);
+        private vec3 lightDirection = new vec3(1, 0, 0);
+
+
         private bool normalMappingEnabled = false;
+
+
+        public override void OnStart()
+        {
+            Shader = Shader.Find("simpleLighting");
+
+            base.OnStart();
+        }
+
 
         public bool HasDiffuseMap
         {
@@ -39,7 +48,7 @@ namespace SharpCG.Base.Scenegraph
 
         public bool HasNormapMap
         {
-            get{ return(normalMapTexture != null); }          
+            get { return (normalMapTexture != null); }
         }
 
         public bool HasSpecularMap
@@ -49,80 +58,85 @@ namespace SharpCG.Base.Scenegraph
 
         public Texture2D DiffuseMapTexture
         {
-            get{ return diffuseMapTexture; }
-            set{ diffuseMapTexture = value; }
+            get { return diffuseMapTexture; }
+            set { diffuseMapTexture = value; }
         }
 
         public Texture2D NormalMapTexture
         {
-            get{ return normalMapTexture; }
-            set{ normalMapTexture = value; }
+            get { return normalMapTexture; }
+            set { normalMapTexture = value; }
         }
 
         public Texture2D SpecularMapTexture
         {
-            get{ return specularMapTexture; }
-            set{ specularMapTexture = value; }
-        }      
+            get { return specularMapTexture; }
+            set { specularMapTexture = value; }
+        }
 
         public vec4 DiffuseAmount
         {
-            get{ return diffuseAmount; }
-            set{ diffuseAmount = value; }
+            get { return diffuseAmount; }
+            set { diffuseAmount = value; }
         }
 
         public vec3 SpecularAmount
         {
-            get{ return specularAmount.rgb; }
-            set{ specularAmount.rgb = value; }
+            get { return specularAmount.rgb; }
+            set { specularAmount.rgb = value; }
         }
 
         public vec3 EmissiveAmount
         {
-            get{ return emissiveAmount; }
-            set{ emissiveAmount = value; }
+            get { return emissiveAmount; }
+            set { emissiveAmount = value; }
         }
 
         public float SpecularExponent
         {
-            get{ return specularAmount.a; }
-            set{ specularAmount.a = value; }
+            get { return specularAmount.a; }
+            set { specularAmount.a = value; }
         }
 
         public bool NormalMappingEnabled
         {
-            get{return normalMappingEnabled;}
-            set{ normalMappingEnabled = value;}
+            get { return normalMappingEnabled; }
+            set { normalMappingEnabled = value; }
         }
+
 
         public vec3 ViewPosition
         {
-            get{return viewPosition; }
-            set{viewPosition = value; }
+            get { return viewPosition; }
+            set { viewPosition = value; }
         }
+
 
         public vec3 LightColor
         {
-            get{return lightColor;}
-            set{lightColor = value;}
+            get { return lightColor; }
+            set { lightColor = value; }
         }
+
 
         public vec3 LightAmbientColor
         {
-            get{return lightAmbientColor;}
-            set{lightAmbientColor = value;}
+            get { return lightAmbientColor; }
+            set { lightAmbientColor = value; }
         }
+
 
         public vec3 LightDirection
         {
-            get{ return lightDirection;}
-            set{lightDirection = value;}
+            get { return lightDirection; }
+            set { lightDirection = value; }
         }
 
-        protected override void InitUniformLocations()
-        {            
-            Shader = Shader.Find("simpleLighting");
 
+        protected override void InitUniformLocations()
+        {
+            base.InitUniformLocations();
+        
             uniformLocations["bHasDiffuseMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "bHasDiffuseMap");
             uniformLocations["bHasNormalMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasNormalMap");
             uniformLocations["bHasSpecularMap"]     = GL.GetUniformLocation(Shader.ProgramHandle, "bHasSpecularMap");
@@ -140,9 +154,8 @@ namespace SharpCG.Base.Scenegraph
             uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
             uniformLocations["vLightAmbient"]       = GL.GetUniformLocation(Shader.ProgramHandle, "vLightAmbient");
             uniformLocations["vViewPosition"]       = GL.GetUniformLocation(Shader.ProgramHandle, "vViewPosition");
-
-            base.InitUniformLocations();
         }
+           
       
         public override void Bind(ref uint textureUnit)
         {
