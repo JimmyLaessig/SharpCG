@@ -18,3 +18,6 @@ packages
 
 
 **/OpenTK.dll.config
+
+
+nsight_profiler.cfg

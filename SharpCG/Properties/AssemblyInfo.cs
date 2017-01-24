@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharpCG")]
+[assembly: AssemblyTitle("SharpCG.Base.Scenegraph")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SharpCG")]
+[assembly: AssemblyProduct("SharpCG.Base.Scenegraph")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b63dff5d-68e8-4a1f-aa29-1db8be35d1d6")]
+[assembly: Guid("bf0203ff-64c1-443f-8534-a91117d863fd")]
 
 // Version information for an assembly consists of the following four values:
 //

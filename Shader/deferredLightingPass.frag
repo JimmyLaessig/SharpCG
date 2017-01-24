@@ -44,7 +44,7 @@ void main()
     vec4 vSpecularColor = texture(texSpecularAlbedo, vTexcoords);
 
 	
-	fragColor = vSpecularColor;
+	fragColor = vDiffuseColor;
 
 	//fragColor = vec4(1, 0, 0, 1);	
 }

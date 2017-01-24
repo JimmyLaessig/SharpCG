@@ -4,13 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Text;
 using System.Threading.Tasks;
-using SharpCG.Base.Input;
-using SharpCG.Base;
+
 using System.IO;
 using SharpCG;
 using GlmSharp;
-using SharpCG.Base.Rendering;
-using SharpCG.Base.Scenegraph;
+
 using OpenTK;
 
 
@@ -50,7 +48,12 @@ namespace SharpCG.Demo
             gBuffer.AddRenderTarget(Texture2D.Empty((uint)window.Width, (uint)window.Height), OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment2, new vec4(0, 0, 0, 0));    // Diffuse
             gBuffer.AddRenderTarget(Texture2D.Empty((uint)window.Width, (uint)window.Height), OpenTK.Graphics.OpenGL4.FramebufferAttachment.ColorAttachment3, new vec4(0, 0, 0, 0));    // Specular
             gBuffer.InitGL();
-            
+            gBuffer.AddRenderBuffer();
+           
+
+            //var clearAction =
+            window.RenderControl.AddImmediateGLEvent(geometryPass, new Action(() => gBuffer.Clear()));
+
             gBuffer.Clear();
 
 
