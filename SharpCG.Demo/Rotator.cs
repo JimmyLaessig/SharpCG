@@ -12,7 +12,8 @@ namespace SharpCG.Demo
 
         public override void Update(double deltaTime)
         {
-            //this.sceneObject.Transform.Rotate(vec3.UnitY, Fun.Radians(90.0f) * (float)deltaTime);
+            this.sceneObject.Transform.Rotate(vec3.UnitY, Fun.Radians(90.0f) * (float)deltaTime);
+            
             base.Update(deltaTime);
         }
     }

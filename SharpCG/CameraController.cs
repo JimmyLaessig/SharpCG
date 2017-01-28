@@ -22,7 +22,7 @@ namespace SharpCG
         int lastMousePosY;
 
         public double MoveSpeed      = 2.0f;
-        public double RotationSpeed  = 60.0f;
+        public double RotationSpeed  = 0.2f;
 
         private vec3 rotation;
         private vec3 position;

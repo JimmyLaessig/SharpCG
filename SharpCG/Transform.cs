@@ -9,8 +9,9 @@ using GlmSharp;
 
 namespace SharpCG
 {
-    public class Transform
+    public class Transform : Component
     {
+
         private vec3 position;
         private quat rotation;
         private vec3 scale;
@@ -18,10 +19,14 @@ namespace SharpCG
         private mat4 worldMatrix;
         private mat4 inverseWorldMatrix;
         private mat3 normalMatrix;
+
         private bool dirty;
 
 
-
+        public static Transform Identity
+        {
+            get { return  new Transform(); }
+            }
 
         public Transform()
         {
@@ -61,7 +66,6 @@ namespace SharpCG
         }
 
 
-
         public quat Rotation
         {
             get { return rotation; }
@@ -81,6 +85,11 @@ namespace SharpCG
             get
             {
                 if (dirty) UpdateMatrices();
+
+
+                if (Parent != null)
+                    return Parent.WorldMatrix * worldMatrix;
+
                 return worldMatrix;
             }
         }
@@ -130,6 +139,22 @@ namespace SharpCG
             get{ return (rotation.ToMat3 * vec3.UnitX).Normalized; }
         }
 
+        public void ToIdentity()
+        {
+            Position    = vec3.Zero;
+            Scale       = vec3.Ones;
+            Rotation    = quat.Identity;
+        }
+
+        public Transform Parent
+        {
+            get
+            {
+                if (this.sceneObject.Parent == null)
+                    return null;
+                return this.sceneObject.Parent.Transform;
+            }            
+        }
 
         private void UpdateMatrices()
         {

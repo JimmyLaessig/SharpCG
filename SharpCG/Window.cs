@@ -25,6 +25,11 @@ namespace SharpCG
             get{return renderControl;}
         }
 
+        public SceneObject Root
+        {
+            get{ return root;}
+        }
+
         public static Window CreateSimpleWindow(int width, int height)
         {
             var window = new Window(width, height);
@@ -157,11 +162,14 @@ namespace SharpCG
             //Traverse<GLComponent>(root, c => { if (c.IsDirty) c.AfterInitGL();});
             //Traverse<Component>(root, c => c.Update(e.Time));    
 
-            Component.All.ForEach(c => c.Update(e.Time));
+           
 
             var glComponents = Component.All.OfType<GLComponent>().ToList();
             glComponents.ForEach(c => { if (c.IsDirty) c.InitGL();});
-            glComponents.ForEach(c => { if (c.IsDirty) c.AfterInitGL();});            
+            glComponents.ForEach(c => { if (c.IsDirty) c.AfterInitGL();});
+
+
+            Component.All.ForEach(c => c.Update(e.Time));
         }
 
 

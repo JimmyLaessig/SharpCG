@@ -131,7 +131,7 @@ namespace SharpCG
         {
             Assimp.AssimpContext assimp = new Assimp.AssimpContext();
             Assimp.Scene scene = assimp.ImportFile(path,
-                                                               Assimp.PostProcessSteps.Triangulate
+                                                            Assimp.PostProcessSteps.Triangulate
                                                             | Assimp.PostProcessSteps.JoinIdenticalVertices
                                                             | Assimp.PostProcessSteps.CalculateTangentSpace);
             string directory = path.Substring(0, path.LastIndexOf('/'));
@@ -151,20 +151,15 @@ namespace SharpCG
             obj.Transform.Scale = new vec3(s.X, s.Y, s.Z);
             obj.Transform.Rotation = new quat(r.X, r.Y, r.Z, r.W);
 
-            // Traverse children
-            if (node.HasChildren)
-            {
-                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null);
-                obj.Children.AddRange(children);
-            }
 
+           
             // Create Mesh Component if it has some (For now, assume each node has max one mesh)
             if (node.HasMeshes)
             {
                 var mesh = obj.AddComponent<Mesh>();
                 var aiMesh = scene.Meshes[node.MeshIndices[0]];
                 ConvertMesh(aiMesh, mesh);
-
+                obj.Name = aiMesh.Name;
                 Assimp.Material aiMaterial = scene.Materials[aiMesh.MaterialIndex];
                 if (materialType == Materials.SimpleLighting)
                 {
@@ -176,6 +171,16 @@ namespace SharpCG
                 }
                
             }
+
+
+            // Traverse children
+            if (node.HasChildren)
+            {
+                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null).ToList();
+                children.ForEach(c => obj.AddChild(c));
+            }
+
+
             // Remove unwanted (empty) scene objects
             if (!node.HasMeshes && !node.HasChildren)
             {
@@ -193,13 +198,13 @@ namespace SharpCG
             uint[] indices = aiMesh.GetUnsignedIndices();
             int numIndices = indices.Length;
             int numVertices = aiMesh.VertexCount;
-
-            float[] positions = new float[numVertices * 3];
-            float[] colors = new float[numVertices * 4];
-            float[] normals = new float[numVertices * 3];
-            float[] tangents = new float[numVertices * 3];
-            float[] bitangents = new float[numVertices * 3];
-            float[] texcoords0 = new float[numVertices * 2];
+            
+            float[] positions   = new float[numVertices * 3];
+            float[] colors      = new float[numVertices * 4];
+            float[] normals     = new float[numVertices * 3];
+            float[] tangents    = new float[numVertices * 3];
+            float[] bitangents  = new float[numVertices * 3];
+            float[] texcoords0  = new float[numVertices * 2];
 
             // Read vertex information
             if (aiMesh.HasVertices)
@@ -278,12 +283,12 @@ namespace SharpCG
             mesh.Indices = ArrayBuffer<uint>.Create(BufferTarget.ElementArrayBuffer, indices);
 
             // ArrayBuffer.Create()
-            mesh.SetAttribute(DefaultAttributeName.Position, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, positions, 3), 0);
-            mesh.SetAttribute(DefaultAttributeName.Normal, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, normals, 3), 1);
-            mesh.SetAttribute(DefaultAttributeName.Tangent, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, tangents, 3), 2);
-            mesh.SetAttribute(DefaultAttributeName.Bitangent, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, bitangents, 3), 3);
-            mesh.SetAttribute(DefaultAttributeName.Color, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, colors, 4), 4);
-            mesh.SetAttribute(DefaultAttributeName.Texcoord0, ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, texcoords0, 2), 5);
+            mesh.SetAttribute(DefaultAttributeName.Position,    ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, positions, 3), 0);
+            mesh.SetAttribute(DefaultAttributeName.Normal,      ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, normals, 3), 1);
+            mesh.SetAttribute(DefaultAttributeName.Tangent,     ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, tangents, 3), 2);
+            mesh.SetAttribute(DefaultAttributeName.Bitangent,   ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, bitangents, 3), 3);
+            mesh.SetAttribute(DefaultAttributeName.Color,       ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, colors, 4), 4);
+            mesh.SetAttribute(DefaultAttributeName.Texcoord0,   ArrayBuffer<float>.Create(BufferTarget.ArrayBuffer, texcoords0, 2), 5);
 
         }
     }

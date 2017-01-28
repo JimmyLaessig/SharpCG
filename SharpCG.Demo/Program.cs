@@ -22,23 +22,22 @@ namespace SharpCG.Demo
 
             Shader.InitializeShaders();
 
-            // Create Camera
-            Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 10000);
-            //Camera.Main.LookAt(vec3.Zero, vec3.UnitZ, vec3.UnitY);
 
-           
+            {
+                // Create Camera
+                Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 10000);
+                Camera.Main.Transform.Position = new vec3(0f, 2.5f, 5f);
+                Camera.Main.Transform.Rotation = quat.FromAxisAngle(glm.Radians(-30f), vec3.UnitX);
+                Camera.Main.SceneObject.AddComponent<CameraController>();
+                window.AddSceneObject(Camera.Main.SceneObject);
+            }
+
+
             RenderPass skyBoxPass   = RenderPass.Before(RenderPass.Main, "SkyboxRenderPass");
             RenderPass geometryPass = RenderPass.After(RenderPass.Main, "GeometryPass");
             RenderPass lightingPass = RenderPass.After(geometryPass, "LightingPass");
-            {
-                SceneObject cameraObject = Camera.Main.SceneObject;
-                cameraObject.Name = "Camera";
-                var controller = cameraObject.AddComponent<CameraController>();
-                controller.MoveSpeed = 2;
-                controller.RotationSpeed = 0.2f;
-                controller.Camera = Camera.Main;
-                window.AddSceneObject(cameraObject);
-            }
+
+
 
             // Create GBuffer
             
@@ -74,24 +73,25 @@ namespace SharpCG.Demo
                 
                 //window.AddSceneObject(skybox);
             }
-            {
-                SceneObject container1 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
-                container1.Name = "Container1";
+            //{
+            //    SceneObject container1 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
+            //    container1.Name = "Container1";
 
-                var r2 = container1.Children[0].AddComponent<DeferredRenderer>();
-                r2.Framebuffer  = gBuffer;
-                r2.RenderPass   = geometryPass;
-                r2.Stage        = Stage.Geometry;
+            //    var r2 = container1.Children[0].AddComponent<DeferredRenderer>();
+            //    r2.Framebuffer  = gBuffer;
+            //    r2.RenderPass   = geometryPass;
+            //    r2.Stage        = Stage.Geometry;
 
 
-                //var renderer = container1.Children[0].AddComponent<MeshRenderer>();
-                //renderer.RenderPass = RenderPass.Main;
+            //    //var renderer = container1.Children[0].AddComponent<MeshRenderer>();
+            //    //renderer.RenderPass = RenderPass.Main;
 
-                container1.Children[0].Transform.Position = new vec3(-1.5f, 0f, -3f);
-                container1.Children[0].Transform.Scale = vec3.Ones;
-                container1.Children[0].AddComponent<Rotator>();
-                window.AddSceneObject(container1);
-            }
+            //    container1.Children[0].Transform.Position = new vec3(-1.5f, 0f, -3f);
+            //    container1.Children[0].Transform.Scale = vec3.Ones;
+            //    container1.Children[0].AddComponent<Rotator>();
+            //    window.AddSceneObject(container1);
+            //}
+
             {
                 SceneObject container2 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
                 container2.Name = "Container2";
@@ -105,14 +105,22 @@ namespace SharpCG.Demo
                 renderer.Stage = Stage.Geometry;
 
 
-                container2.Children[0].Transform.Position = new vec3(1.5f, 0f, -3f);
-                container2.Children[0].Transform.Scale = vec3.Ones;
-                container2.Children[0].AddComponent<Rotator>();
-                window.AddSceneObject(container2);
+                container2.Children[0].Transform.ToIdentity();
+                container2.Children[0].Transform.Position = new vec3(2, 0, 0);
+
+
+                SceneObject pivot = new SceneObject();
+                pivot.Name = "Pivot";
+
+                pivot.AddChild(container2);
+                pivot.AddComponent<Rotator>();
+                window.AddSceneObject(pivot);
             }
+
             // Add A Light
             {
                 SceneObject lightObject = new SceneObject();
+                lightObject.Name    = "Ambient Light";
                 var light           = lightObject.AddComponent<AmbientLight>();
                 light.Color         = new vec3(0.25f, 0.25f, 0.25f);
                 var renderer        = lightObject.AddComponent<DeferredRenderer>();
@@ -125,8 +133,38 @@ namespace SharpCG.Demo
                 window.AddSceneObject(lightObject);
             }
 
+            Console.WriteLine("---------- Scenegraph ----------");
+            printSceneGraph(window.Root, 0);
+
             window.Run();            
         }
-       
+
+        public static void printSceneGraph(SceneObject obj, int level)
+        {
+            var oldC = Console.ForegroundColor;
+            
+            
+            string sceneObjectTabbing   = string.Concat(Enumerable.Repeat("|  ", Math.Max(0,(level - 1)))) + "|-- ";
+            string componentTabbing     = string.Concat(Enumerable.Repeat("|  ", Math.Max(0, (level )))) + "|-- ";
+                
+            if (level == 0)
+            {
+                sceneObjectTabbing = "";
+                componentTabbing = "";
+            }
+           
+            Console.Write(sceneObjectTabbing);
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(obj.Name);
+            Console.ForegroundColor = oldC;
+
+            obj.Components.ForEach(c =>
+            {
+                Console.WriteLine(componentTabbing + c.GetType());
+            });
+
+            obj.Children.ForEach(c => printSceneGraph(c, level + 1));
+        }
     }  
 }

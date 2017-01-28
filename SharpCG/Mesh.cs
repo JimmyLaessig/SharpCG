@@ -45,6 +45,7 @@ namespace SharpCG
 
 
 
+
         public bool HasIndices
         {
             get{return indices != null;}

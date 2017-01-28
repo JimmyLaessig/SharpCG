@@ -35,6 +35,7 @@ namespace SharpCG
                     cam.SetProjectionMatrix(cam.fov, cam.aspect, cam.zNear, cam.zFar);
 
                     SceneObject obj = new SceneObject();
+                    obj.Name = "Camera";
                     obj.AddComponent(cam);
 
                     main = cam;
@@ -54,7 +55,6 @@ namespace SharpCG
         public Transform Transform
         {
             get { return sceneObject.Transform; }
-            set { sceneObject.Transform = value; }
         }
 
 

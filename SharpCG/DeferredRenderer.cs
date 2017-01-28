@@ -120,14 +120,15 @@ namespace SharpCG
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
             GL.DepthMask(true);
-            
+
 
             // Uniforms for matrices
+
 
             var W = sceneObject.Transform.WorldMatrix;
             var V = camera.ViewMatrix;
             var P = camera.ProjectionMatrix;
-
+            
             geometryPassMaterial.WorldMatrix = W;
             geometryPassMaterial.ViewMatrix = V;
             geometryPassMaterial.ProjectionMatrix = P;

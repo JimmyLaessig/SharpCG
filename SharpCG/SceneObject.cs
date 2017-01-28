@@ -9,18 +9,22 @@ namespace SharpCG
 {
     public class SceneObject
     {
+
         private Transform transform;
         private List<Component> components;
 
-        public List<SceneObject> Children;
+
+        private SceneObject parent;
+        private List<SceneObject> children;
+
 
         private string name;
 
         public SceneObject()
         {
-            transform   = new Transform();
             components  = new List<Component>();
-            Children    = new List<SceneObject>();
+            children    = new List<SceneObject>();
+            transform   = this.AddComponent<Transform>();
             Name = "";
         }
 
@@ -50,8 +54,7 @@ namespace SharpCG
 
         public Transform Transform
         {
-            get{ return transform; }
-            set{ transform = value; }
+            get{ return transform; }           
         }
 
 
@@ -69,7 +72,7 @@ namespace SharpCG
         {
             var list = components.OfType<T>().ToList();
 
-            Children.ForEach(c => list.AddRange(c.FindComponentsInChildren<T>()));
+            children.ForEach(c => list.AddRange(c.FindComponentsInChildren<T>()));
 
             return list;
         }
@@ -85,6 +88,35 @@ namespace SharpCG
         {
             get{ return name; }
             set{ name = value; }
+        }
+
+
+
+        public void AddChild(SceneObject child)
+        {
+            children.Add(child);
+
+            // register this as parent
+            child.parent = this;
+        }
+
+
+        public void RemoveChild(SceneObject child)
+        {                      
+            if( children.Remove(child))
+            {
+                child.Parent = null;
+            }
+        }
+        public List<SceneObject> Children
+        {
+            get{return children; }
+        }
+
+        public SceneObject Parent
+        {
+            get{return parent;}
+            set{parent = value;}
         }
     }
 }
