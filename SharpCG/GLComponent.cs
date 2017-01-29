@@ -35,7 +35,7 @@ namespace SharpCG
         /// Method to invoice OpenGL for initialization. This will be called after InitGL() for all GLComponents was called. 
         /// This method will be called on frame start, if the dirtyFlag (IsDirty) returns true. 
         /// </summary>
-        public virtual void AfterInitGL() {}
+        public virtual void LateInitGL() {}
 
 
         /// <summary>

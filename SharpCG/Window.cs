@@ -166,7 +166,7 @@ namespace SharpCG
 
             var glComponents = Component.All.OfType<GLComponent>().ToList();
             glComponents.ForEach(c => { if (c.IsDirty) c.InitGL();});
-            glComponents.ForEach(c => { if (c.IsDirty) c.AfterInitGL();});
+            glComponents.ForEach(c => { if (c.IsDirty) c.LateInitGL();});
 
 
             Component.All.ForEach(c => c.Update(e.Time));

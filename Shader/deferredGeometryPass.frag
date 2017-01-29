@@ -21,11 +21,11 @@ uniform vec3 vMaterialEmissive;
 uniform vec4 vMaterialDiffuse;
 uniform vec4 vMaterialSpecular;
 
+layout (location = 0) out vec4 gDiffuseAlbedo;
+layout (location = 1) out vec4 gSpecularAlbedo;
+layout (location = 2) out vec4 gWorldPosition;
+layout (location = 3) out vec4 gWorldNormal;
 
-layout (location = 0) out vec4 gWorldPosition;
-layout (location = 1) out vec4 gWorldNormal;
-layout (location = 2) out vec4 gDiffuseAlbedo;
-layout (location = 3) out vec4 gSpecularAlbedo;
 
 
 //--------------------------------------------------------------------------------------

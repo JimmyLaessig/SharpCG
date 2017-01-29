@@ -14,8 +14,6 @@ namespace SharpCG
     public class CameraController : Component
     {
 
-
-
         private Camera camera;
 
         int lastMousePosX;
@@ -27,14 +25,13 @@ namespace SharpCG
         private vec3 rotation;
         private vec3 position;
 
-        /// <summary>
-        /// Creates a new CameraController
-        /// </summary>
-        public CameraController()
+
+
+
+        public override void OnStart()
         {
+            camera = this.sceneObject.FindComponent<Camera>();
         }
-
-
 
         /// <summary>
         /// Sets the camera object to the given camera
@@ -122,6 +119,8 @@ namespace SharpCG
                 rotation.z  = 0;
                 rotation    = normalizeAngles(rotation);
                 
+               
+
                 camera.Transform.Rotation = new quat(rotation).Normalized;
             }
         }

@@ -39,7 +39,7 @@ namespace SharpCG
         }
 
 
-        public override uint Width
+        public override int Width
         {
             get
             {
@@ -49,7 +49,7 @@ namespace SharpCG
         }
 
 
-        public override uint Height
+        public override int Height
         {
             get
             {

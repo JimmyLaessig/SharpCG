@@ -16,13 +16,13 @@ namespace SharpCG
         protected bool useMipMaps;
 
 
-        public abstract uint Width
+        public abstract int Width
         {
             get;
         }
 
 
-        public abstract uint Height
+        public abstract int Height
         {
             get;
         }

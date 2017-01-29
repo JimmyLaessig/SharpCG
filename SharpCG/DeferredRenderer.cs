@@ -87,15 +87,8 @@ namespace SharpCG
 
         public Framebuffer GBuffer
         {
-            get
-            {
-                return gBuffer;
-            }
-
-            set
-            {
-                gBuffer = value;
-            }
+            get{ return gBuffer;}
+            set{ gBuffer = value;}
         }
 
 
@@ -119,8 +112,11 @@ namespace SharpCG
 
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
+           
             GL.DepthMask(true);
 
+            GL.Disable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
 
             // Uniforms for matrices
 
@@ -154,12 +150,18 @@ namespace SharpCG
         private void RenderLight()
         {
 
+
             GL.Viewport(0, 0, 1024, 768);
             Camera camera = Camera.Main;
 
+
             GL.Disable(EnableCap.CullFace);           
-            GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.DepthTest);
             GL.DepthMask(false);
+
+
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.One);
 
             // Uniforms for matrices
 
@@ -169,27 +171,27 @@ namespace SharpCG
 
             if (light.LightType == 0)
             {
-                lightingPassMaterial.WorldMatrix = mat4.Identity;
-                lightingPassMaterial.ViewMatrix = mat4.Identity;
-                lightingPassMaterial.ProjectionMatrix = mat4.Identity;
-                lightingPassMaterial.WvpMatrix = mat4.Identity;
-                lightingPassMaterial.NormalMatrix = mat3.Identity;
-            }
+                lightingPassMaterial.WorldMatrix        = mat4.Identity;
+                lightingPassMaterial.ViewMatrix         = mat4.Identity;
+                lightingPassMaterial.ProjectionMatrix   = mat4.Identity;
+                lightingPassMaterial.WvpMatrix          = mat4.Identity;
+                lightingPassMaterial.NormalMatrix       = mat3.Identity;
+            }         
+        
+            lightingPassMaterial.DiffuseAlbedoTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
+            lightingPassMaterial.SpecularAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
+            lightingPassMaterial.WorldPositionTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
+            lightingPassMaterial.WorldNormalTexture     = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment3);
+          
 
 
-            lightingPassMaterial.WorldPositionTexture = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
-            lightingPassMaterial.WorldNormalTexture = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
-            lightingPassMaterial.DiffuseAlbedoTexture = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
-            lightingPassMaterial.SpecularAlbedoTexture = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment3);
+            lightingPassMaterial.LightType          = light.LightType;
+            lightingPassMaterial.LightPosition      = light.Position;
+            lightingPassMaterial.LightDirection     = light.Direction;
+            lightingPassMaterial.LightColor         = light.Color;
+            lightingPassMaterial.LightAttenuation   = light.Attenuation;
 
-
-            lightingPassMaterial.LightType = light.LightType;
-            lightingPassMaterial.LightPosition = light.Position;
-            lightingPassMaterial.LightDirection = light.Direction;
-            lightingPassMaterial.LightColor = light.Color;
-            lightingPassMaterial.LightAttenuation = light.Attenuation;
-
-            lightingPassMaterial.CameraPosition = camera.Transform.Position;
+            lightingPassMaterial.CameraPosition     = camera.Transform.Position;
 
             uint unit = 0;
             lightingPassMaterial.Bind(ref unit);

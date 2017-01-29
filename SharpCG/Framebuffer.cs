@@ -11,7 +11,7 @@ using GlmSharp;
 namespace SharpCG
 {
 
-    public struct RenderTarget
+    public class RenderTarget
     {
         public Texture2D Texture;
         public vec4 ClearColor;
@@ -24,18 +24,13 @@ namespace SharpCG
 
         private int handle;
 
-        private List<RenderTarget> attachments;
+        private List<RenderTarget> attachments = new List<RenderTarget>();
 
         private RenderTarget depthBuffer;
 
         private int renderBufferHandle;
 
 
-        public Framebuffer() : base()
-        {
-            attachments = new List<RenderTarget>();
-            isDirty     = false;
-        }
         
         public int Width
         {
@@ -47,6 +42,7 @@ namespace SharpCG
             }
         }
 
+
         public int Height
         {
             get
@@ -56,8 +52,17 @@ namespace SharpCG
                 return (int)attachments.First().Texture.Height;
             }
         }
+
+
         public void AddRenderBuffer()
         {
+
+            //if (depthBuffer != null)
+            //{
+            //    Console.WriteLine("Already depth texture created!");
+            //    return;
+            //}
+
             int width = Width;
             int height = Height;
 
@@ -84,18 +89,21 @@ namespace SharpCG
             target.ClearColor   = clearColor;
             target.attachment = attachment;
 
-            if (attachment == FramebufferAttachment.Depth)
+            if (attachment == FramebufferAttachment.DepthAttachment || attachment == FramebufferAttachment.DepthStencilAttachment)
                 depthBuffer = target;
             else
                 attachments.Add(target);
 
-            isDirty = true;
-           
+            isDirty = true;         
         }
 
 
         public Texture2D GetRenderTarget(FramebufferAttachment attachment)
         {
+
+            if (attachment == FramebufferAttachment.DepthAttachment || attachment == FramebufferAttachment.DepthStencilAttachment)
+                return depthBuffer.Texture;
+
             var ls = attachments.Where(a => a.attachment == attachment);
 
             if (ls.Count() > 0)
@@ -126,6 +134,7 @@ namespace SharpCG
         }
 
 
+
         public void BindForWriting()
         {
             if (attachments.Count > 0)
@@ -139,9 +148,6 @@ namespace SharpCG
                 int height = (int)attachments.First().Texture.Height;
                 GL.Viewport(0, 0, width, height);
             }
-
-            //glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-
         }
 
         public void BindForReading()
@@ -150,25 +156,25 @@ namespace SharpCG
         }
 
 
-        public override void InitGL()
+        public override void LateInitGL()
         {
             DeInitGL();
 
             GL.GenFramebuffers(1, out handle);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);
 
-
-            attachments.ForEach(ct => 
-                ct.Texture.InitGL()
-            );
-
-
             attachments.ToList().ForEach(ct =>
             {
-                ct.Texture.Bind(TextureUnit.Texture10);
+                ct.Texture.Bind(TextureUnit.Texture0);
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, ct.attachment, TextureTarget.Texture2D, ct.Texture.Handle, 0);
             }
             );
+
+            if (depthBuffer != null)
+            {
+                depthBuffer.Texture.Bind(TextureUnit.Texture0);
+                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, depthBuffer.attachment, TextureTarget.Texture2D, depthBuffer.Texture.Handle, 0);
+            }
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 

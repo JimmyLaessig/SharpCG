@@ -11,8 +11,9 @@ namespace SharpCG
 {
     public class Image
     {
-        private uint width;
-        private uint height;
+
+        private int width;
+        private int height;
         private byte[] data;
 
 
@@ -22,20 +23,20 @@ namespace SharpCG
         }
 
 
-        public uint Height
+        public int Height
         {
             get{return height; }
 
         }
 
 
-        public uint Width
+        public int Width
         {
             get{return width;}
         }
 
 
-        public Image(uint width, uint height, byte[] data)
+        public Image(int width, int height, byte[] data)
         {
             this.width = width;
             this.width = height;
@@ -53,7 +54,7 @@ namespace SharpCG
         }
 
 
-        public Image(uint width, uint height)
+        public Image(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -63,7 +64,7 @@ namespace SharpCG
 
         public static Image FromBitmap(Bitmap bmp)
         {
-            var img = new Image((uint)bmp.Width, (uint)bmp.Height);
+            var img = new Image(bmp.Width, bmp.Height);
            
             BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             byte[] data = new byte[Math.Abs(bitmapData.Stride * bmp.Height)];

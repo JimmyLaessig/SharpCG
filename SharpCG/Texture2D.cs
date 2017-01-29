@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing.Imaging;
+
 using OpenTK.Graphics.OpenGL4;
 
 using System.Runtime.InteropServices;
@@ -15,7 +15,13 @@ namespace SharpCG
     public class Texture2D : Texture
     {
         private Image image;
-        private int handle;
+        private int handle = -1;
+
+
+        private PixelInternalFormat internalFormat  = PixelInternalFormat.Rgba;
+        private PixelFormat format                  = PixelFormat.Bgra;
+        private PixelType type                      = PixelType.UnsignedByte;
+
 
 
         public Image Image
@@ -29,13 +35,13 @@ namespace SharpCG
         }
 
 
-        public override uint Width
+        public override int Width
         {
             get{ return image.Width; }
         }
 
 
-        public override uint Height
+        public override int Height
         {
             get{ return image.Height; }
         }
@@ -61,18 +67,32 @@ namespace SharpCG
             GL.BindTexture(TextureTarget.Texture2D, handle);
 
           
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int)Width, (int)Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, image.Data);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, (int)Width, (int)Height, 0, format, type, image.Data);
 
-            if (UseMipMaps) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+            if (format == PixelFormat.DepthComponent || format == PixelFormat.DepthStencil)
+            {
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+               // GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int)TextureCompareMode.CompareRefToTexture);
+              //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)DepthFunction.Lequal);
+            }
+            else
+            {
+                if (UseMipMaps) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapR, (int)TextureWrapMode.Repeat);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+                TextureMinFilter textureMinFilter = (UseMipMaps) ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear;
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)textureMinFilter);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            }
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapR, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-
-            TextureMinFilter textureMinFilter = (UseMipMaps) ? TextureMinFilter.LinearMipmapLinear : TextureMinFilter.Linear;
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)textureMinFilter);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
 
             isDirty = false;
         }
@@ -90,7 +110,7 @@ namespace SharpCG
         }
 
 
-        public static Texture2D Empty(uint width, uint height, bool useMipMaps = false)
+        public static Texture2D Empty(int width, int height, bool useMipMaps = false)
         {
             Texture2D texture = new Texture2D();
             texture.Image       = new Image(width, height);
@@ -98,6 +118,25 @@ namespace SharpCG
             texture.Name        = "empty";
             texture.useMipMaps  = useMipMaps;
             texture.isDirty     = true;
+            return texture;
+        }
+
+
+        public static Texture2D Depth(int width, int height, bool useStencil = false)
+        {
+            Texture2D texture = new Texture2D();
+            texture.Image = new Image(width, height);
+            texture.isDirty = true;
+
+            texture.internalFormat  = (useStencil) ? PixelInternalFormat.Depth24Stencil8 : PixelInternalFormat.DepthComponent;
+            texture.format          = (useStencil) ? PixelFormat.DepthStencil : PixelFormat.DepthComponent;
+            texture.type            = PixelType.Float;
+
+            texture.Name = "Depth Texture";
+
+
+            texture.useMipMaps = false;
+
             return texture;
         }
 

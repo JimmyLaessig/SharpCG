@@ -100,7 +100,7 @@ namespace SharpCG
             get
             {
                 if (dirty) UpdateMatrices(); 
-                return inverseWorldMatrix;
+                return WorldMatrix.Inverse;
             }
         }
 
@@ -111,7 +111,7 @@ namespace SharpCG
             get
             {
                 if (dirty) UpdateMatrices();
-                return normalMatrix;
+                return new mat3(InverseWorldMatrix.Transposed);
             }
         }
 
@@ -164,8 +164,8 @@ namespace SharpCG
            
 
             worldMatrix         = T * R * S;
-            inverseWorldMatrix  = worldMatrix.Inverse;
-            normalMatrix        = new mat3(inverseWorldMatrix.Transposed);
+            //inverseWorldMatrix  = worldMatrix.Inverse;
+            //normalMatrix        = new mat3(inverseWorldMatrix.Transposed);
             dirty               = false;
         }
     }

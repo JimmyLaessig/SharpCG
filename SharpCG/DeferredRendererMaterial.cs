@@ -276,17 +276,18 @@ namespace SharpCG
             
             Shader.bind();
 
-            GL.Uniform1(uniformLocations["texWorldPosition"], 0);
-            worldPositionTexture.Bind(TextureUnit.Texture0);
 
-            GL.Uniform1(uniformLocations["texWorldNormal"], 1);
-            worldNormalTexture.Bind(TextureUnit.Texture1);
+            GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 0);
+            diffuseAlbedoTexture.Bind(TextureUnit.Texture0);
 
-            GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 2);
-            diffuseAlbedoTexture.Bind(TextureUnit.Texture2);
+            GL.Uniform1(uniformLocations["texSpecularAlbedo"], 1);
+            specularAlbedoTexture.Bind(TextureUnit.Texture1);
 
-            GL.Uniform1(uniformLocations["texSpecularAlbedo"], 3);
-            specularAlbedoTexture.Bind(TextureUnit.Texture3);
+            GL.Uniform1(uniformLocations["texWorldPosition"], 2);
+            worldPositionTexture.Bind(TextureUnit.Texture2);
+
+            GL.Uniform1(uniformLocations["texWorldNormal"], 3);
+            worldNormalTexture.Bind(TextureUnit.Texture3);
 
             GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
 

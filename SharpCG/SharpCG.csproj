@@ -58,6 +58,8 @@
   <ItemGroup>
     <Compile Include="AmbientLight.cs" />
     <Compile Include="ArrayBuffer.cs" />
+    <Compile Include="TextureToDepthRenderer.cs" />
+    <Compile Include="TextureToDepthMaterial.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="CameraController.cs" />
     <Compile Include="Component.cs" />

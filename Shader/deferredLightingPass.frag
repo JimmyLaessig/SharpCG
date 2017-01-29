@@ -37,14 +37,20 @@ void main()
 	vec4 normal			= texture(texWorldNormal, vTexcoords);	
 	float hasGeometry	= normal.w;
 
+
 	// Extract GBuffer Information
 	vec3 vWorldNormal	= normalize(normal.xyz); 
     vec3 vWorldPosition = texture(texWorldPosition, vTexcoords).xyz;
     vec4 vDiffuseColor	= texture(texDiffuseAlbedo, vTexcoords);
     vec4 vSpecularColor = texture(texSpecularAlbedo, vTexcoords);
 
-	
-	fragColor = vDiffuseColor;
 
-	//fragColor = vec4(1, 0, 0, 1);	
+	fragColor.rgb = vDiffuseColor.rgb;
+	fragColor.a = vDiffuseColor.a;
+	if(hasGeometry > 0)
+	{
+		fragColor.rgb = vDiffuseColor.rgb * vLightColor;
+	}
+	
+
 }
