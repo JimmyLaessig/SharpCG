@@ -140,17 +140,26 @@ namespace SharpCG
             return texture;
         }
 
+        private static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
         public static Texture2D Load(string path, bool useMipMaps = true)
         {
+            if(textures.ContainsKey(path))
+            {
+                Console.WriteLine("asdasdasdasasd");
+            }
+            if (!textures.ContainsKey(path))
+            {
+                Texture2D texture = new Texture2D();
+                texture.Image = Image.FromFile(path);
+                texture.useMipMaps = useMipMaps;
+                texture.Name = path;
+                texture.isDirty = true;
 
-            Texture2D texture = new Texture2D();
-            texture.Image       = Image.FromFile(path);
-            texture.useMipMaps  = useMipMaps;
-            texture.Name        = path;
-            texture.isDirty     = true;
+                textures[path] = texture;
+            }
 
-            return texture;
+            return textures[path];
         }        
     }
 }

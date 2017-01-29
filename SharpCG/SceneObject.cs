@@ -20,6 +20,7 @@ namespace SharpCG
 
         private string name;
 
+
         public SceneObject()
         {
             components  = new List<Component>();
@@ -28,12 +29,15 @@ namespace SharpCG
             Name = "";
         }
 
+
         public T AddComponent<T> (T component) where T: Component
         {            
             components.Add(component);
             component.SceneObject = this;
             return component;
         }
+
+
         public T AddComponent<T>() where T : Component, new()
         {
 
@@ -45,12 +49,14 @@ namespace SharpCG
             return component;
             
         }
+        
 
         public List<Component> Components
         {
             get{ return components; }
             set{ components = value; }
         }
+
 
         public Transform Transform
         {
@@ -91,7 +97,6 @@ namespace SharpCG
         }
 
 
-
         public void AddChild(SceneObject child)
         {
             children.Add(child);
@@ -108,15 +113,34 @@ namespace SharpCG
                 child.Parent = null;
             }
         }
+
+
         public List<SceneObject> Children
         {
             get{return children; }
         }
 
+
         public SceneObject Parent
         {
             get{return parent;}
             set{parent = value;}
+        }
+
+
+        public static void TraverseAndExecute<T>(SceneObject obj, Action<T> action) where T : Component
+        {
+            obj.Components.OfType<T>().ToList().ForEach(action);
+            obj.Children.ForEach(c => TraverseAndExecute(c, action));
+        }
+
+
+        // Collects Components of type T
+        public static List<T> TraverseAndCollect<T>(SceneObject obj)
+        {
+            var ls = obj.Components.OfType<T>().ToList();
+            obj.Children.ForEach(child => ls.AddRange(TraverseAndCollect<T>(child)));
+            return ls;
         }
     }
 }

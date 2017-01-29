@@ -19,18 +19,18 @@ namespace SharpCG
         int lastMousePosX;
         int lastMousePosY;
 
-        public double MoveSpeed      = 2.0f;
+        public double MoveSpeed      = 10.0f;
         public double RotationSpeed  = 0.2f;
 
         private vec3 rotation;
         private vec3 position;
 
 
-
-
         public override void OnStart()
         {
             camera = this.sceneObject.FindComponent<Camera>();
+            this.rotation = (vec3)camera.Transform.Rotation.EulerAngles;
+            this.position = camera.Transform.Position;
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace SharpCG
     public abstract class Renderer : GLComponent
     {
         protected Framebuffer framebuffer;
-        protected RenderPass renderPass;
+        protected RenderPass renderPass = RenderPass.Main;
 
 
         public virtual Framebuffer Framebuffer

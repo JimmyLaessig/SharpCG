@@ -128,57 +128,65 @@ namespace SharpCG
         }
 
         public static SceneObject Load(string path, Materials materialType)
-        {
+        {           
             Assimp.AssimpContext assimp = new Assimp.AssimpContext();
-            Assimp.Scene scene = assimp.ImportFile(path,
-                                                            Assimp.PostProcessSteps.Triangulate
-                                                            | Assimp.PostProcessSteps.JoinIdenticalVertices
-                                                            | Assimp.PostProcessSteps.CalculateTangentSpace);
+            
+            Assimp.Scene scene = assimp.ImportFile(path,    Assimp.PostProcessSteps.Triangulate |
+                                                            Assimp.PostProcessSteps.JoinIdenticalVertices |
+                                                            Assimp.PostProcessSteps.CalculateTangentSpace);
             string directory = path.Substring(0, path.LastIndexOf('/'));
-            return Traverse(scene, scene.RootNode, directory, materialType);
+            var obj = Traverse(scene, scene.RootNode, directory, materialType);
+
+            scene.Clear();
+            
+            return obj;
         }
 
 
         private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory, Materials materialType)
         {
-            SceneObject obj = new SceneObject();
-            // Decompose Transform
+
+           
             Assimp.Vector3D t; Assimp.Vector3D s; Assimp.Quaternion r;
             node.Transform.Decompose(out s, out r, out t);
 
+
+            SceneObject obj = new SceneObject();
+            obj.Name                = node.Name;
             // Add Transform to scene object
-            obj.Transform.Position = new vec3(t.X, t.Y, t.Z);
-            obj.Transform.Scale = new vec3(s.X, s.Y, s.Z);
-            obj.Transform.Rotation = new quat(r.X, r.Y, r.Z, r.W);
+            obj.Transform.Position  = new vec3(t.X, t.Y, t.Z);
+            obj.Transform.Scale     = new vec3(s.X, s.Y, s.Z);
+            obj.Transform.Rotation  = new quat(r.X, r.Y, r.Z, r.W);
+         
 
-
-           
-            // Create Mesh Component if it has some (For now, assume each node has max one mesh)
-            if (node.HasMeshes)
+            // Create Meshes
+            node.MeshIndices.ForEach(i => 
             {
+                
                 var mesh = obj.AddComponent<Mesh>();
-                var aiMesh = scene.Meshes[node.MeshIndices[0]];
+                var aiMesh = scene.Meshes[i];
                 ConvertMesh(aiMesh, mesh);
                 obj.Name = aiMesh.Name;
                 Assimp.Material aiMaterial = scene.Materials[aiMesh.MaterialIndex];
+
+
                 if (materialType == Materials.SimpleLighting)
                 {
-                    obj.AddComponent(MaterialExtensions.Create(aiMaterial, directory));
+                    var mat         = obj.AddComponent(MaterialExtensions.Create(aiMaterial, directory));
+                    var renderer    = obj.AddComponent<MeshRenderer>();
+                    // TODO LINK RENDERER, MATERIAL AND MESH
                 }
                 else if (materialType == Materials.Deferred)
                 {
-                    obj.AddComponent(MaterialExtensions.Create2(aiMaterial, directory));
-                }
-               
-            }
-
-
-            // Traverse children
-            if (node.HasChildren)
-            {
-                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null).ToList();
-                children.ForEach(c => obj.AddChild(c));
-            }
+                    var mat         = obj.AddComponent(MaterialExtensions.Create2(aiMaterial, directory));
+                    var renderer    = obj.AddComponent<DeferredRenderer>();
+                    renderer.Stage = Stage.Geometry;
+                    renderer.Mesh = mesh;
+                    renderer.GeometryPassMaterial   = mat;
+                   
+                    
+                }                          
+            });
 
 
             // Remove unwanted (empty) scene objects
@@ -187,6 +195,12 @@ namespace SharpCG
                 obj = null;
             }
 
+            // Traverse children
+            if (node.HasChildren)
+            {
+                var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null);
+                obj.Children.AddRange(children);
+            }          
 
             // Return composed scene object
             return obj;

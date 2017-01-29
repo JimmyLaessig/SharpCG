@@ -14,6 +14,7 @@ namespace SharpCG
     {
         Geometry, Lighting
     }
+    
 
     public class DeferredRenderer : Renderer
     {
@@ -23,10 +24,36 @@ namespace SharpCG
         private GeometryPassMaterial geometryPassMaterial;
         private LightingPassMaterial lightingPassMaterial;
 
+
         private Mesh mesh;
         private Light light;
 
-        private Framebuffer gBuffer;
+
+        private static Framebuffer gBuffer;
+
+
+        public static Framebuffer GBuffer
+        {
+            get
+            {
+                if (gBuffer == null)
+                {
+                    gBuffer = new Framebuffer();
+
+                    // TODO CHANGE THIS
+                    int width = 1024;
+                    int height = 758;
+
+                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(0));   // Diffuse
+                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment1, new vec4(0));   // Specular
+                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment2, new vec4(0));   // Position
+                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment3, new vec4(0));   // Normals
+                    gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment, new vec4(1));    // Depth
+                }
+                return gBuffer;
+            }
+            set { gBuffer = value; }
+        }
 
 
         public override void OnStart()
@@ -34,13 +61,12 @@ namespace SharpCG
             switch (stage)
             {
                 case Stage.Geometry:
-                    mesh = sceneObject.Components.OfType<Mesh>().First();
-                    geometryPassMaterial = sceneObject.FindComponent<GeometryPassMaterial>();
+                    if (mesh == null)                   mesh = sceneObject.Components.OfType<Mesh>().First();                  
+                    if(geometryPassMaterial == null)    geometryPassMaterial = sceneObject.FindComponent<GeometryPassMaterial>();
                     break;
                 case Stage.Lighting:
-                    light = sceneObject.FindComponent<Light>();
-                    lightingPassMaterial = sceneObject.FindComponent<LightingPassMaterial>();
-                    
+                    if (light == null)                  light = sceneObject.FindComponent<Light>();
+                    if (lightingPassMaterial == null)   lightingPassMaterial = sceneObject.FindComponent<LightingPassMaterial>();                   
                     break;
             }
         }
@@ -60,7 +86,7 @@ namespace SharpCG
                 switch (stage)
                 {
                     case Stage.Geometry:
-                        return gBuffer;
+                        return GBuffer;
 
                     case Stage.Lighting:
                         return framebuffer;
@@ -73,7 +99,7 @@ namespace SharpCG
                 switch (stage)
                 {
                     case Stage.Geometry:
-                        gBuffer = value;
+                        GBuffer = value;
                         break;
                     case Stage.Lighting:
                         framebuffer = value;
@@ -85,10 +111,31 @@ namespace SharpCG
         }
 
 
-        public Framebuffer GBuffer
+        public Mesh Mesh
         {
-            get{ return gBuffer;}
-            set{ gBuffer = value;}
+            get{return mesh; }
+            set{ mesh = value;}
+        }
+
+
+        public Light Light
+        {
+            get{return light; }
+            set{light = value;}
+        }
+
+
+        public GeometryPassMaterial GeometryPassMaterial
+        {
+            get {return geometryPassMaterial;}
+            set {geometryPassMaterial = value;}
+        }
+
+
+        public LightingPassMaterial LightingPassMaterial
+        {
+            get {return lightingPassMaterial;}
+            set {lightingPassMaterial = value; }
         }
 
 
@@ -149,7 +196,6 @@ namespace SharpCG
 
         private void RenderLight()
         {
-
 
             GL.Viewport(0, 0, 1024, 768);
             Camera camera = Camera.Main;

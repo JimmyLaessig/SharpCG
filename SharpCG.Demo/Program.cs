@@ -20,7 +20,7 @@ namespace SharpCG.Demo
         static void Main(string[] args)
         {
             Window window = Window.CreateSimpleWindow(1024, 768);
-
+            
             Shader.InitializeShaders();
 
 
@@ -42,126 +42,97 @@ namespace SharpCG.Demo
             RenderPass beforeLighting   = RenderPass.Before(lightingPass, "before lighting");
 
 
-            // Create GBuffer
-
-            Framebuffer gBuffer = new Framebuffer();
-           
-            gBuffer.AddRenderTarget(Texture2D.Empty(window.Width, window.Height), FramebufferAttachment.ColorAttachment0, new vec4(0)); // Diffuse
-            gBuffer.AddRenderTarget(Texture2D.Empty(window.Width, window.Height), FramebufferAttachment.ColorAttachment1, new vec4(0)); // Specular
-            gBuffer.AddRenderTarget(Texture2D.Empty(window.Width, window.Height), FramebufferAttachment.ColorAttachment2, new vec4(0)); // Position
-            gBuffer.AddRenderTarget(Texture2D.Empty(window.Width, window.Height), FramebufferAttachment.ColorAttachment3, new vec4(0)); // Normals
-
-            gBuffer.AddRenderTarget(Texture2D.Depth(window.Width, window.Height), FramebufferAttachment.DepthAttachment, new vec4(1)); // Depth
-
-            // //var clearAction =
+            Framebuffer gBuffer = DeferredRenderer.GBuffer;            
             window.RenderControl.AddImmediateGLEvent(geometryPass, new Action(() => gBuffer.Clear()));
-
-
+           
             {
-                SceneObject skybox = new SceneObject();
-                skybox.Name = "Skybox";
-                skybox.AddComponent(MeshExtensions.UnitCube);
-                var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
-                skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
-                                                                "Assets/skybox/skybox_right2048.png",
-                                                                "Assets/skybox/skybox_top2048.png",
-                                                                "Assets/skybox/skybox_bottom2048.png",
-                                                                "Assets/skybox/skybox_front2048.png",
-                                                                "Assets/skybox/skybox_back2048.png");
+            //    SceneObject skybox = new SceneObject();
+            //    skybox.Name = "Skybox";
+            //    skybox.AddComponent(MeshExtensions.UnitCube);
+            //    var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
+            //    skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
+            //                                                    "Assets/skybox/skybox_right2048.png",
+            //                                                    "Assets/skybox/skybox_top2048.png",
+            //                                                    "Assets/skybox/skybox_bottom2048.png",
+            //                                                    "Assets/skybox/skybox_front2048.png",
+            //                                                    "Assets/skybox/skybox_back2048.png");
 
-                var renderer = skybox.AddComponent<SkyboxRenderer>();
-                //renderer.Framebuffer = gBuffer;
-                renderer.RenderPass = lightingPass;
+            //    var renderer = skybox.AddComponent<SkyboxRenderer>();
+            //    renderer.Framebuffer = gBuffer;
+            //    renderer.RenderPass = beforeGeometry;
 
 
-                window.AddSceneObject(skybox);
+            //    window.AddSceneObject(skybox);
             }
 
 
             // Copy depth texture to back buffer
             {
                 SceneObject obj = new SceneObject();
+                obj.Name = "DepthbufferBlit";
                 obj.Transform.ToIdentity();
                 obj.AddComponent<Mesh>(MeshExtensions.FullscreenQuad);
 
                 var mat = obj.AddComponent<TextureToDepthMaterial>();
-                mat.DepthTexture = gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
+                mat.DepthTexture = DeferredRenderer.GBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
 
-                var renderer        = obj.AddComponent<TextureToDepthRenderer>();
-                renderer.RenderPass = beforeLighting;                                
+                var renderer = obj.AddComponent<TextureToDepthRenderer>();
+                renderer.RenderPass = beforeLighting;
 
-               
                 window.AddSceneObject(obj);
             }
 
             {
-                SceneObject container1 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
-                container1.Name = "Container1";
+                //SceneObject city = MeshExtensions.Load("Assets/city/NYC_Set_8.obj", MeshExtensions.Materials.Deferred);
+                //city.Name = "city";
+                //city.Transform.Scale = new vec3(0.01f, 0.01f, 0.01f);
+                //SceneObject.TraverseAndExecute<Mesh>(city, m =>
+                //{
+                //    var renderer = m.SceneObject.AddComponent<DeferredRenderer>();
+                //    renderer.RenderPass = geometryPass;
+                //    renderer.Stage = Stage.Geometry;
+                //    renderer.Framebuffer = gBuffer;
+                //});
 
-                var r2 = container1.Children[0].AddComponent<DeferredRenderer>();
-                r2.Framebuffer = gBuffer;
-                r2.RenderPass = geometryPass;
-                r2.Stage = Stage.Geometry;
-
-
-                container1.Children[0].Transform.ToIdentity();
-                container1.Children[0].AddComponent<Rotator>();
-                window.AddSceneObject(container1);
+                //window.AddSceneObject(city);                
             }
+
             {
-                SceneObject container2 = MeshExtensions.Load("Assets/model/container.fbx", MeshExtensions.Materials.Deferred);
-                container2.Name = "Container2";
+                SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
+                container.Name = "container";
+                container.Transform.ToIdentity();
+                container.Transform.Scale = new vec3(0.01f, 0.01f, 0.01f);
+                SceneObject.TraverseAndExecute<Mesh>(container, m =>
+                {
+                    var obj = m.SceneObject;
+                    obj.Transform.ToIdentity();
+                    var renderer        = obj.FindComponent<DeferredRenderer>();
+                    renderer.RenderPass = geometryPass;
+                    renderer.Framebuffer= gBuffer;
+                });
 
-
-                var renderer = container2.Children[0].AddComponent<DeferredRenderer>();
-                renderer.Framebuffer = gBuffer;
-                renderer.RenderPass = geometryPass;
-                renderer.Stage = Stage.Geometry;
-
-
-                container2.Children[0].Transform.ToIdentity();
-                container2.Children[0].Transform.Position = new vec3(2, 0, 0);
-
-
-                SceneObject pivot = new SceneObject();
-                pivot.Name = "Pivot";
-
-                pivot.AddChild(container2);
-                pivot.AddComponent<Rotator>();
-                window.AddSceneObject(pivot);
+                window.AddSceneObject(container);
             }
 
-            // Add A Light
+
+
+            // Add Ambient Light
             {
                 SceneObject lightObject = new SceneObject();
                 lightObject.Name = "Ambient Light";
                 var light = lightObject.AddComponent<AmbientLight>();
                 light.Color = new vec3(0.25f, 0.25f, 0.25f);
+
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;
                 renderer.Stage = Stage.Lighting;
-                renderer.GBuffer = gBuffer;
-                var material = lightObject.AddComponent<LightingPassMaterial>();
 
+                var material = lightObject.AddComponent<LightingPassMaterial>();
+                renderer.LightingPassMaterial = material;
 
                 window.AddSceneObject(lightObject);
             }
 
-            // Add A Light
-            {
-                //SceneObject lightObject = new SceneObject();
-                //lightObject.Name = "Ambient Light";
-                //var light = lightObject.AddComponent<AmbientLight>();
-                //light.Color = new vec3(0.25f, 0.25f, 0.25f);
-                //var renderer = lightObject.AddComponent<DeferredRenderer>();
-                //renderer.RenderPass = lightingPass;
-                //renderer.Stage = Stage.Lighting;
-                //renderer.GBuffer = gBuffer;
-                //var material = lightObject.AddComponent<LightingPassMaterial>();
-
-
-                //window.AddSceneObject(lightObject);
-            }
 
             Console.WriteLine("---------- Scenegraph ----------");
             printSceneGraph(window.Root, 0);

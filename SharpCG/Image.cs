@@ -77,7 +77,7 @@ namespace SharpCG
 
         public static Image FromFile(string path)
         {
-            return FromBitmap( Bitmap.FromFile(path) as Bitmap);           
+            return FromBitmap(System.Drawing.Image.FromFile(path) as Bitmap);           
         }
     }
 }

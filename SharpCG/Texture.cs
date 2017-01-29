@@ -13,7 +13,7 @@ namespace SharpCG
     public abstract class Texture : GLComponent
     {     
 
-        protected bool useMipMaps;
+        protected bool useMipMaps;      
 
 
         public abstract int Width

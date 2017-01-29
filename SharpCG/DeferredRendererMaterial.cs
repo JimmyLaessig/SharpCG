@@ -139,18 +139,21 @@ namespace SharpCG
             GL.Uniform4(uniformLocations["vMaterialDiffuse"], 1, diffuseAmount.Values);      
             GL.Uniform4(uniformLocations["vMaterialSpecular"], 1, specularAmount.Values);
 
-
-            GL.Uniform1(uniformLocations["texDiffuseMap"], 0);
-            diffuseMapTexture.Bind(TextureUnit.Texture0);
-
-
-            GL.Uniform1(uniformLocations["texNormalMap"], 1);
-            normalMapTexture.Bind(TextureUnit.Texture1);
-
-
-            GL.Uniform1(uniformLocations["texSpecularMap"], 2);
-            specularMapTexture.Bind(TextureUnit.Texture2);
-
+            if (HasDiffuseMap)
+            {
+                GL.Uniform1(uniformLocations["texDiffuseMap"], 0);
+                diffuseMapTexture.Bind(TextureUnit.Texture0);
+            }
+            if (HasNormapMap)
+            {
+                GL.Uniform1(uniformLocations["texNormalMap"], 1);
+                normalMapTexture.Bind(TextureUnit.Texture1);
+            }
+            if (HasSpecularMap)
+            {
+                GL.Uniform1(uniformLocations["texSpecularMap"], 2);
+                specularMapTexture.Bind(TextureUnit.Texture2);
+            }
         }
     }
 

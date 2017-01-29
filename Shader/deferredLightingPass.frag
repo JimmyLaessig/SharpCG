@@ -45,12 +45,14 @@ void main()
     vec4 vSpecularColor = texture(texSpecularAlbedo, vTexcoords);
 
 
-	fragColor.rgb = vDiffuseColor.rgb;
-	fragColor.a = vDiffuseColor.a;
+
 	if(hasGeometry > 0)
 	{
 		fragColor.rgb = vDiffuseColor.rgb * vLightColor;
 	}
-	
+	else
+	{
+		fragColor = vec4(0);
+	}
 
 }

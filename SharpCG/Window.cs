@@ -9,7 +9,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Input;
 
-
+using SharpCG.Base.Scenegraph;
 namespace SharpCG
 {
     public class Window : GameWindow
@@ -22,26 +22,26 @@ namespace SharpCG
 
         public RenderControl RenderControl
         {
-            get{return renderControl;}
+            get { return renderControl; }
         }
 
         public SceneObject Root
         {
-            get{ return root;}
+            get { return root; }
         }
 
         public static Window CreateSimpleWindow(int width, int height)
         {
             var window = new Window(width, height);
 
-            window.renderControl                    = new RenderControl();
-            window.renderControl.ClearColorFlag     = true;
-            window.renderControl.ClearColor         = Color4.White;
-            window.renderControl.ClearDepthFlag     = true;
-            window.renderControl.ClearDepth         = 0.0f;
-            window.renderControl.ClearStencilFlag   = false;
-            window.renderControl.ClearStencil       = 0;
-            window.renderControl.Viewport           = new Rectangle(0, 0, window.Size.Width, window.Size.Height);
+            window.renderControl = new RenderControl();
+            window.renderControl.ClearColorFlag = true;
+            window.renderControl.ClearColor = Color4.White;
+            window.renderControl.ClearDepthFlag = true;
+            window.renderControl.ClearDepth = 0.0f;
+            window.renderControl.ClearStencilFlag = false;
+            window.renderControl.ClearStencil = 0;
+            window.renderControl.Viewport = new Rectangle(0, 0, window.Size.Width, window.Size.Height);
 
 
             //window.screenSize   = new Vector2(window.Width, window.Height);
@@ -73,15 +73,11 @@ namespace SharpCG
         /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
-            Traverse<Component>(root, c => c.OnStart());          
+            SceneObject.TraverseAndExecute<Component>(root, c => c.OnStart());
         }
 
 
-        private static void Traverse<T>(SceneObject obj, Action<T> action) where T : Component
-        {         
-            obj.Components.OfType<T>().ToList().ForEach(action);
-            obj.Children.ForEach(c => Traverse(c, action));           
-        }
+
 
         protected override void OnKeyPress(OpenTK.KeyPressEventArgs e)
         {
@@ -97,7 +93,7 @@ namespace SharpCG
         /// <param name="e"></param>
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            
+
             // Update render control values if changed
             if (renderControl.isDirty)
             {
@@ -121,7 +117,7 @@ namespace SharpCG
 
 
 
-            renderControl.renderEvents.Values.ToList().ForEach(x => 
+            renderControl.renderEvents.Values.ToList().ForEach(x =>
             {
                 // Execute all immediate events on renderpass change
                 x.immediateEvents.ForEach(a => a.Invoke());
@@ -138,13 +134,7 @@ namespace SharpCG
 
 
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
-        {
-            //var rnd = new System.Random();
-            //var r   = (float)rnd.NextDouble();
-            //var g   = (float)rnd.NextDouble();
-            //var b   = (float)rnd.NextDouble();
-           
-            //renderControl.ClearColor = new Color4(r, g, b, 1.0f);
+        {            
             base.OnKeyUp(e);
         }
 
@@ -155,18 +145,12 @@ namespace SharpCG
         /// <param name="e"></param>
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            newObjects.ForEach(obj => Traverse<Component>(obj, c => c.OnStart()));
+            newObjects.ForEach(obj => SceneObject.TraverseAndExecute<Component>(obj, c => c.OnStart()));
             newObjects.Clear();
 
-            //Traverse<GLComponent>(root, c => { if (c.IsDirty) c.InitGL(); });
-            //Traverse<GLComponent>(root, c => { if (c.IsDirty) c.AfterInitGL();});
-            //Traverse<Component>(root, c => c.Update(e.Time));    
-
-           
-
             var glComponents = Component.All.OfType<GLComponent>().ToList();
-            glComponents.ForEach(c => { if (c.IsDirty) c.InitGL();});
-            glComponents.ForEach(c => { if (c.IsDirty) c.LateInitGL();});
+            glComponents.ForEach(c => { if (c.IsDirty) c.InitGL(); });
+            glComponents.ForEach(c => { if (c.IsDirty) c.LateInitGL(); });
 
 
             Component.All.ForEach(c => c.Update(e.Time));
@@ -206,23 +190,15 @@ namespace SharpCG
             }
             // Execute GLCommand
             renderer.RenderGL();
-       
+
         }
 
 
         public void AddSceneObject(SceneObject obj)
         {
-            Traverse<Renderer>(obj, r =>renderControl.AddRenderGLEvent(r.RenderPass, () => this.OnRenderGL(r)));
+            SceneObject.TraverseAndExecute<Renderer>(obj, r => renderControl.AddRenderGLEvent(r.RenderPass, () => this.OnRenderGL(r)));
             root.Children.Add(obj);
         }
 
-
-        // Collects Components of type T
-        public static List<T> Collect<T>(SceneObject obj)
-        {
-            var ls = obj.Components.OfType<T>().ToList();
-            obj.Children.ForEach(child => ls.AddRange(Collect<T>(child)));            
-            return ls;
-        }
     }
 }
