@@ -54,6 +54,8 @@ vec3 calcNormal(vec3 normal, vec3 tangent, vec3 bitangent)
 }
 
 
+
+
 void main()
 {
 	

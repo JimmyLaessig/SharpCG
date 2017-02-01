@@ -145,7 +145,6 @@ namespace SharpCG
 
         private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory, Materials materialType)
         {
-
            
             Assimp.Vector3D t; Assimp.Vector3D s; Assimp.Quaternion r;
             node.Transform.Decompose(out s, out r, out t);
@@ -199,6 +198,7 @@ namespace SharpCG
             if (node.HasChildren)
             {
                 var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null);
+                children.ToList().ForEach(c => obj.AddChild(c));
                 obj.Children.AddRange(children);
             }          
 

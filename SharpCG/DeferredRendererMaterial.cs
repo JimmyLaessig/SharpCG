@@ -25,7 +25,7 @@ namespace SharpCG
 
         private bool normalMappingEnabled = false;
 
-
+        
         public override void OnStart()
         {
             Shader = Shader.Find("deferredGeometryPass");
@@ -165,7 +165,10 @@ namespace SharpCG
         private Texture2D diffuseAlbedoTexture;
         private Texture2D specularAlbedoTexture;
 
+        private Texture2D depthTexture;
+
         private vec3 cameraPosition;
+
 
         private vec3 lightDirection;
         private vec3 lightPosition;
@@ -174,6 +177,7 @@ namespace SharpCG
 
         private int lightType;
 
+        private mat4 inverseViewProjectionMatrix;
 
         public override void OnStart()
         {
@@ -212,7 +216,7 @@ namespace SharpCG
 
         public vec3 CameraPosition
         {
-            get { return cameraPosition;}
+            get { return cameraPosition; }
 
             set{cameraPosition = value;}
         }
@@ -254,6 +258,18 @@ namespace SharpCG
         }
 
 
+        public mat4 InverseViewProjectionMatrix
+        {
+            get{return inverseViewProjectionMatrix;}
+            set{inverseViewProjectionMatrix = value;}
+        }
+
+        public Texture2D DepthTexture
+        {
+            get{return depthTexture;}
+            set{ depthTexture = value;}
+        }
+
         protected override void InitUniformLocations()
         {
             base.InitUniformLocations();
@@ -262,8 +278,12 @@ namespace SharpCG
             uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
             uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
             uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
+            uniformLocations["texDepth"]            = GL.GetUniformLocation(Shader.ProgramHandle, "texDepth");
 
+            
+            uniformLocations["mInvViewProj"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mInvViewProj");
             uniformLocations["vCameraPosition"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vCameraPosition");
+            uniformLocations["vViewportSize"]       = GL.GetUniformLocation(Shader.ProgramHandle, "vViewportSize");
 
             uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
             uniformLocations["vLightPosition"]      = GL.GetUniformLocation(Shader.ProgramHandle, "vLightPosition");
@@ -292,7 +312,12 @@ namespace SharpCG
             GL.Uniform1(uniformLocations["texWorldNormal"], 3);
             worldNormalTexture.Bind(TextureUnit.Texture3);
 
+            GL.Uniform1(uniformLocations["texDepth"], 4);
+            depthTexture.Bind(TextureUnit.Texture4);
+
             GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
+
+            GL.UniformMatrix4(uniformLocations["mInvViewProj"], 1, false, inverseViewProjectionMatrix.Values1D);
 
             GL.Uniform1(uniformLocations["iLightType"], lightType);
 
@@ -301,9 +326,7 @@ namespace SharpCG
             GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
             GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
 
-
             base.Bind(ref textureUnit);
         }
-
     }
 }

@@ -13,7 +13,6 @@ void main()
 {
 	vec4 position	= mWVP * vec4(vPosition, 1.0f);
 	
-	//position = position * 2.0 - 1.0;
 	vTexcoords		= position.xy * 0.5 + 0.5;
     gl_Position		= position;
 }

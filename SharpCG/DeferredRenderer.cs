@@ -157,7 +157,7 @@ namespace SharpCG
         {
             Camera camera = Camera.Main;
 
-            GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);         
             GL.Enable(EnableCap.DepthTest);
            
             GL.DepthMask(true);
@@ -172,13 +172,13 @@ namespace SharpCG
             var V = camera.ViewMatrix;
             var P = camera.ProjectionMatrix;
             
-            geometryPassMaterial.WorldMatrix = W;
-            geometryPassMaterial.ViewMatrix = V;
-            geometryPassMaterial.ProjectionMatrix = P;
-            geometryPassMaterial.WvpMatrix = P * V * W;
+            geometryPassMaterial.WorldMatrix        = W;
+            geometryPassMaterial.ViewMatrix         = V;
+            geometryPassMaterial.ProjectionMatrix   = P;
+            geometryPassMaterial.WvpMatrix          = P * V * W;
             geometryPassMaterial.NormalMatrix = sceneObject.Transform.NormalMatrix;
             geometryPassMaterial.NormalMappingEnabled = true;
-
+            
 
             uint unit = 0;
             geometryPassMaterial.Bind(ref unit);
@@ -214,21 +214,26 @@ namespace SharpCG
             var W = sceneObject.Transform.WorldMatrix;
             var V = camera.ViewMatrix;
             var P = camera.ProjectionMatrix;
-
-            if (light.LightType == 0)
+                      
+            lightingPassMaterial.WorldMatrix        = W;
+            lightingPassMaterial.ViewMatrix         = V;
+            lightingPassMaterial.ProjectionMatrix   = P;
+            if (light.LightType == 0 || light.LightType == 1)
             {
-                lightingPassMaterial.WorldMatrix        = mat4.Identity;
-                lightingPassMaterial.ViewMatrix         = mat4.Identity;
-                lightingPassMaterial.ProjectionMatrix   = mat4.Identity;
-                lightingPassMaterial.WvpMatrix          = mat4.Identity;
-                lightingPassMaterial.NormalMatrix       = mat3.Identity;
-            }         
+                lightingPassMaterial.WvpMatrix = mat4.Identity;
+            }
+            else
+            {
+                lightingPassMaterial.WvpMatrix = P * V * W;
+            }
+            lightingPassMaterial.NormalMatrix       = mat3.Identity;
+            
         
             lightingPassMaterial.DiffuseAlbedoTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
             lightingPassMaterial.SpecularAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
             lightingPassMaterial.WorldPositionTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
             lightingPassMaterial.WorldNormalTexture     = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment3);
-          
+            lightingPassMaterial.DepthTexture           = gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
 
 
             lightingPassMaterial.LightType          = light.LightType;
@@ -237,8 +242,9 @@ namespace SharpCG
             lightingPassMaterial.LightColor         = light.Color;
             lightingPassMaterial.LightAttenuation   = light.Attenuation;
 
-            lightingPassMaterial.CameraPosition     = camera.Transform.Position;
-
+            lightingPassMaterial.InverseViewProjectionMatrix =  V.Inverse * P.Inverse;
+            lightingPassMaterial.CameraPosition     = camera.Transform.WorldPosition;
+            
             uint unit = 0;
             lightingPassMaterial.Bind(ref unit);
 

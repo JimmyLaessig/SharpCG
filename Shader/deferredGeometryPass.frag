@@ -17,6 +17,7 @@ uniform sampler2D texNormalMap;
 uniform sampler2D texSpecularMap;
 
 
+
 uniform vec3 vMaterialEmissive;
 uniform vec4 vMaterialDiffuse;
 uniform vec4 vMaterialSpecular;
@@ -40,7 +41,7 @@ vec3 calcNormal(vec3 normal, vec3 tangent, vec3 bitangent)
 {
 	if(bHasNormalMap)
 	{	
-		vec3 perturbedNormal	= normalize(texture(texNormalMap, pTexcoords).xyz * 2.0 -1.0);
+		vec3 perturbedNormal	= (texture(texNormalMap, pTexcoords).xyz * 2.0 -1.0);
 		mat3 mTBN				= mat3(tangent, bitangent, normal);
 		return normalize(mTBN * perturbedNormal);
 	}
@@ -65,6 +66,7 @@ void main()
 	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
 
 	gDiffuseAlbedo		= vDiffuseColor * vMaterialDiffuse;
-	gSpecularAlbedo		= vec4 (vSpecularColor.rgb * vMaterialSpecular.rgb, vMaterialSpecular.a);
+	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular.rgb;
+	gSpecularAlbedo.a	= vMaterialSpecular.a;
 
 }

@@ -20,6 +20,7 @@ namespace SharpCG
         public abstract vec3 Direction
         {
             get;
+            set;
         }
 
         public abstract int LightType
@@ -29,12 +30,14 @@ namespace SharpCG
         public abstract vec3 Position
         {
             get;
+            set;
         }
 
 
         public abstract vec3 Attenuation
         {
             get;
+            set;
         }
 
         public virtual vec3 Color

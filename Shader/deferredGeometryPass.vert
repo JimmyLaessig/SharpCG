@@ -25,8 +25,8 @@ void main()
 {
 	gl_Position		= (mWVP		* vec4(vPosition, 1.0f));   
 	pWorldPosition	= (mWorld	* vec4(vPosition, 1.0f)).xyz;
-    pWorldNormal	= normalize(mNormal * vNormal);   
-    pWorldTangent	= normalize(mNormal * vTangent);
-    pWorldBitangent	= normalize(mNormal * vBitangent);
+    pWorldNormal	= (mNormal * vNormal);   
+    pWorldTangent	= (mNormal * vTangent);
+    pWorldBitangent	= (mNormal * vBitangent);
 	pTexcoords		= vTexcoords;	  
 }

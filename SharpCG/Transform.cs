@@ -41,6 +41,55 @@ namespace SharpCG
         }
 
 
+        public vec3 WorldScale
+        {
+            get
+            {
+                if (Parent == null)
+                    return scale;
+                return Parent.WorldScale * scale;
+            }
+            set
+            {
+                if (Parent == null)
+                    scale = value;
+
+                scale = value / Parent.WorldScale;
+            }
+        }
+
+
+        public vec3 WorldPosition
+        {
+            get
+            {
+                if (Parent == null)
+                    return position;
+                return Parent.WorldPosition + position;
+            }
+            set
+            {
+                if (Parent == null)
+                    position = value;
+                position = value - Parent.WorldPosition;
+            }
+        }
+
+
+        public quat WorldRotation
+        {
+            get
+            {
+                if (Parent == null)
+                    return rotation;
+                return rotation * Parent.WorldRotation;
+            }
+            set
+            {
+
+            }
+        }
+
 
         public void Rotate(vec3 axis, float angle)
         {
@@ -56,7 +105,6 @@ namespace SharpCG
             position    = position + translation;
             dirty       = true;
         }
-
 
 
         public vec3 Scale

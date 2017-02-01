@@ -67,15 +67,15 @@ namespace SharpCG
             GL.BindTexture(TextureTarget.Texture2D, handle);
 
           
-            GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, (int)Width, (int)Height, 0, format, type, image.Data);
-
+            GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, Width, Height, 0, format, type, image.Data);
+            var error = GL.GetError();
 
             if (format == PixelFormat.DepthComponent || format == PixelFormat.DepthStencil)
             {
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMagFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-               // GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int)TextureCompareMode.CompareRefToTexture);
-              //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)DepthFunction.Lequal);
+                // GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareMode, (int)TextureCompareMode.CompareRefToTexture);
+                //  GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureCompareFunc, (int)DepthFunction.Lequal);
             }
             else
             {
@@ -118,6 +118,16 @@ namespace SharpCG
             texture.Name        = "empty";
             texture.useMipMaps  = useMipMaps;
             texture.isDirty     = true;
+
+            texture.internalFormat  = PixelInternalFormat.Rgba32f;
+            texture.format          = PixelFormat.Rgba;
+            texture.type            = PixelType.UnsignedByte;
+
+        //private PixelInternalFormat internalFormat = PixelInternalFormat.Rgba;
+        //private PixelFormat format = PixelFormat.Bgra;
+        //private PixelType type = PixelType.UnsignedByte;
+
+
             return texture;
         }
 
@@ -144,10 +154,6 @@ namespace SharpCG
 
         public static Texture2D Load(string path, bool useMipMaps = true)
         {
-            if(textures.ContainsKey(path))
-            {
-                Console.WriteLine("asdasdasdasasd");
-            }
             if (!textures.ContainsKey(path))
             {
                 Texture2D texture = new Texture2D();

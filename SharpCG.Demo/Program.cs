@@ -26,7 +26,7 @@ namespace SharpCG.Demo
 
             {
                 // Create Camera
-                Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 10000);
+                Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 100000);
                 Camera.Main.Transform.Position = new vec3(0f, 2.5f, 5f);
                 Camera.Main.Transform.Rotation = quat.FromAxisAngle(glm.Radians(-30f), vec3.UnitX);
                 Camera.Main.SceneObject.AddComponent<CameraController>();
@@ -83,45 +83,71 @@ namespace SharpCG.Demo
             }
 
             {
-                //SceneObject city = MeshExtensions.Load("Assets/city/NYC_Set_8.obj", MeshExtensions.Materials.Deferred);
-                //city.Name = "city";
-                //city.Transform.Scale = new vec3(0.01f, 0.01f, 0.01f);
-                //SceneObject.TraverseAndExecute<Mesh>(city, m =>
+                SceneObject plane = MeshExtensions.Load("Assets/plane/plane.fbx", MeshExtensions.Materials.Deferred);
+                plane.Name = "plane";
+                plane.Transform.ToIdentity();
+                plane.Transform.Scale = new vec3(5);
+
+
+                SceneObject.TraverseAndExecute<Mesh>(plane, m =>
+                {
+                    var obj = m.SceneObject;
+                    var scale = obj.Transform.Scale;
+                    obj.Transform.ToIdentity();
+
+                    var renderer = obj.FindComponent<DeferredRenderer>();
+                    renderer.RenderPass = geometryPass;
+                    renderer.Framebuffer = gBuffer;
+
+                });
+
+
+                window.AddSceneObject(plane);
+            }
+            {
+                //SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
+                //container.Name = "container";
+                //container.Transform.ToIdentity();
+                //container.Transform.Position = new vec3(0.0f, 0.5f, 0.0f);
+                //SceneObject.TraverseAndExecute<Mesh>(container, m =>
                 //{
-                //    var renderer = m.SceneObject.AddComponent<DeferredRenderer>();
+                //    var obj = m.SceneObject;
+                //    obj.Transform.ToIdentity();
+                //    var renderer = obj.FindComponent<DeferredRenderer>();
                 //    renderer.RenderPass = geometryPass;
-                //    renderer.Stage = Stage.Geometry;
                 //    renderer.Framebuffer = gBuffer;
                 //});
 
-                //window.AddSceneObject(city);                
+                //window.AddSceneObject(container);
             }
-
-            {
-                SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
-                container.Name = "container";
-                container.Transform.ToIdentity();
-                container.Transform.Scale = new vec3(0.01f, 0.01f, 0.01f);
-                SceneObject.TraverseAndExecute<Mesh>(container, m =>
-                {
-                    var obj = m.SceneObject;
-                    obj.Transform.ToIdentity();
-                    var renderer        = obj.FindComponent<DeferredRenderer>();
-                    renderer.RenderPass = geometryPass;
-                    renderer.Framebuffer= gBuffer;
-                });
-
-                window.AddSceneObject(container);
-            }
-
 
 
             // Add Ambient Light
             {
+                //SceneObject lightObject = new SceneObject();
+                //lightObject.Name = "Ambient Light";
+                //var light = lightObject.AddComponent<AmbientLight>();
+                //light.Color = new vec3(0.25f, 0.25f, 0.25f);
+
+                //var renderer = lightObject.AddComponent<DeferredRenderer>();
+                //renderer.RenderPass = lightingPass;
+                //renderer.Stage = Stage.Lighting;
+
+                //var material = lightObject.AddComponent<LightingPassMaterial>();
+                //renderer.LightingPassMaterial = material;
+
+                //window.AddSceneObject(lightObject);
+            }
+
+
+            /// Add Directional Light
+            {
                 SceneObject lightObject = new SceneObject();
-                lightObject.Name = "Ambient Light";
-                var light = lightObject.AddComponent<AmbientLight>();
-                light.Color = new vec3(0.25f, 0.25f, 0.25f);
+                lightObject.Name = "Directional Light";
+                var light = lightObject.AddComponent<DirectionalLight>();
+
+                light.Color     = new vec3(1);
+                light.Direction = new vec3(0f, -1f, 0f);
 
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;

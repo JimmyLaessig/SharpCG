@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using GlmSharp;
 using OpenTK.Graphics.OpenGL4;
 
+
 namespace SharpCG
 {
     public static class MaterialExtensions
@@ -46,21 +47,26 @@ namespace SharpCG
             return material;
         }
 
+
         public static GeometryPassMaterial Create2(Assimp.Material aiMaterial, string directory)
         {
             GeometryPassMaterial material = new GeometryPassMaterial();
 
             if (aiMaterial.HasColorDiffuse)
             {
-                material.DiffuseAmount = new vec4(aiMaterial.ColorDiffuse.R, aiMaterial.ColorDiffuse.G, aiMaterial.ColorDiffuse.B, aiMaterial.ColorDiffuse.A);
+                material.DiffuseAmount = new vec4(aiMaterial.ColorDiffuse.R, aiMaterial.ColorDiffuse.G, aiMaterial.ColorDiffuse.B, aiMaterial.ColorDiffuse.A) ;
             }
             if (aiMaterial.HasOpacity)
             {
                 material.DiffuseAmount = new vec4(material.DiffuseAmount.rgb, aiMaterial.Opacity);
             }
+            if (aiMaterial.HasColorSpecular)
+            {
+                material.SpecularAmount = new vec3(aiMaterial.ColorSpecular.R, aiMaterial.ColorSpecular.G, aiMaterial.ColorSpecular.B) * 2.0f;
+            }
             if (aiMaterial.HasShininess)
             {
-                material.SpecularExponent = aiMaterial.Shininess;
+                material.SpecularExponent = 1 + (aiMaterial.Shininess) * 5.10f;                
             }
             if (aiMaterial.HasTextureDiffuse)
             {
@@ -70,6 +76,10 @@ namespace SharpCG
             {
                 material.NormalMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureNormal.FilePath, true);
             }
+            //if (aiMaterial.HasTextureHeight)
+            //{
+            //    material.NormalMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureHeight.FilePath, true);
+            //}
             if (aiMaterial.HasTextureSpecular)
             {
                 material.SpecularMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
