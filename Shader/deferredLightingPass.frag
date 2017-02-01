@@ -84,26 +84,20 @@ void main()
 		vec3 N = vWorldNormal;
 
 		//vec3 N = vec3(0, 1, 0);
+		vec3 V = normalize( vCameraPosition - vWorldPosition);
 
 		vec3 L = normalize(-vLightDirection);	
-		vec3 V = normalize( vCameraPosition - vWorldPosition);
+		
 
 		vec3 H = normalize( V + L );
 
-		//vec3 R = normalize(reflect (L, N));
+		vec3 R = normalize(-reflect (L, N));
 			
 		
 		vec3 Id	= vDiffuseAlbedo.rgb * saturate(dot(N,L));		
-		vec3 Is	= vec3(1) * pow (saturate (dot (N, H)), 512.0f);
-		//vec3 Is = vec3(1) * pow(max(0.0, dot(R, V)),  512.0f);
+		vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(R, V)),  512f);
 		fragColor.rgb	= ( Id + Is) * vLightColor;
 		fragColor.a		= 1.0f;
 		
 	}
-
-	fragColor.xyz = vWorldPosition;
-	fragColor.a = 1.0f;
-	//fragColor.z = 0.0f;
-	//fragColor.xy = vTexcoords * 2.0 - vec2(1.0);
-	//fragColor.xyz = vec3(depth);
 }

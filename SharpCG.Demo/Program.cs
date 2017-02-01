@@ -83,60 +83,101 @@ namespace SharpCG.Demo
             }
 
             {
-                SceneObject plane = MeshExtensions.Load("Assets/plane/plane.fbx", MeshExtensions.Materials.Deferred);
-                plane.Name = "plane";
-                plane.Transform.ToIdentity();
-                plane.Transform.Scale = new vec3(5);
+                //SceneObject plane = MeshExtensions.Load("Assets/plane/plane.fbx", MeshExtensions.Materials.Deferred);
+                //plane.Name = "plane";
+                //plane.Transform.ToIdentity();
+                //plane.Transform.Scale = new vec3(5);
 
 
-                SceneObject.TraverseAndExecute<Mesh>(plane, m =>
-                {
-                    var obj = m.SceneObject;
-                    var scale = obj.Transform.Scale;
-                    obj.Transform.ToIdentity();
-
-                    var renderer = obj.FindComponent<DeferredRenderer>();
-                    renderer.RenderPass = geometryPass;
-                    renderer.Framebuffer = gBuffer;
-
-                });
-
-
-                window.AddSceneObject(plane);
-            }
-            {
-                //SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
-                //container.Name = "container";
-                //container.Transform.ToIdentity();
-                //container.Transform.Position = new vec3(0.0f, 0.5f, 0.0f);
-                //SceneObject.TraverseAndExecute<Mesh>(container, m =>
+                //SceneObject.TraverseAndExecute<Mesh>(plane, m =>
                 //{
                 //    var obj = m.SceneObject;
+                //    var scale = obj.Transform.Scale;
                 //    obj.Transform.ToIdentity();
+
                 //    var renderer = obj.FindComponent<DeferredRenderer>();
                 //    renderer.RenderPass = geometryPass;
                 //    renderer.Framebuffer = gBuffer;
+
                 //});
 
-                //window.AddSceneObject(container);
+
+                //window.AddSceneObject(plane);
+            }
+
+            {
+                //SceneObject sphere = MeshExtensions.Load("Assets/sphere/sphere.fbx", MeshExtensions.Materials.Deferred);
+                //sphere.Name = "Sphere";
+                ////sphere.Transform.ToIdentity();
+                ////sphere.Transform.Scale = new vec3(5);
+
+
+                //SceneObject.TraverseAndExecute<Mesh>(sphere, m =>
+                //{
+                //    var obj = m.SceneObject;
+                //    //var scale = obj.Transform.Scale;
+                //   // obj.Transform.ToIdentity();
+
+                //    var renderer = obj.FindComponent<DeferredRenderer>();
+                //    renderer.RenderPass = geometryPass;
+                //    renderer.Framebuffer = gBuffer;
+
+                //});
+
+                //window.AddSceneObject(sphere);
+            }
+            {
+                SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
+                container.Name = "container";
+                container.Transform.ToIdentity();
+                container.Transform.Position = new vec3(1.0f, 0.5f, 0.0f);
+                SceneObject.TraverseAndExecute<Mesh>(container, m =>
+                {
+                    var obj = m.SceneObject;
+                    obj.Transform.ToIdentity();
+                    var renderer = obj.FindComponent<DeferredRenderer>();
+                    renderer.RenderPass = geometryPass;
+                    renderer.Framebuffer = gBuffer;
+                });
+
+                window.AddSceneObject(container);
+            }
+
+            {
+                SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
+                container.Name = "container";
+                container.Transform.ToIdentity();
+                container.Transform.Position = new vec3(-1.0f, 0.5f, 0.0f);
+
+                SceneObject.TraverseAndExecute<Mesh>(container, m =>
+                {
+                    var obj = m.SceneObject;
+                    obj.Transform.ToIdentity();
+                    var renderer = obj.FindComponent<DeferredRenderer>();
+                    renderer.GeometryPassMaterial.NormalMappingEnabled = false;
+                    renderer.RenderPass = geometryPass;
+                    renderer.Framebuffer = gBuffer;
+                });
+
+                window.AddSceneObject(container);
             }
 
 
             // Add Ambient Light
             {
-                //SceneObject lightObject = new SceneObject();
-                //lightObject.Name = "Ambient Light";
-                //var light = lightObject.AddComponent<AmbientLight>();
-                //light.Color = new vec3(0.25f, 0.25f, 0.25f);
+                SceneObject lightObject = new SceneObject();
+                lightObject.Name = "Ambient Light";
+                var light = lightObject.AddComponent<AmbientLight>();
+                light.Color = new vec3(0.25f, 0.25f, 0.25f);
 
-                //var renderer = lightObject.AddComponent<DeferredRenderer>();
-                //renderer.RenderPass = lightingPass;
-                //renderer.Stage = Stage.Lighting;
+                var renderer = lightObject.AddComponent<DeferredRenderer>();
+                renderer.RenderPass = lightingPass;
+                renderer.Stage = Stage.Lighting;
 
-                //var material = lightObject.AddComponent<LightingPassMaterial>();
-                //renderer.LightingPassMaterial = material;
+                var material = lightObject.AddComponent<LightingPassMaterial>();
+                renderer.LightingPassMaterial = material;
 
-                //window.AddSceneObject(lightObject);
+                window.AddSceneObject(lightObject);
             }
 
 
@@ -147,7 +188,7 @@ namespace SharpCG.Demo
                 var light = lightObject.AddComponent<DirectionalLight>();
 
                 light.Color     = new vec3(1);
-                light.Direction = new vec3(0f, -1f, 0f);
+                light.Direction = new vec3(0f, -1f, -1f);
 
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;

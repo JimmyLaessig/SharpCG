@@ -176,8 +176,8 @@ namespace SharpCG
             geometryPassMaterial.ViewMatrix         = V;
             geometryPassMaterial.ProjectionMatrix   = P;
             geometryPassMaterial.WvpMatrix          = P * V * W;
-            geometryPassMaterial.NormalMatrix = sceneObject.Transform.NormalMatrix;
-            geometryPassMaterial.NormalMappingEnabled = true;
+            geometryPassMaterial.NormalMatrix       = sceneObject.Transform.NormalMatrix;
+            
             
 
             uint unit = 0;

@@ -23,7 +23,7 @@ namespace SharpCG
         private vec4 diffuseAmount      = new vec4(1, 1, 1, 1);
         private vec4 specularAmount     = new vec4(1, 1, 1, 128);
 
-        private bool normalMappingEnabled = false;
+        private bool normalMappingEnabled = true;
 
         
         public override void OnStart()
@@ -108,9 +108,7 @@ namespace SharpCG
 
 
         protected override void InitUniformLocations()
-        {
-            
-           
+        {                     
             uniformLocations["bHasDiffuseMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "bHasDiffuseMap");          
             uniformLocations["bHasSpecularMap"]     = GL.GetUniformLocation(Shader.ProgramHandle, "bHasSpecularMap");
             uniformLocations["bHasNormalMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasNormalMap");
