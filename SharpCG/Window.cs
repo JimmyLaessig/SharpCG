@@ -196,9 +196,10 @@ namespace SharpCG
 
         public void AddSceneObject(SceneObject obj)
         {
+            obj.Runtime = this;
             SceneObject.TraverseAndExecute<Renderer>(obj, r => renderControl.AddRenderGLEvent(r.RenderPass, () => this.OnRenderGL(r)));
-            root.Children.Add(obj);
-        }
 
+            root.AddChild(obj);           
+        }
     }
 }

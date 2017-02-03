@@ -171,22 +171,24 @@ namespace SharpCG
 
                 if (materialType == Materials.SimpleLighting)
                 {
-                    var mat         = obj.AddComponent(MaterialExtensions.Create(aiMaterial, directory));
-                    var renderer    = obj.AddComponent<MeshRenderer>();
+                    // var mat         = obj.AddComponent(MaterialExtensions.Create(aiMaterial, directory));
+                    //var renderer    = obj.AddComponent<MeshRenderer>();
                     // TODO LINK RENDERER, MATERIAL AND MESH
                 }
                 else if (materialType == Materials.Deferred)
                 {
-                    var mat         = obj.AddComponent(MaterialExtensions.Create2(aiMaterial, directory));
+                    var material = obj.AddComponent<GeometryPassMaterial>();
+                    MaterialExtensions.Convert(aiMaterial, directory, ref material);
                     var renderer    = obj.AddComponent<DeferredRenderer>();
-                    renderer.Stage = Stage.Geometry;
-                    renderer.Mesh = mesh;
-                    renderer.GeometryPassMaterial   = mat;
-                   
-                    
+                    renderer.Stage  = Stage.Geometry;
+                    renderer.Mesh   = mesh;
+                    renderer.GeometryPassMaterial = material;                                       
                 }                          
             });
-
+            if(node.HasMeshes)
+            {
+                obj.AddTag("ShadowCaster");
+            }
 
             // Remove unwanted (empty) scene objects
             if (!node.HasMeshes && !node.HasChildren)
@@ -198,8 +200,7 @@ namespace SharpCG
             if (node.HasChildren)
             {
                 var children = node.Children.ToList().ConvertAll(child => Traverse(scene, child, directory, materialType)).Where(c => c != null);
-                children.ToList().ForEach(c => obj.AddChild(c));
-                obj.Children.AddRange(children);
+                children.ToList().ForEach(c => obj.AddChild(c));               
             }          
 
             // Return composed scene object

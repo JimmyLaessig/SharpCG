@@ -9,6 +9,10 @@ namespace SharpCG
 {
     public class SceneObject
     {
+        private Window runtime;
+        
+
+        private HashSet<string> tags;
 
         private Transform transform;
         private List<Component> components;
@@ -23,10 +27,18 @@ namespace SharpCG
 
         public SceneObject()
         {
+            tags        = new HashSet<string>();
             components  = new List<Component>();
             children    = new List<SceneObject>();
             transform   = this.AddComponent<Transform>();
             Name = "";
+            
+        }
+
+
+        public SceneObject(string name) : this()
+        {
+            Name = name;
         }
 
 
@@ -73,6 +85,13 @@ namespace SharpCG
             else
                 return null;
         }
+
+
+        public List<T> FindComponents<T>() where T : Component
+        {
+            return components.OfType<T>().ToList();           
+        }
+
 
         public List<T> FindComponentsInChildren<T>() where T : Component
         {
@@ -127,6 +146,41 @@ namespace SharpCG
             set{parent = value;}
         }
 
+        public HashSet<string> Tags
+        {
+            get{return tags;}
+        }
+
+        public Window Runtime
+        {
+            get
+            {
+                return runtime;
+            }
+
+            set
+            {
+                runtime = value;
+            }
+        }
+
+        public void AddTag(string tag)
+        {
+            tags.Add(tag);
+        }
+
+
+        public void RemoveTag(string tag)
+        {
+            tags.Remove(tag);
+        }
+
+
+        public bool HasTag(string tag)
+        {
+            return tags.Contains(tag);
+        }
+
 
         public static void TraverseAndExecute<T>(SceneObject obj, Action<T> action) where T : Component
         {
@@ -135,11 +189,29 @@ namespace SharpCG
         }
 
 
+        public static void TraverseAndExecute(SceneObject obj, Action<SceneObject> action)
+        {
+            action.Invoke(obj);
+            obj.Children.ForEach(c => TraverseAndExecute(c, action));
+        }
+
+
         // Collects Components of type T
-        public static List<T> TraverseAndCollect<T>(SceneObject obj)
+        public static List<T> Collect<T>(SceneObject obj) where T : Component
         {
             var ls = obj.Components.OfType<T>().ToList();
-            obj.Children.ForEach(child => ls.AddRange(TraverseAndCollect<T>(child)));
+            obj.Children.ForEach(child => ls.AddRange(Collect<T>(child)));
+            return ls;
+        }
+
+
+        public static List<T> CollectWhere<T>(SceneObject obj, Func<SceneObject, bool> f) where T : Component
+        {
+            var ls = new List<T>();
+
+            if (f(obj)) ls.AddRange(obj.FindComponents<T>());
+            
+            obj.Children.ForEach(child => ls.AddRange(CollectWhere<T>(child, f)));
             return ls;
         }
     }

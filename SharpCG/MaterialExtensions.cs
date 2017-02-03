@@ -48,10 +48,9 @@ namespace SharpCG
         }
 
 
-        public static GeometryPassMaterial Create2(Assimp.Material aiMaterial, string directory)
+        public static void Convert(Assimp.Material aiMaterial, string directory, ref GeometryPassMaterial material)
         {
-            GeometryPassMaterial material = new GeometryPassMaterial();
-
+            
             if (aiMaterial.HasColorDiffuse)
             {
                 material.DiffuseAmount = new vec4(aiMaterial.ColorDiffuse.R, aiMaterial.ColorDiffuse.G, aiMaterial.ColorDiffuse.B, aiMaterial.ColorDiffuse.A) ;
@@ -83,10 +82,7 @@ namespace SharpCG
             if (aiMaterial.HasTextureSpecular)
             {
                 material.SpecularMapTexture = Texture2D.Load(directory + "/" + aiMaterial.TextureSpecular.FilePath, true);
-            }
-
-            return material;
+            }           
         }
-
     }
 }

@@ -27,17 +27,14 @@ namespace SharpCG
             get {
                 if(main == null)
                 {                   
-                    Camera cam  = new Camera();
-                    cam.zNear   = 0.1f;
-                    cam.zFar    = 1000;
-                    cam.fov     = 60.0f;
-                    cam.aspect  = 1024.0f / 768.0f;
+                    SceneObject camObject = new SceneObject();
+                    camObject.Name = "Camera";
+                    Camera cam = camObject.AddComponent<Camera>();
+                    cam.zNear = 0.1f;
+                    cam.zFar = 1000;
+                    cam.fov = 60.0f;
+                    cam.aspect = 1024.0f / 768.0f;
                     cam.SetProjectionMatrix(cam.fov, cam.aspect, cam.zNear, cam.zFar);
-
-                    SceneObject obj = new SceneObject();
-                    obj.Name = "Camera";
-                    obj.AddComponent(cam);
-
                     main = cam;
                 }
                 return main;

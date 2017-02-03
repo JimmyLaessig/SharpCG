@@ -29,31 +29,7 @@ namespace SharpCG
         private Light light;
 
 
-        private static Framebuffer gBuffer;
-
-
-        public static Framebuffer GBuffer
-        {
-            get
-            {
-                if (gBuffer == null)
-                {
-                    gBuffer = new Framebuffer();
-
-                    // TODO CHANGE THIS
-                    int width = 1024;
-                    int height = 758;
-
-                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(0));   // Diffuse
-                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment1, new vec4(0));   // Specular
-                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment2, new vec4(0));   // Position
-                    gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment3, new vec4(0));   // Normals
-                    gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment, new vec4(1));    // Depth
-                }
-                return gBuffer;
-            }
-            set { gBuffer = value; }
-        }
+        private Framebuffer gBuffer;
 
 
         public override void OnStart()
@@ -61,13 +37,32 @@ namespace SharpCG
             switch (stage)
             {
                 case Stage.Geometry:
-                    if (mesh == null)                   mesh = sceneObject.Components.OfType<Mesh>().First();                  
-                    if(geometryPassMaterial == null)    geometryPassMaterial = sceneObject.FindComponent<GeometryPassMaterial>();
+                    if (mesh == null)                   mesh                    = sceneObject.Components.OfType<Mesh>().First();                  
+                    if(geometryPassMaterial == null)    geometryPassMaterial    = sceneObject.FindComponent<GeometryPassMaterial>();                    
                     break;
                 case Stage.Lighting:
-                    if (light == null)                  light = sceneObject.FindComponent<Light>();
-                    if (lightingPassMaterial == null)   lightingPassMaterial = sceneObject.FindComponent<LightingPassMaterial>();                   
+                    if (light == null)                  light                   = sceneObject.FindComponent<Light>();
+                    if (lightingPassMaterial == null)   lightingPassMaterial    = sceneObject.FindComponent<LightingPassMaterial>();                   
                     break;
+            }
+        }
+
+
+        public override Framebuffer Framebuffer
+        {
+            get
+            {
+                if (stage == Stage.Geometry)
+                    return gBuffer;
+                else
+                    return framebuffer;
+            }
+            set
+            {
+                if (stage == Stage.Geometry)
+                    gBuffer = value;
+                else
+                    framebuffer = value;
             }
         }
 
@@ -76,39 +71,7 @@ namespace SharpCG
         {
             get{return stage;}
             set{stage = value;}
-        }
-
-
-        public override Framebuffer Framebuffer
-        {
-            get
-            {
-                switch (stage)
-                {
-                    case Stage.Geometry:
-                        return GBuffer;
-
-                    case Stage.Lighting:
-                        return framebuffer;
-                    default:
-                        return null;
-                }
-            }
-            set
-            {
-                switch (stage)
-                {
-                    case Stage.Geometry:
-                        GBuffer = value;
-                        break;
-                    case Stage.Lighting:
-                        framebuffer = value;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        }    
 
 
         public Mesh Mesh
@@ -139,6 +102,13 @@ namespace SharpCG
         }
 
 
+        public Framebuffer GBuffer
+        {
+            get{return gBuffer;}
+            set{gBuffer = value;}
+        }
+
+
         public override void RenderGL()
         {
             switch (stage)
@@ -163,7 +133,7 @@ namespace SharpCG
             GL.DepthMask(true);
 
             GL.Disable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
+            //GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
 
             // Uniforms for matrices
 
@@ -176,18 +146,16 @@ namespace SharpCG
             geometryPassMaterial.ViewMatrix         = V;
             geometryPassMaterial.ProjectionMatrix   = P;
             geometryPassMaterial.WvpMatrix          = P * V * W;
-            geometryPassMaterial.NormalMatrix       = sceneObject.Transform.NormalMatrix;
-            
-            
+            geometryPassMaterial.NormalMatrix       = sceneObject.Transform.NormalMatrix;                      
 
             uint unit = 0;
             geometryPassMaterial.Bind(ref unit);
 
             mesh.Bind();
             GL.DrawElements(BeginMode.Triangles, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
-            GL.BindVertexArray(0);
+            //GL.BindVertexArray(0);
 
-            geometryPassMaterial.Shader.release();
+            //geometryPassMaterial.Shader.release();
 
             //GL.Enable(EnableCap.CullFace);
             //GL.DepthMask(true);
@@ -231,8 +199,7 @@ namespace SharpCG
         
             lightingPassMaterial.DiffuseAlbedoTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
             lightingPassMaterial.SpecularAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
-            lightingPassMaterial.WorldPositionTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
-            lightingPassMaterial.WorldNormalTexture     = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment3);
+            lightingPassMaterial.WorldNormalTexture     = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
             lightingPassMaterial.DepthTexture           = gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
 
 

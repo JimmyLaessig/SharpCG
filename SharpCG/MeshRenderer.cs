@@ -58,8 +58,6 @@ public class MeshRenderer : Renderer
         }
         else
         {
-            var x = BeginMode.Triangles;
-            var y = PrimitiveType.Triangles;
             GL.DrawArrays(mesh.PrimitiveType, 0, mesh.TriangleCount * 3);
         }
         //GL.BindVertexArray(0);

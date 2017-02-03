@@ -12,6 +12,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 using SharpCG.Base.Scenegraph;
+using SharpCG;
 
 namespace SharpCG.Demo
 {
@@ -36,116 +37,69 @@ namespace SharpCG.Demo
 
 
             RenderPass geometryPass     = RenderPass.Main;
+            
             RenderPass beforeGeometry   = RenderPass.Before(geometryPass, "before Geometry");
-           
-            RenderPass lightingPass     = RenderPass.After(geometryPass, "LightingPass");
+
+            RenderPass shadowPass       = RenderPass.After(geometryPass, "shadowPass");
+
+            RenderPass lightingPass     = RenderPass.After(shadowPass, "LightingPass");
             RenderPass beforeLighting   = RenderPass.Before(lightingPass, "before lighting");
 
-
-            Framebuffer gBuffer = DeferredRenderer.GBuffer;            
-            window.RenderControl.AddImmediateGLEvent(geometryPass, new Action(() => gBuffer.Clear()));
+            var gBuffer = Framebuffer.GBuffer;
+            window.RenderControl.AddImmediateGLEvent(beforeGeometry, new Action(() => gBuffer.Clear()));
            
             {
-            //    SceneObject skybox = new SceneObject();
-            //    skybox.Name = "Skybox";
-            //    skybox.AddComponent(MeshExtensions.UnitCube);
-            //    var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
-            //    skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
-            //                                                    "Assets/skybox/skybox_right2048.png",
-            //                                                    "Assets/skybox/skybox_top2048.png",
-            //                                                    "Assets/skybox/skybox_bottom2048.png",
-            //                                                    "Assets/skybox/skybox_front2048.png",
-            //                                                    "Assets/skybox/skybox_back2048.png");
+                //SceneObject skybox = new SceneObject();
+                //skybox.Name = "Skybox";
+                //skybox.AddComponent(MeshExtensions.UnitCube);
+                //var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
+                //skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
+                //                                                "Assets/skybox/skybox_right2048.png",
+                //                                                "Assets/skybox/skybox_top2048.png",
+                //                                                "Assets/skybox/skybox_bottom2048.png",
+                //                                                "Assets/skybox/skybox_front2048.png",
+                //                                                "Assets/skybox/skybox_back2048.png");
 
-            //    var renderer = skybox.AddComponent<SkyboxRenderer>();
-            //    renderer.Framebuffer = gBuffer;
-            //    renderer.RenderPass = beforeGeometry;
+                //var renderer = skybox.AddComponent<SkyboxRenderer>();
+                //renderer.Framebuffer = gBuffer;
+                //renderer.RenderPass = beforeGeometry;
 
 
-            //    window.AddSceneObject(skybox);
+                //window.AddSceneObject(skybox);
             }
 
 
             // Copy depth texture to back buffer
             {
-                SceneObject obj = new SceneObject();
-                obj.Name = "DepthbufferBlit";
-                obj.Transform.ToIdentity();
-                obj.AddComponent<Mesh>(MeshExtensions.FullscreenQuad);
-
-                var mat = obj.AddComponent<TextureToDepthMaterial>();
-                mat.DepthTexture = DeferredRenderer.GBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
-
-                var renderer = obj.AddComponent<TextureToDepthRenderer>();
-                renderer.RenderPass = beforeLighting;
-
+                var obj = SceneObjectExtensions.CopyDepthBuffer(gBuffer, null, beforeLighting);               
                 window.AddSceneObject(obj);
             }
-
             {
-                //SceneObject plane = MeshExtensions.Load("Assets/plane/plane.fbx", MeshExtensions.Materials.Deferred);
-                //plane.Name = "plane";
-                //plane.Transform.ToIdentity();
-                //plane.Transform.Scale = new vec3(5);
+                SceneObject plane = MeshExtensions.Load("Assets/plane/plane.fbx", MeshExtensions.Materials.Deferred);
+                plane.Name = "plane";
+                plane.Transform.ToIdentity();
+                plane.Transform.Scale = new vec3(5);
 
 
-                //SceneObject.TraverseAndExecute<Mesh>(plane, m =>
-                //{
-                //    var obj = m.SceneObject;
-                //    var scale = obj.Transform.Scale;
-                //    obj.Transform.ToIdentity();
-
-                //    var renderer = obj.FindComponent<DeferredRenderer>();
-                //    renderer.RenderPass = geometryPass;
-                //    renderer.Framebuffer = gBuffer;
-
-                //});
-
-
-                //window.AddSceneObject(plane);
-            }
-
-            {
-                //SceneObject sphere = MeshExtensions.Load("Assets/sphere/sphere.fbx", MeshExtensions.Materials.Deferred);
-                //sphere.Name = "Sphere";
-                ////sphere.Transform.ToIdentity();
-                ////sphere.Transform.Scale = new vec3(5);
-
-
-                //SceneObject.TraverseAndExecute<Mesh>(sphere, m =>
-                //{
-                //    var obj = m.SceneObject;
-                //    //var scale = obj.Transform.Scale;
-                //   // obj.Transform.ToIdentity();
-
-                //    var renderer = obj.FindComponent<DeferredRenderer>();
-                //    renderer.RenderPass = geometryPass;
-                //    renderer.Framebuffer = gBuffer;
-
-                //});
-
-                //window.AddSceneObject(sphere);
-            }
-            {
-                SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
-                container.Name = "container";
-                container.Transform.ToIdentity();
-                container.Transform.Position = new vec3(1.0f, 0.5f, 0.0f);
-                SceneObject.TraverseAndExecute<Mesh>(container, m =>
+                SceneObject.TraverseAndExecute<Mesh>(plane, m =>
                 {
                     var obj = m.SceneObject;
+                    var scale = obj.Transform.Scale;
                     obj.Transform.ToIdentity();
+
                     var renderer = obj.FindComponent<DeferredRenderer>();
                     renderer.RenderPass = geometryPass;
+                    renderer.Stage = Stage.Geometry;
                     renderer.Framebuffer = gBuffer;
+
                 });
 
-                window.AddSceneObject(container);
+                window.AddSceneObject(plane);
             }
 
             {
                 SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
-                container.Name = "container";
+                container.Name = "containerLeft";
                 container.Transform.ToIdentity();
                 container.Transform.Position = new vec3(-1.0f, 0.5f, 0.0f);
 
@@ -154,13 +108,36 @@ namespace SharpCG.Demo
                     var obj = m.SceneObject;
                     obj.Transform.ToIdentity();
                     var renderer = obj.FindComponent<DeferredRenderer>();
-                    renderer.GeometryPassMaterial.NormalMappingEnabled = false;
                     renderer.RenderPass = geometryPass;
+                    renderer.Stage = Stage.Geometry;
                     renderer.Framebuffer = gBuffer;
                 });
 
                 window.AddSceneObject(container);
             }
+
+            {
+                SceneObject container = MeshExtensions.Load("Assets/container/container.fbx", MeshExtensions.Materials.Deferred);
+                container.Name = "containerRight";
+                container.Transform.ToIdentity();
+                container.Transform.Position = new vec3(1.0f, 0.5f, 0.0f);
+                SceneObject.TraverseAndExecute<Mesh>(container, m =>
+                {
+                    var obj = m.SceneObject;
+                    obj.Transform.ToIdentity();
+                    var renderer = obj.FindComponent<DeferredRenderer>();
+                    renderer.RenderPass = geometryPass;
+                    renderer.Stage = Stage.Geometry;
+                    renderer.Framebuffer = gBuffer;
+                });
+
+                window.AddSceneObject(container);
+            }
+
+           
+
+
+
 
 
             // Add Ambient Light
@@ -169,33 +146,43 @@ namespace SharpCG.Demo
                 lightObject.Name = "Ambient Light";
                 var light = lightObject.AddComponent<AmbientLight>();
                 light.Color = new vec3(0.25f, 0.25f, 0.25f);
+                var material = lightObject.AddComponent<LightingPassMaterial>();
 
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;
                 renderer.Stage = Stage.Lighting;
-
-                var material = lightObject.AddComponent<LightingPassMaterial>();
                 renderer.LightingPassMaterial = material;
+                renderer.GBuffer = gBuffer;
 
                 window.AddSceneObject(lightObject);
             }
 
 
-            /// Add Directional Light
+            // Add Directional Light
             {
                 SceneObject lightObject = new SceneObject();
                 lightObject.Name = "Directional Light";
+
                 var light = lightObject.AddComponent<DirectionalLight>();
 
-                light.Color     = new vec3(1);
-                light.Direction = new vec3(0f, -1f, -1f);
+                light.Color = new vec3(1);
+                light.Direction = new vec3(0f, -1f, 0f);
 
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;
                 renderer.Stage = Stage.Lighting;
+                renderer.GBuffer = gBuffer;
 
                 var material = lightObject.AddComponent<LightingPassMaterial>();
                 renderer.LightingPassMaterial = material;
+
+
+                // Shadows
+                var shadows = lightObject.AddComponent<ShadowMapping>();
+                shadows.RenderPass = shadowPass;
+                var framebuffer = shadows.Framebuffer;
+                window.RenderControl.AddImmediateGLEvent(shadowPass, new Action(() => shadows.Framebuffer.Clear()));
+
 
                 window.AddSceneObject(lightObject);
             }
@@ -225,6 +212,13 @@ namespace SharpCG.Demo
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(obj.Name);
+            Console.ForegroundColor = oldC;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            obj.Tags.ToList().ForEach(c =>
+            {
+                Console.WriteLine(componentTabbing + c);
+            });
             Console.ForegroundColor = oldC;
 
             obj.Components.ForEach(c =>

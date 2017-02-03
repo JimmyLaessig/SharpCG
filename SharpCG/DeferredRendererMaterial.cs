@@ -116,10 +116,10 @@ namespace SharpCG
             uniformLocations["texDiffuseMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseMap");
             uniformLocations["texNormalMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texNormalMap");
             uniformLocations["texSpecularMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularMap");
+
             uniformLocations["vMaterialDiffuse"]    = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialDiffuse");
             uniformLocations["vMaterialEmissive"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialEmissive");
             uniformLocations["vMaterialSpecular"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialSpecular");
-
 
             base.InitUniformLocations();
         }
@@ -142,26 +142,27 @@ namespace SharpCG
                 GL.Uniform1(uniformLocations["texDiffuseMap"], 0);
                 diffuseMapTexture.Bind(TextureUnit.Texture0);
             }
-            if (HasNormapMap)
-            {
-                GL.Uniform1(uniformLocations["texNormalMap"], 1);
-                normalMapTexture.Bind(TextureUnit.Texture1);
-            }
             if (HasSpecularMap)
             {
-                GL.Uniform1(uniformLocations["texSpecularMap"], 2);
-                specularMapTexture.Bind(TextureUnit.Texture2);
+                GL.Uniform1(uniformLocations["texSpecularMap"], 1);
+                specularMapTexture.Bind(TextureUnit.Texture1);
             }
+            if (HasNormapMap)
+            {
+                GL.Uniform1(uniformLocations["texNormalMap"], 2);
+                normalMapTexture.Bind(TextureUnit.Texture2);
+            }
+
         }
     }
 
 
     public class LightingPassMaterial : Material
     {
-        private Texture2D worldPositionTexture;
-        private Texture2D worldNormalTexture;
+
         private Texture2D diffuseAlbedoTexture;
         private Texture2D specularAlbedoTexture;
+        private Texture2D worldNormalTexture;
 
         private Texture2D depthTexture;
 
@@ -181,13 +182,6 @@ namespace SharpCG
         {
             Shader = Shader.Find("deferredLightingPass");
             base.OnStart();
-        }
-
-
-        public Texture2D WorldPositionTexture
-        {
-            get{return worldPositionTexture;}
-            set{worldPositionTexture = value;}
         }
 
 
@@ -262,17 +256,18 @@ namespace SharpCG
             set{inverseViewProjectionMatrix = value;}
         }
 
+
         public Texture2D DepthTexture
         {
             get{return depthTexture;}
             set{ depthTexture = value;}
         }
 
+
         protected override void InitUniformLocations()
         {
             base.InitUniformLocations();
 
-            uniformLocations["texWorldPosition"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldPosition");
             uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
             uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
             uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
@@ -304,14 +299,11 @@ namespace SharpCG
             GL.Uniform1(uniformLocations["texSpecularAlbedo"], 1);
             specularAlbedoTexture.Bind(TextureUnit.Texture1);
 
-            GL.Uniform1(uniformLocations["texWorldPosition"], 2);
-            worldPositionTexture.Bind(TextureUnit.Texture2);
+            GL.Uniform1(uniformLocations["texWorldNormal"], 2);
+            worldNormalTexture.Bind(TextureUnit.Texture2);
 
-            GL.Uniform1(uniformLocations["texWorldNormal"], 3);
-            worldNormalTexture.Bind(TextureUnit.Texture3);
-
-            GL.Uniform1(uniformLocations["texDepth"], 4);
-            depthTexture.Bind(TextureUnit.Texture4);
+            GL.Uniform1(uniformLocations["texDepth"], 3);
+            depthTexture.Bind(TextureUnit.Texture3);
 
             GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
 

@@ -217,7 +217,6 @@ namespace SharpCG
             catch (System.Exception ex)
             {
                 code = "";
-
             }
             if (code == "")
             {
@@ -260,6 +259,12 @@ namespace SharpCG
         /// <returns>Returns the shader object if found, otherwhise null.</returns>
         public static Shader Find(string key)
         {
+            if (Shaders.ContainsKey(key))
+                return Shaders[key];
+
+            if (!LoadShader(key))
+                throw new Exception("Shader not available" + key);
+
             return Shaders[key];
         }
 
@@ -272,8 +277,7 @@ namespace SharpCG
             if (!LoadShader("deferredGeometryPass")) return false;
             if (!LoadShader("deferredLightingPass")) return false;
             if (!LoadShader("textureToDepth")) return false;
-            
-
+            if (!LoadShader("shadowMap")) return false;
 
             return true;
         }

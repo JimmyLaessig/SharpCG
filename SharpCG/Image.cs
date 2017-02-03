@@ -16,6 +16,7 @@ namespace SharpCG
         private int height;
         private byte[] data;
 
+        private string path;
 
         public byte[] Data
         {
@@ -35,6 +36,11 @@ namespace SharpCG
             get{return width;}
         }
 
+        public string Path
+        {
+            get{return path;}
+            set{path = value;}
+        }
 
         public Image(int width, int height, byte[] data)
         {
@@ -64,6 +70,7 @@ namespace SharpCG
 
         public static Image FromBitmap(Bitmap bmp)
         {
+            
             var img = new Image(bmp.Width, bmp.Height);
            
             BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -77,7 +84,10 @@ namespace SharpCG
 
         public static Image FromFile(string path)
         {
-            return FromBitmap(System.Drawing.Image.FromFile(path) as Bitmap);           
+            var i = FromBitmap(System.Drawing.Image.FromFile(path) as Bitmap);
+            i.Path = path;
+            
+            return i;
         }
     }
 }

@@ -36,9 +36,13 @@ namespace SharpCG
         {
             get
             {
-                if (attachments.Count <= 0)
-                    return 0;
-                return (int)attachments.First().Texture.Width;
+                if (depthBuffer != null)
+                    return depthBuffer.Texture.Width ;
+
+                if (attachments.Count > 0)
+                    return attachments.First().Texture.Width;
+
+                return 0;
             }
         }
 
@@ -47,9 +51,13 @@ namespace SharpCG
         {
             get
             {
-                if (attachments.Count <= 0)
-                    return 0;
-                return (int)attachments.First().Texture.Height;
+                if (depthBuffer != null)
+                    return depthBuffer.Texture.Height;
+
+                if (attachments.Count > 0)
+                    return attachments.First().Texture.Height;
+
+                return 0;
             }
         }
 
@@ -77,7 +85,6 @@ namespace SharpCG
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, renderBufferHandle);
 
         }
-
 
 
         public void AddRenderTarget(Texture2D texture, FramebufferAttachment attachment, vec4 clearColor)
@@ -114,14 +121,14 @@ namespace SharpCG
         }
 
 
-
         public void Clear()
         {
+
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);
 
-            attachments.ForEach(ct => 
+            attachments.ForEach(ct =>
             {
-                GL.DrawBuffer((DrawBufferMode)ct.attachment);              
+                GL.DrawBuffer((DrawBufferMode)ct.attachment);
                 var c = ct.ClearColor;
                 GL.ClearColor(c.r, c.g, c.b, c.a);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -134,20 +141,23 @@ namespace SharpCG
         }
 
 
-
         public void BindForWriting()
         {
-            if (attachments.Count > 0)
-            {
-                GL.BindFramebuffer(FramebufferTarget.Framebuffer, this.handle);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, this.handle);
 
-                var buffers = attachments.ConvertAll(a =>(DrawBuffersEnum) a.attachment).ToArray();
+            if (attachments.Count > 0)
+            {              
+                var buffers = attachments.ConvertAll(a =>(DrawBuffersEnum) a.attachment).ToArray();                
                 GL.DrawBuffers(buffers.Length, buffers);                
-                
-                int width = (int)attachments.First().Texture.Width;
-                int height = (int)attachments.First().Texture.Height;
-                GL.Viewport(0, 0, width, height);
             }
+            else
+            {
+                var buffers = new[] { DrawBuffersEnum.None };
+                GL.DrawBuffers(buffers.Length, buffers);
+            }
+            
+            GL.Viewport(0, 0, Width, Height);
+
         }
 
         public void BindForReading()
@@ -177,16 +187,36 @@ namespace SharpCG
             }
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
+            
             isDirty = false;
         }        
-
 
 
         public override void DeInitGL()
         {
             GL.DeleteFramebuffer(handle);
             GL.DeleteRenderbuffer(renderBufferHandle);     
+        }
+
+
+        public static Framebuffer GBuffer
+        {
+            get
+            {               
+                var  gBuffer = new Framebuffer();
+
+                // TODO CHANGE THIS
+                int width = 1024;
+                int height = 758;
+
+                gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(0));   // Diffuse
+                gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment1, new vec4(0));   // Specular
+                gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment2, new vec4(0));   // Normals
+                gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment,  new vec4(1));    // Depth
+                
+
+                return gBuffer;
+            }
         }
     }
 }

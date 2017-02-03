@@ -59,6 +59,9 @@
     <Compile Include="AmbientLight.cs" />
     <Compile Include="ArrayBuffer.cs" />
     <Compile Include="DirectionalLight.cs" />
+    <Compile Include="SceneObjectExtensions.cs" />
+    <Compile Include="ShadowMapMaterial.cs" />
+    <Compile Include="ShadowMapping.cs" />
     <Compile Include="TextureToDepthRenderer.cs" />
     <Compile Include="TextureToDepthMaterial.cs" />
     <Compile Include="Camera.cs" />

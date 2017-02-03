@@ -8,25 +8,23 @@ in vec2 pTexcoords;
 
 
 uniform bool bHasDiffuseMap		= true;
-uniform bool bHasNormalMap		= true;
 uniform bool bHasSpecularMap	= true;
+uniform bool bHasNormalMap		= true;
 
 
 uniform sampler2D texDiffuseMap;
-uniform sampler2D texNormalMap;
 uniform sampler2D texSpecularMap;
-
+uniform sampler2D texNormalMap;
 
 
 uniform vec3 vMaterialEmissive;
 uniform vec4 vMaterialDiffuse;
 uniform vec4 vMaterialSpecular;
 
+
 layout (location = 0) out vec4 gDiffuseAlbedo;
 layout (location = 1) out vec4 gSpecularAlbedo;
-layout (location = 2) out vec4 gWorldPosition;
-layout (location = 3) out vec4 gWorldNormal;
-
+layout (location = 2) out vec4 gWorldNormal;
 
 
 //--------------------------------------------------------------------------------------
@@ -51,8 +49,6 @@ vec3 calcNormal(vec3 normal, vec3 tangent, vec3 bitangent)
 
 void main()
 {
-    gWorldPosition.xyz = pWorldPosition;
-	gWorldPosition.w = 1;
 
 	// Calculate pertubed normal  
 	gWorldNormal.xyz = calcNormal(	normalize(pWorldNormal), 
@@ -64,6 +60,7 @@ void main()
 	vec4 vDiffuseColor	= (bHasDiffuseMap)	? texture(texDiffuseMap, pTexcoords) : vec4(1);
 	// Get specular color from texture
 	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
+	
 
 	gDiffuseAlbedo		= vDiffuseColor * vMaterialDiffuse;
 	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular.rgb;

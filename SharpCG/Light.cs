@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using GlmSharp;
 
 
+
 namespace SharpCG
 {
-
 
 
     public abstract class Light : Component
@@ -21,12 +21,15 @@ namespace SharpCG
         {
             get;
             set;
-        }
+        }       
+
 
         public abstract int LightType
         {
             get;
         }
+
+
         public abstract vec3 Position
         {
             get;
@@ -40,11 +43,13 @@ namespace SharpCG
             set;
         }
 
+
         public virtual vec3 Color
         {
             get { return color; }
             set { color = value; }
         }
+
 
         public abstract Mesh LightGeometry
         {

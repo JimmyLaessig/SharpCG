@@ -15,7 +15,6 @@ uniform mat4 mWVP;
 uniform mat3 mNormal;
 
 
-out vec3 pWorldPosition;
 out vec3 pWorldNormal;
 out vec3 pWorldTangent;
 out vec3 pWorldBitangent;
@@ -24,7 +23,6 @@ out vec2 pTexcoords;
 void main() 
 {
 	gl_Position		= (mWVP		* vec4(vPosition, 1.0f));   
-	pWorldPosition	= (mWorld	* vec4(vPosition, 1.0f)).xyz;
     pWorldNormal	= (mNormal * vNormal);   
     pWorldTangent	= (mNormal * vTangent);
     pWorldBitangent	= (mNormal * vBitangent);

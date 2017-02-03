@@ -119,7 +119,7 @@ namespace SharpCG
             texture.useMipMaps  = useMipMaps;
             texture.isDirty     = true;
 
-            texture.internalFormat  = PixelInternalFormat.Rgba32f;
+            texture.internalFormat  = PixelInternalFormat.Rgba;
             texture.format          = PixelFormat.Rgba;
             texture.type            = PixelType.UnsignedByte;
 

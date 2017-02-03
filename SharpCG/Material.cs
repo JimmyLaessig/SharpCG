@@ -69,47 +69,28 @@ namespace SharpCG
 
         public mat4 WvpMatrix
         {
-            get
-            {
-                return wvpMatrix;
-            }
-
-            set
-            {
-                wvpMatrix = value;
-            }
+            get{return wvpMatrix;}
+            set{wvpMatrix = value;}
         }
 
         public mat3 NormalMatrix
         {
-            get
-            {
-                return normalMatrix;
-            }
-
-            set
-            {
-                normalMatrix = value;
-            }
+            get{ return normalMatrix; }
+            set{normalMatrix = value;}
         }
 
         public Shader Shader
         {
-            get
-            {
-                return shader;
-            }
-
-            set
-            {
-                shader = value;
-            }
+            get{return shader;}
+            set{shader = value;}
         }
+
 
         public Material()
         {
            
         }
+
 
         protected virtual void InitUniformLocations()
         {           
