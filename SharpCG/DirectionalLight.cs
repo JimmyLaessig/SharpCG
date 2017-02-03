@@ -16,7 +16,7 @@ namespace SharpCG
         private Mesh fullscreenQuad;
 
 
-        private ShadowMapping shadowMappingTechnique;
+        private ShadowMapRenderer shadowMappingTechnique;
 
         public override void OnStart()
         {
@@ -24,7 +24,7 @@ namespace SharpCG
 
             if(shadowMappingTechnique == null)
             {
-                shadowMappingTechnique = sceneObject.FindComponent<ShadowMapping>();
+                shadowMappingTechnique = sceneObject.FindComponent<ShadowMapRenderer>();
             }
         }
 
@@ -66,7 +66,7 @@ namespace SharpCG
 
         public mat4 LightProjectionMatrix
         {
-            get { return mat4.Ortho(-10f, 10f, -10f, 10f, 0.1f, 20f); }
+            get { return mat4.Ortho(-10f, 10f, -10f, 10f, 0.1f, 1000f); }
         }
 
 

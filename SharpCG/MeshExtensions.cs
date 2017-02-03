@@ -133,7 +133,9 @@ namespace SharpCG
             
             Assimp.Scene scene = assimp.ImportFile(path,    Assimp.PostProcessSteps.Triangulate |
                                                             Assimp.PostProcessSteps.JoinIdenticalVertices |
-                                                            Assimp.PostProcessSteps.CalculateTangentSpace);
+                                                            Assimp.PostProcessSteps.CalculateTangentSpace |
+                                                            0                                                          
+                                                            );
             string directory = path.Substring(0, path.LastIndexOf('/'));
             var obj = Traverse(scene, scene.RootNode, directory, materialType);
 
@@ -259,7 +261,7 @@ namespace SharpCG
                 }
 
                 i = 0;
-                foreach (var bitangent in aiMesh.Tangents)
+                foreach (var bitangent in aiMesh.BiTangents)
                 {
                     bitangents[i++] = bitangent.X;
                     bitangents[i++] = bitangent.Y;

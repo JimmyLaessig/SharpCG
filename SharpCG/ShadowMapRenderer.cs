@@ -8,7 +8,7 @@ using GlmSharp;
 
 namespace SharpCG.Base.Scenegraph
 {
-    public class ShadowMapping : Renderer
+    public class ShadowMapRenderer : Renderer
     {
 
         private DirectionalLight light = null;
@@ -30,24 +30,6 @@ namespace SharpCG.Base.Scenegraph
                 material = sceneObject.AddComponent<ShadowMapMaterial>();
                 material.OnStart();
             }  
-        }
-
-
-        public override Framebuffer Framebuffer
-        {
-            get
-            {                            
-                if (framebuffer == null)
-                {
-                    framebuffer = new Framebuffer();
-                    framebuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment, vec4.Ones);
-                }
-                return framebuffer;
-            }
-            set
-            {
-                base.Framebuffer = value;
-            }
         }
 
 
@@ -82,7 +64,7 @@ namespace SharpCG.Base.Scenegraph
                 return;
 
             var shadowCasters = SceneObject.CollectWhere<Mesh>(sceneObject.Runtime.Root, (obj => obj.HasTag("ShadowCaster")));
-            GL.Enable(EnableCap.CullFace);
+            GL.Disable(EnableCap.CullFace);
 
             //GL.DepthMask(true);
             

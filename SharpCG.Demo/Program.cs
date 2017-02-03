@@ -12,7 +12,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 
 using SharpCG.Base.Scenegraph;
-using SharpCG;
+
 
 namespace SharpCG.Demo
 {
@@ -166,7 +166,7 @@ namespace SharpCG.Demo
                 var light = lightObject.AddComponent<DirectionalLight>();
 
                 light.Color = new vec3(1);
-                light.Direction = new vec3(0f, -1f, 0f);
+                light.Direction = new vec3(1f, -1f, -1f);
 
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;
@@ -178,12 +178,15 @@ namespace SharpCG.Demo
 
 
                 // Shadows
-                var shadows = lightObject.AddComponent<ShadowMapping>();
+                var framebuffer = new Framebuffer();
+                framebuffer.AddRenderTarget(Texture2D.Depth(1000, 1000), FramebufferAttachment.DepthAttachment, vec4.Ones);
+                window.RenderControl.AddImmediateGLEvent(shadowPass, new Action(() => framebuffer.Clear()));
+
+
+                var shadows = lightObject.AddComponent<ShadowMapRenderer>();
                 shadows.RenderPass = shadowPass;
-                var framebuffer = shadows.Framebuffer;
-                window.RenderControl.AddImmediateGLEvent(shadowPass, new Action(() => shadows.Framebuffer.Clear()));
-
-
+                shadows.Framebuffer = framebuffer;
+               
                 window.AddSceneObject(lightObject);
             }
 
