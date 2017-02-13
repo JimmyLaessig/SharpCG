@@ -159,24 +159,26 @@ namespace SharpCG
 
     public class LightingPassMaterial : Material
     {
-
+        // GBuffer
         private Texture2D diffuseAlbedoTexture;
         private Texture2D specularAlbedoTexture;
         private Texture2D worldNormalTexture;
-
         private Texture2D depthTexture;
 
+        // CameraParams
         private vec3 cameraPosition;
+        private mat4 inverseViewProjectionMatrix;
 
-
+        // Light Params
         private vec3 lightDirection;
         private vec3 lightPosition;
         private vec3 lightColor;
         private vec3 lightAttenuation;
-
         private int lightType;
-
-        private mat4 inverseViewProjectionMatrix;
+        
+        // ShadowMappingParams
+        private mat4 lightViewProjectionMatrix;
+        private Texture shadowMapTexture;
 
         public override void OnStart()
         {
@@ -227,6 +229,10 @@ namespace SharpCG
             set{lightPosition = value;}
         }
 
+        public bool HasShadowMapTexture
+        {
+            get { return shadowMapTexture != null; }
+        }
 
         public vec3 LightColor
         {
@@ -264,6 +270,19 @@ namespace SharpCG
         }
 
 
+
+        public mat4 LightViewProjectionMatrix
+        {
+            get{return lightViewProjectionMatrix;}
+            set{lightViewProjectionMatrix = value;}
+        }
+
+        public Texture ShadowMapTexture
+        {
+            get{return shadowMapTexture;}
+            set{shadowMapTexture = value;}
+        }
+
         protected override void InitUniformLocations()
         {
             base.InitUniformLocations();
@@ -280,10 +299,17 @@ namespace SharpCG
 
             uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
             uniformLocations["vLightPosition"]      = GL.GetUniformLocation(Shader.ProgramHandle, "vLightPosition");
+
             uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
             uniformLocations["vLightAttenuation"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vLightAttenuation");
             uniformLocations["iLightType"]          = GL.GetUniformLocation(Shader.ProgramHandle, "iLightType");
 
+            uniformLocations["mLightBiasVP"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mLightBiasVP");
+            uniformLocations["bHasShadowMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasShadowMap");
+            uniformLocations["texShadowMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texShadowMap");
+
+           
+            
         }
 
 
@@ -291,7 +317,6 @@ namespace SharpCG
         {
             
             Shader.bind();
-
 
             GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 0);
             diffuseAlbedoTexture.Bind(TextureUnit.Texture0);
@@ -315,6 +340,24 @@ namespace SharpCG
             GL.Uniform3(uniformLocations["vLightPosition"], 1, lightPosition.Values);            
             GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
             GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
+
+            GL.Uniform1(uniformLocations["bHasShadowMap"], (HasShadowMapTexture) ? 1 : 0);
+           
+
+            if (shadowMapTexture != null)
+            {
+                GL.Uniform1(uniformLocations["texShadowMap"], 4);
+                shadowMapTexture.Bind(TextureUnit.Texture4);
+            }
+
+            var biasMatrix = new mat4 (
+                0.5f, 0.0f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.0f, 0.0f,
+                0.0f, 0.0f, 0.5f, 0.0f,
+                0.5f, 0.5f, 0.5f, 1.0f);
+
+            var biasLightVP = biasMatrix * lightViewProjectionMatrix;
+            GL.UniformMatrix4(uniformLocations["mLightBiasVP"], 1, false, biasLightVP.Values1D);
 
             base.Bind(ref textureUnit);
         }

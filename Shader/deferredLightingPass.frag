@@ -3,7 +3,6 @@
 in vec2 vTexcoords;
 
 
-uniform sampler2D texWorldPosition;
 uniform sampler2D texWorldNormal;
 uniform sampler2D texDiffuseAlbedo;
 uniform sampler2D texSpecularAlbedo;
@@ -22,6 +21,10 @@ uniform vec3 vLightDirection;
 uniform vec3 vLightColor;
 uniform vec3 vLightAttenuation;
 
+uniform sampler2D texShadowMap;
+uniform bool bHasShadowMap = false;
+
+uniform mat4 mLightBiasVP;
 
 uniform mat4 mProj;
 uniform mat4 mInvViewProj;
@@ -51,17 +54,43 @@ vec3 calcWorldPosition(vec3 ndc)
 	//return ndc.xyz;
 	return worldPos.xyz;
 }
+#define EPSILON 0.1
+
+float calcVisiblity(vec3 vWorldPosition)
+{
+	if(bHasShadowMap)
+	{
+		vec4 shadowPosition = mLightBiasVP * vec4(vWorldPosition, 1.0);
+		vec3 lightCoords = shadowPosition.xyz / shadowPosition.w;
+		float depth = texture (texShadowMap, lightCoords.xy).r;
+
+		return (depth < lightCoords.z ) ? 0.0 : 1.0;
+
+	}
+	return 1.0f;
+}
+
+
+
+//float calcVisiblity(vec3 vWorldPosition)
+//{
+//	if(bHasShadowMap)
+//	{
+//		vec4 shadowPosition = mLightBiasVP * vec4(vWorldPosition, 1.0);
+//		if (texture (texShadowMap, shadowPosition.xy).r < shadowPosition.z + EPSILON)
+//			return 0.0f;
+//		return 1.0f;
+
+//	}
+//	return 0.0f;
+//}
 
 
 void main()
 {
-	vec4 normal			= texture(texWorldNormal, vTexcoords);	
+	vec4 normal	= texture(texWorldNormal, vTexcoords);	
 	
-	if(normal.w <= 0)
-	{
-		fragColor = vec4(0);		
-		return;
-	}
+	
 
 	float depth = texture(texDepth, vTexcoords).x;
 	
@@ -77,10 +106,22 @@ void main()
 	{
 		fragColor.rgb = vDiffuseAlbedo.rgb * vLightColor;
 		fragColor.a = 1;
+
+		if(normal.w <= 0)
+		{
+			fragColor = vDiffuseAlbedo;		
+			return;
+		}
 	}
 
 	if(iLightType == 1)
 	{		
+		if(normal.w <= 0)
+		{
+			fragColor = vec4(0);		
+			return;
+		}
+		
 		vec3 N = vWorldNormal;
 
 		//vec3 N = vec3(0, 1, 0);
@@ -92,12 +133,15 @@ void main()
 		vec3 H = normalize( V + L );
 
 		vec3 R = normalize(-reflect (L, N));
-			
+		
+		
 		
 		vec3 Id	= vDiffuseAlbedo.rgb * saturate(dot(N,L));		
 		vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(R, V)),  512f);
-		fragColor.rgb	= ( Id + Is) * vLightColor;
-		fragColor.a		= 1.0f;
+		float visibility = calcVisiblity(vWorldPosition);
+
+		fragColor.rgb	= ( Id + Is) * vLightColor * visibility;
+		fragColor.a		= 1.0f;		
 		
 	}
 }

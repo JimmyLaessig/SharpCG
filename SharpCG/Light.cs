@@ -28,7 +28,16 @@ namespace SharpCG
         {
             get;
         }
+        public abstract mat4 ViewMatrix
+        {
+            get;
+        }
 
+        public abstract mat4 ProjectionMatrix
+        {
+            get;
+
+        }
 
         public abstract vec3 Position
         {
@@ -48,6 +57,12 @@ namespace SharpCG
         {
             get { return color; }
             set { color = value; }
+        }
+
+
+        public virtual Texture ShadowMap
+        {
+            get { return null; }          
         }
 
 

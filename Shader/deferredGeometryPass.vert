@@ -22,7 +22,7 @@ out vec2 pTexcoords;
 
 void main() 
 {
-	gl_Position		= (mWVP		* vec4(vPosition, 1.0f));   
+	gl_Position		= (mWVP	   * vec4(vPosition, 1.0f));   
     pWorldNormal	= (mNormal * vNormal);   
     pWorldTangent	= (mNormal * vTangent);
     pWorldBitangent	= (mNormal * vBitangent);

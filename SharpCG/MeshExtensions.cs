@@ -272,7 +272,7 @@ namespace SharpCG
             // Read Texture coordinates           
             if (aiMesh.HasTextureCoords(0))
             {
-                Console.WriteLine("Loading Texture coordinates...");
+                
                 var i = 0;
                 foreach (var uv in aiMesh.TextureCoordinateChannels[0])
                 {
@@ -284,7 +284,7 @@ namespace SharpCG
             // Read color information               
             if (aiMesh.HasVertexColors(0))
             {
-                Console.WriteLine("Loading Colors...");
+                
                 int i = 0;
                 foreach (var color in aiMesh.VertexColorChannels[0])
                 {

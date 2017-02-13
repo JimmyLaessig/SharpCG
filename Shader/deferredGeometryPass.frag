@@ -39,7 +39,7 @@ vec3 calcNormal(vec3 normal, vec3 tangent, vec3 bitangent)
 {
 	if(bHasNormalMap)
 	{	
-		vec3 perturbedNormal	= (texture(texNormalMap, pTexcoords).xyz * 2.0 -1.0);
+		vec3 perturbedNormal	= (texture(texNormalMap, pTexcoords).xyz * 2.0 - 1.0);
 		mat3 mTBN				= mat3(tangent, bitangent, normal);
 		return normalize(mTBN * perturbedNormal);
 	}
@@ -57,12 +57,13 @@ void main()
 	gWorldNormal.w = 1;		
 	
 	// Get diffuse color from texture
-	vec4 vDiffuseColor	= (bHasDiffuseMap)	? texture(texDiffuseMap, pTexcoords) : vec4(1);
+	vec4 vDiffuseColor	= (bHasDiffuseMap)	? texture(texDiffuseMap, pTexcoords) : vec4(1);	
 	// Get specular color from texture
 	vec4 vSpecularColor = (bHasSpecularMap) ? texture(texSpecularMap, pTexcoords) : vec4(1);
 	
 
 	gDiffuseAlbedo		= vDiffuseColor * vMaterialDiffuse;
+	gDiffuseAlbedo.a	= 1.0f;
 	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular.rgb;
 	gSpecularAlbedo.a	= vMaterialSpecular.a;
 

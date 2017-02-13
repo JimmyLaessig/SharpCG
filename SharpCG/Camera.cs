@@ -96,29 +96,7 @@ namespace SharpCG
         
         public void LookAt(vec3 eye, vec3 target, vec3 up)
         {
-            //vec3 direction = (target - eye).Normalized;
-            //vec3 rotation = vec3.Zero;
-
-            //rotation.x = (float)Fun.Degrees(Math.Asin((double)-direction.y));
-            //rotation.y = (float)Fun.Degrees(Math.Atan2((double)-direction.x, -direction.z));
-
-            //Transform.Position = eye;
-            //Transform.Rotation = new quat(rotation);
-
-
-            var viewMat = GlmSharp.mat4.LookAt(eye, target, up);
-
-            var translation = vec3.Zero;
-            var rotation    = quat.Identity;
-            var scale       = vec3.Ones;
-            
-            Fun.Decompose(viewMat, out translation, out rotation, out scale);
-
-            Transform.Position  = translation;
-            Transform.Rotation  = rotation;
-            Transform.Scale     = scale;
-
+            Transform.LookAt(eye, target, up);          
         }
-
     }
 }

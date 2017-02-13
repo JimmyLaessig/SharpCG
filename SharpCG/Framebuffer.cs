@@ -123,7 +123,7 @@ namespace SharpCG
 
         public void Clear()
         {
-
+            
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, handle);
 
             attachments.ForEach(ct =>
@@ -133,6 +133,7 @@ namespace SharpCG
                 GL.ClearColor(c.r, c.g, c.b, c.a);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
             });
+
             GL.ClearDepth(1.0);
             GL.ClearStencil(0);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
@@ -152,8 +153,8 @@ namespace SharpCG
             }
             else
             {
-                var buffers = new[] { DrawBuffersEnum.None };
-                GL.DrawBuffers(buffers.Length, buffers);
+                GL.ReadBuffer(ReadBufferMode.None);    
+                GL.DrawBuffer(DrawBufferMode.None);
             }
             
             GL.Viewport(0, 0, Width, Height);
@@ -209,7 +210,7 @@ namespace SharpCG
                 int width = 1024;
                 int height = 758;
 
-                gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(0));   // Diffuse
+                gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(1));   // Diffuse
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment1, new vec4(0));   // Specular
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment2, new vec4(0));   // Normals
                 gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment,  new vec4(1));    // Depth

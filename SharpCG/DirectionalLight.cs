@@ -10,14 +10,11 @@ using SharpCG.Base.Scenegraph;
 namespace SharpCG
 {
     public class DirectionalLight : Light
-    {
-        private vec3 direction = new vec3(1, -1, 0);
-
+    {        
         private Mesh fullscreenQuad;
 
-
         private ShadowMapRenderer shadowMappingTechnique;
-
+        private vec3 direction;
         public override void OnStart()
         {
             fullscreenQuad = MeshExtensions.FullscreenQuad;
@@ -29,19 +26,21 @@ namespace SharpCG
         }
 
 
-
-
         public override vec3 Attenuation
         {
-            get{return vec3.Zero;}
-            set { }
+            get{ return vec3.Zero; }
+            set{ }
         }
 
 
         public override vec3 Direction
         {
-            get{ return direction;}
-            set{ direction = value;}
+            get{ 
+                return direction;
+            }
+            set{
+                direction = value;    
+            }
         }
 
 
@@ -53,26 +52,32 @@ namespace SharpCG
 
         public override int LightType
         {
-            get{return 1;}
+            get{ return 1; }
         }
 
 
         public override vec3 Position
         {
-            get {return vec3.Zero;}
+            get { return vec3.Zero; }
             set { }
         }
 
 
-        public mat4 LightProjectionMatrix
-        {
-            get { return mat4.Ortho(-10f, 10f, -10f, 10f, 0.1f, 1000f); }
+        public override mat4 ProjectionMatrix
+        {           
+            get { return mat4.Ortho(-10, 10, -10, 10, 0.01f, 1000f); }
         }
 
 
-        public mat4 lightViewMatrix
+        public override mat4 ViewMatrix
         {
-            get { return mat4.LookAt(direction, vec3.Zero, vec3.UnitY); }
+            get {
+                vec3 up = vec3.UnitY;
+                if (Math.Abs(vec3.Dot(direction, up)) > 0.9999f)
+                    up = vec3.UnitZ;
+
+                return mat4.LookAt(-direction, vec3.Zero, up);
+                }
         }
 
 
@@ -82,7 +87,7 @@ namespace SharpCG
         }
 
 
-        public Texture2D ShadowMap
+        public override Texture ShadowMap
         {
             get
             {

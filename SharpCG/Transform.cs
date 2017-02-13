@@ -187,12 +187,14 @@ namespace SharpCG
             get{ return (rotation.ToMat3 * vec3.UnitX).Normalized; }
         }
 
+
         public void ToIdentity()
         {
             Position    = vec3.Zero;
             Scale       = vec3.Ones;
             Rotation    = quat.Identity;
         }
+
 
         public Transform Parent
         {
@@ -203,6 +205,25 @@ namespace SharpCG
                 return this.sceneObject.Parent.Transform;
             }            
         }
+
+
+
+        public void LookAt(vec3 eye, vec3 target, vec3 up)
+        {
+            
+            var viewMat = mat4.LookAt(eye, target, up);
+            
+            var translation = vec3.Zero;
+            var rotation = quat.Identity;
+            var scale = vec3.Ones;
+
+            Fun.Decompose(viewMat, out translation, out rotation, out scale);
+
+            Position    = translation;
+            Rotation    = rotation;
+            Scale       = scale;
+        }
+
 
         private void UpdateMatrices()
         {
@@ -216,5 +237,7 @@ namespace SharpCG
             //normalMatrix        = new mat3(inverseWorldMatrix.Transposed);
             dirty               = false;
         }
+
+
     }
 }

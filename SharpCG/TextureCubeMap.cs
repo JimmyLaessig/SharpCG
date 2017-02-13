@@ -130,12 +130,12 @@ namespace SharpCG
         {
             TextureCubeMap texture = new TextureCubeMap();
 
-            texture.SetImage(Image.FromFile(posXPath), CubeMapFace.PosX);
-            texture.SetImage(Image.FromFile(negXPath), CubeMapFace.NegX);
-            texture.SetImage(Image.FromFile(posYPath), CubeMapFace.PosY);
-            texture.SetImage(Image.FromFile(negYPath), CubeMapFace.NegY);
-            texture.SetImage(Image.FromFile(posZPath), CubeMapFace.PosZ);
-            texture.SetImage(Image.FromFile(negZPath), CubeMapFace.NegZ);
+            texture.SetImage(Image.FromFile(posXPath, false), CubeMapFace.PosX);
+            texture.SetImage(Image.FromFile(negXPath, false), CubeMapFace.NegX);
+            texture.SetImage(Image.FromFile(posYPath, false), CubeMapFace.PosY);
+            texture.SetImage(Image.FromFile(negYPath, false), CubeMapFace.NegY);
+            texture.SetImage(Image.FromFile(posZPath, false), CubeMapFace.PosZ);
+            texture.SetImage(Image.FromFile(negZPath, false), CubeMapFace.NegZ);
 
             texture.Name        = posXPath;
             texture.isDirty     = true;

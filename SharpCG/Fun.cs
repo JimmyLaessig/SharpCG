@@ -35,10 +35,9 @@ namespace SharpCG
     public static void Decompose(mat4 matrix, out vec3 translation, out quat rotation, out vec3 scale)
     {
         //Extract the translation
-        translation.x = matrix.m03;
-        translation.y = matrix.m13;
-        translation.z = matrix.m23;
-
+        translation     = matrix.Column3.xyz;
+        
+            
         //Extract row vectors of the matrix
         vec3 row0 = matrix.Row0.xyz;
         vec3 row1 = matrix.Row1.xyz;
@@ -75,7 +74,7 @@ namespace SharpCG
                                 row1.x, row1.y, row1.z,
                                 row2.x, row2.y, row2.z);
 
-        rotation = new quat(rotMat);
+        rotation = new quat(rotMat).Conjugate;
     }
 
 }

@@ -27,7 +27,7 @@ namespace SharpCG
 
         private Mesh mesh;
         private Light light;
-
+          
 
         private Framebuffer gBuffer;
 
@@ -127,7 +127,8 @@ namespace SharpCG
         {
             Camera camera = Camera.Main;
 
-            GL.Enable(EnableCap.CullFace);         
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);      
             GL.Enable(EnableCap.DepthTest);
            
             GL.DepthMask(true);
@@ -208,14 +209,23 @@ namespace SharpCG
             lightingPassMaterial.LightDirection     = light.Direction;
             lightingPassMaterial.LightColor         = light.Color;
             lightingPassMaterial.LightAttenuation   = light.Attenuation;
-
-            lightingPassMaterial.InverseViewProjectionMatrix =  V.Inverse * P.Inverse;
-            lightingPassMaterial.CameraPosition     = camera.Transform.WorldPosition;
             
+
+            lightingPassMaterial.InverseViewProjectionMatrix    =  V.Inverse * P.Inverse;
+            lightingPassMaterial.CameraPosition                 = camera.Transform.WorldPosition;
+
+            if (light.ShadowMap != null)
+            {
+                lightingPassMaterial.ShadowMapTexture = light.ShadowMap;
+                lightingPassMaterial.LightViewProjectionMatrix = light.ProjectionMatrix * Light.ViewMatrix;
+            }
+
             uint unit = 0;
             lightingPassMaterial.Bind(ref unit);
 
             light.LightGeometry.Bind();
+            
+
             GL.DrawElements(BeginMode.Triangles, light.LightGeometry.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
 

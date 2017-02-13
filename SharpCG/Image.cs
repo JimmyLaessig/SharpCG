@@ -68,12 +68,15 @@ namespace SharpCG
         }
 
 
-        public static Image FromBitmap(Bitmap bmp)
+        public static Image FromBitmap(Bitmap bmp, bool flipped = true)
         {
             
             var img = new Image(bmp.Width, bmp.Height);
-           
+            if(flipped)
+                bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
             BitmapData bitmapData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            
             byte[] data = new byte[Math.Abs(bitmapData.Stride * bmp.Height)];
             Marshal.Copy(bitmapData.Scan0, img.data, 0, data.Length);
             bmp.UnlockBits(bitmapData);            
@@ -82,9 +85,9 @@ namespace SharpCG
         }
 
 
-        public static Image FromFile(string path)
+        public static Image FromFile(string path, bool flipped = true)
         {
-            var i = FromBitmap(System.Drawing.Image.FromFile(path) as Bitmap);
+            var i = FromBitmap(System.Drawing.Image.FromFile(path) as Bitmap, flipped);
             i.Path = path;
             
             return i;

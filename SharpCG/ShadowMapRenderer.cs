@@ -64,19 +64,21 @@ namespace SharpCG.Base.Scenegraph
                 return;
 
             var shadowCasters = SceneObject.CollectWhere<Mesh>(sceneObject.Runtime.Root, (obj => obj.HasTag("ShadowCaster")));
-            GL.Disable(EnableCap.CullFace);
+            GL.Enable(EnableCap.PolygonOffsetFill);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+           
+            GL.PolygonOffset(1.1f, 4.0f);
+       
 
-            //GL.DepthMask(true);
-            
-
-            shadowCasters.ForEach(mesh => {
+            shadowCasters.ForEach(mesh => 
+            {
                 var obj = mesh.SceneObject;
 
                 material.WorldMatrix        = obj.Transform.WorldMatrix;
-                material.ProjectionMatrix   = light.LightProjectionMatrix;
-                material.ViewMatrix         = light.lightViewMatrix;
+                material.ProjectionMatrix   = light.ProjectionMatrix;
+                material.ViewMatrix         = light.ViewMatrix;
                 material.WvpMatrix          = material.ProjectionMatrix * material.ViewMatrix * material.WorldMatrix;
-
 
                 uint unit = 0;
                 material.Bind(ref unit);
@@ -91,7 +93,13 @@ namespace SharpCG.Base.Scenegraph
                     GL.DrawArrays(mesh.PrimitiveType, 0, mesh.TriangleCount * 3);
                 }
                 material.Shader.release();
-            });            
+            });
+
+
+            GL.Disable(EnableCap.PolygonOffsetFill);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+            GL.PolygonOffset(0.0f, 0.0f);
         }
 
 

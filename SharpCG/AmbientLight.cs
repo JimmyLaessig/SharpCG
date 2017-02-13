@@ -30,6 +30,7 @@ namespace SharpCG
             get{return 0;}
         }
 
+        
 
         public override vec3 Direction
         {
@@ -48,6 +49,22 @@ namespace SharpCG
         {
             get {return vec3.Zero;}
             set { }
+        }
+
+        public override mat4 ViewMatrix
+        {
+            get
+            {
+                return mat4.Identity;
+            }
+        }
+
+        public override mat4 ProjectionMatrix
+        {
+            get
+            {
+                return mat4.Identity;
+            }
         }
     }
 }

@@ -251,7 +251,6 @@ namespace SharpCG
         }
 
 
-
         /// <summary>
         /// Finds the shader for the given key. 
         /// </summary>
@@ -267,6 +266,7 @@ namespace SharpCG
 
             return Shaders[key];
         }
+
 
         public static bool InitializeShaders()
         {
