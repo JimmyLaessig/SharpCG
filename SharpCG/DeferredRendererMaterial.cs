@@ -153,7 +153,6 @@ namespace SharpCG
                 GL.Uniform1(uniformLocations["texNormalMap"], 2);
                 normalMapTexture.Bind(TextureUnit.Texture2);
             }
-
         }
     }
 

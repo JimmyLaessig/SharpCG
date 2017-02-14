@@ -61,7 +61,7 @@ namespace SharpCG
             //GL.CullFace(CullFaceMode.Back);
             GL.Disable(EnableCap.CullFace);
 
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            //GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             material.WorldMatrix        = sceneObject.Transform.WorldMatrix;
             material.ProjectionMatrix   = camera.ProjectionMatrix;
             material.ViewMatrix         = camera.ViewMatrix;

@@ -37,9 +37,9 @@ uniform vec3 vCameraPosition;
 out vec4 vFragColor;
 
 
-float calcAttenuation(float linear, float quadratic, float d)
+float calcAttenuation(float constant, float linear, float quadratic, float d)
 {
-    return 1.0 / (1.0 + linear * d + quadratic * d * d);
+    return 1.0 / (constant + linear * d + quadratic * d * d);
 }
 
 
@@ -119,7 +119,7 @@ void main()
 		vFragColor.a = 1;
 	}
 	// Directional Light (with ShadowMapping)
-	if(iLightType == 1)
+	else if(iLightType == 1)
 	{		
 		if(normal.w <= 0)
 		{
@@ -128,24 +128,45 @@ void main()
 		}
 		
 		vec3 N = vWorldNormal;
-
-		//vec3 N = vec3(0, 1, 0);
 		vec3 V = normalize( vCameraPosition - vWorldPosition);
-
 		vec3 L = normalize(-vLightDirection);	
-		
-
 		vec3 H = normalize( V + L );
-
 		vec3 R = normalize(-reflect (L, N));
 		
 		
-		
 		vec3 Id	= vDiffuseAlbedo.rgb * saturate(dot(N,L));		
-		vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(R, V)),  512f);
+		vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(R, V)),  vSpecularAlbedo.a);
 		float visibility = calcVisiblity(vWorldPosition);
 
 		vFragColor.rgb	= ( Id + Is) * vLightColor * visibility;
+		vFragColor.a	= 1.0f;		
+		
+	}
+	// Point light
+	else if(iLightType == 2)
+	{
+
+		if(normal.w <= 0)
+		{
+			vFragColor = vec4(0);		
+			return;
+		}
+
+		vec3 N = vWorldNormal;
+
+		vec3 V = normalize( vCameraPosition - vWorldPosition);
+		vec3 L = normalize( vLightPosition - vWorldPosition);			
+		vec3 H = normalize( V + L );
+		vec3 R = normalize(-reflect (L, N));		
+		
+		float d = length(vLightPosition - vWorldPosition);
+		
+		vec3 Id	= vDiffuseAlbedo.rgb * saturate(dot(N,L));		
+		vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(R, V)),  vSpecularAlbedo.a);
+		//vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(N, H)),  vSpecularAlbedo.a);
+
+		vFragColor.rgb	= ( Id + Is) * vLightColor * calcAttenuation(vLightAttenuation.x, vLightAttenuation.y ,vLightAttenuation.z, d);
+		vFragColor.rgb = vec3(1, 0, 0);
 		vFragColor.a	= 1.0f;		
 		
 	}

@@ -173,7 +173,7 @@ namespace SharpCG
             GL.Disable(EnableCap.CullFace);           
             GL.Enable(EnableCap.DepthTest);
             GL.DepthMask(false);
-
+            
 
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.One);
@@ -187,16 +187,18 @@ namespace SharpCG
             lightingPassMaterial.WorldMatrix        = W;
             lightingPassMaterial.ViewMatrix         = V;
             lightingPassMaterial.ProjectionMatrix   = P;
+
             if (light.LightType == 0 || light.LightType == 1)
             {
                 lightingPassMaterial.WvpMatrix = mat4.Identity;
             }
             else
             {
+                GL.Enable(EnableCap.CullFace);
                 lightingPassMaterial.WvpMatrix = P * V * W;
             }
-            lightingPassMaterial.NormalMatrix       = mat3.Identity;
-            
+
+            lightingPassMaterial.NormalMatrix           = mat3.Identity;          
         
             lightingPassMaterial.DiffuseAlbedoTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
             lightingPassMaterial.SpecularAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
@@ -211,7 +213,7 @@ namespace SharpCG
             lightingPassMaterial.LightAttenuation   = light.Attenuation;
             
 
-            lightingPassMaterial.InverseViewProjectionMatrix    =  V.Inverse * P.Inverse;
+            lightingPassMaterial.InverseViewProjectionMatrix    = V.Inverse * P.Inverse;
             lightingPassMaterial.CameraPosition                 = camera.Transform.WorldPosition;
 
             if (light.ShadowMap != null)
@@ -224,15 +226,21 @@ namespace SharpCG
             lightingPassMaterial.Bind(ref unit);
 
             light.LightGeometry.Bind();
-            
 
-            GL.DrawElements(BeginMode.Triangles, light.LightGeometry.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
+
+            if (light.LightGeometry.HasIndices)
+            {
+                GL.DrawElements(light.LightGeometry.PrimitiveType, light.LightGeometry.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
+            }
+            else
+            {
+                GL.DrawArrays(light.LightGeometry.PrimitiveType, 0, light.LightGeometry.TriangleCount * 3);
+            }
             GL.BindVertexArray(0);
 
             lightingPassMaterial.Shader.release();
 
-            //GL.Enable(EnableCap.CullFace);
-            //GL.DepthMask(true);
+
 
             GL.Enable(EnableCap.CullFace);           
             GL.Enable(EnableCap.DepthTest);

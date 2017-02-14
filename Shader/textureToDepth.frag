@@ -10,6 +10,6 @@ uniform sampler2D texDepth;
 void main(void)
 {
 	float z = texture(texDepth, vTexcoords).r;	
-	gl_FragDepth	=z;
+	gl_FragDepth	= z;
 
 }

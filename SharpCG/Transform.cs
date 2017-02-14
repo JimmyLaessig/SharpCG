@@ -21,12 +21,7 @@ namespace SharpCG
         private mat3 normalMatrix;
 
         private bool dirty;
-
-
-        public static Transform Identity
-        {
-            get { return  new Transform(); }
-            }
+      
 
         public Transform()
         {
@@ -34,10 +29,8 @@ namespace SharpCG
             rotation    = quat.Identity;
             scale       = vec3.Ones;
 
-
-            worldMatrix = mat4.Identity;
-            inverseWorldMatrix = mat4.Identity;
-
+            worldMatrix         = mat4.Identity;
+            inverseWorldMatrix  = mat4.Identity;
         }
 
 
@@ -53,8 +46,8 @@ namespace SharpCG
             {
                 if (Parent == null)
                     scale = value;
-
-                scale = value / Parent.WorldScale;
+                else
+                    scale = value / Parent.WorldScale;
             }
         }
 
@@ -71,7 +64,8 @@ namespace SharpCG
             {
                 if (Parent == null)
                     position = value;
-                position = value - Parent.WorldPosition;
+                else
+                    position = value - Parent.WorldPosition;
             }
         }
 
