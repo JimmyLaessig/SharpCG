@@ -9,7 +9,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Input;
 
-using SharpCG.Base.Scenegraph;
+
 namespace SharpCG
 {
     public class Window : GameWindow

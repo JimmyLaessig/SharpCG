@@ -66,7 +66,7 @@ namespace SharpCG
         }
 
 
-        public abstract Mesh LightGeometry
+        public abstract Geometry LightGeometry
         {
             get;
         }

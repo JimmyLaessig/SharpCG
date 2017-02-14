@@ -5,19 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using GlmSharp;
 
-using SharpCG.Base.Scenegraph;
+
 
 namespace SharpCG
 {
     public class DirectionalLight : Light
     {        
-        private Mesh fullscreenQuad;
+        private Geometry fullscreenQuad;
 
         private ShadowMapRenderer shadowMappingTechnique;
         private vec3 direction;
         public override void OnStart()
         {
-            fullscreenQuad = MeshExtensions.FullscreenQuad;
+            fullscreenQuad = GeometryExtensions.FullscreenQuad;
 
             if(shadowMappingTechnique == null)
             {
@@ -44,7 +44,7 @@ namespace SharpCG
         }
 
 
-        public override Mesh LightGeometry
+        public override Geometry LightGeometry
         {
             get{ return fullscreenQuad; }
         }

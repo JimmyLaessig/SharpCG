@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
 using GlmSharp;
 
-namespace SharpCG.Base.Scenegraph
+namespace SharpCG
 {
     public class ShadowMapRenderer : Renderer
     {
@@ -63,7 +63,7 @@ namespace SharpCG.Base.Scenegraph
             if (material == null)
                 return;
 
-            var shadowCasters = SceneObject.CollectWhere<Mesh>(sceneObject.Runtime.Root, (obj => obj.HasTag("ShadowCaster")));
+            var shadowCasters = SceneObject.CollectWhere<Geometry>(sceneObject.Runtime.Root, (obj => obj.HasTag("ShadowCaster")));
             GL.Enable(EnableCap.PolygonOffsetFill);
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Front);

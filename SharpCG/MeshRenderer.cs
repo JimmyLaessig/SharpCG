@@ -11,14 +11,14 @@ namespace SharpCG
 {
 public class MeshRenderer : Renderer
 {
-    private Mesh mesh;
+    private Geometry mesh;
     private SimpleLightingMaterial material;
 
 
 
     public override void OnStart()
     {
-        mesh = (Mesh)sceneObject.Components.Find(c => c is Mesh);
+        mesh = (Geometry)sceneObject.Components.Find(c => c is Geometry);
         material = (SimpleLightingMaterial)sceneObject.Components.Find(c => c is SimpleLightingMaterial);
     }
 

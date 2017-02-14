@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpCG.Base.Scenegraph
+namespace SharpCG
 {
     public static class SceneObjectExtensions
     {
@@ -13,7 +13,7 @@ namespace SharpCG.Base.Scenegraph
         public static SceneObject CopyDepthBuffer(Framebuffer from, Framebuffer target, RenderPass renderPass)
         {
             SceneObject obj = new SceneObject("Depth Texture Copy");
-            obj.AddComponent<Mesh>(MeshExtensions.FullscreenQuad);
+            obj.AddComponent<Geometry>(GeometryExtensions.FullscreenQuad);
 
             var mat             = obj.AddComponent<TextureToDepthMaterial>();
             mat.DepthTexture    = from.GetRenderTarget(FramebufferAttachment.DepthAttachment);

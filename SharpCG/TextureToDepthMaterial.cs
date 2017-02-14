@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpCG.Base.Scenegraph;
+
 using OpenTK.Graphics.OpenGL4;
 
-namespace SharpCG.Base.Scenegraph
+namespace SharpCG
 {
     public class TextureToDepthMaterial : Material
     {

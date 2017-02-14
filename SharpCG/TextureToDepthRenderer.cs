@@ -8,21 +8,19 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using GlmSharp;
 
-namespace SharpCG.Base.Scenegraph
+namespace SharpCG
 {
-
 
     public class TextureToDepthRenderer : Renderer
     {
 
-
-        private Mesh fullscreenQuad;
+        private Geometry fullscreenQuad;
         private TextureToDepthMaterial material;
 
 
         public override void OnStart()
         {
-            fullscreenQuad  = sceneObject.FindComponent<Mesh>();
+            fullscreenQuad  = sceneObject.FindComponent<Geometry>();
             material        = sceneObject.FindComponent<TextureToDepthMaterial>();
         }
 

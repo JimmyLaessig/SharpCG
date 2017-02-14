@@ -18,14 +18,14 @@ namespace SharpCG
     public class SkyboxRenderer : Renderer
     {
 
-        private Mesh mesh;
+        private Geometry mesh;
         private SkyboxMaterial material;
 
        
 
         public override void OnStart()
         {
-            mesh = (Mesh)sceneObject.Components.Find(c => c is Mesh);
+            mesh = (Geometry)sceneObject.Components.Find(c => c is Geometry);
             material = (SkyboxMaterial)sceneObject.Components.Find(c => c is SkyboxMaterial);
         }
 

@@ -8,12 +8,14 @@ uniform sampler2D texDiffuseAlbedo;
 uniform sampler2D texSpecularAlbedo;
 uniform sampler2D texDepth;
 
+
 // Light uniforms
 uniform int iLightType = 0;	
 // 0 ... Ambient
 // 1 ... Directional
 // 2 ... Point
 // 3 ... Spot
+
 
 uniform vec3 vLightPosition;
 uniform vec3 vLightDirection;

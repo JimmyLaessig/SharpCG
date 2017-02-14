@@ -10,11 +10,11 @@ namespace SharpCG
 {
     public class AmbientLight : Light
     {
-        private Mesh fullscreenQuad;
+        private Geometry fullscreenQuad;
 
         public override void OnStart()
         {
-            fullscreenQuad = MeshExtensions.FullscreenQuad;
+            fullscreenQuad = GeometryExtensions.FullscreenQuad;
 
         }
 
@@ -39,7 +39,7 @@ namespace SharpCG
         }
 
 
-        public override Mesh LightGeometry
+        public override Geometry LightGeometry
         {
             get{return fullscreenQuad;}
         }

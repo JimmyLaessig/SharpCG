@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpCG.Base.Scenegraph
+namespace SharpCG
 {
     public class ShadowMapMaterial : Material
     {

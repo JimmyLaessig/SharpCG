@@ -278,7 +278,7 @@ namespace SharpCG
             if (!LoadShader("deferredLightingPass")) return false;
             if (!LoadShader("textureToDepth")) return false;
             if (!LoadShader("shadowMap")) return false;
-
+            if (!LoadShader("uniformColor")) return false;
             return true;
         }
     }

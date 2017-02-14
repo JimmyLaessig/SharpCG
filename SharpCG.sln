@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shader", "Shader", "{E3654D
 		Shader\skybox.vert = Shader\skybox.vert
 		Shader\textureToDepth.frag = Shader\textureToDepth.frag
 		Shader\textureToDepth.vert = Shader\textureToDepth.vert
+		Shader\uniformColor.frag = Shader\uniformColor.frag
+		Shader\uniformColor.vert = Shader\uniformColor.vert
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCG", "SharpCG\SharpCG.csproj", "{BF0203FF-64C1-443F-8534-A91117D863FD}"

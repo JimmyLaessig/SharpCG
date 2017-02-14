@@ -49,29 +49,27 @@ namespace SharpCG
 
         public static ArrayBuffer<float> Create(BufferTarget target, vec2[] data)
         {
-            // TODO quicker?
-            var data1D = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
-
-            return Create(target, data1D,  2);
+            var data1D = new List<float>();
+            data.ToList().ForEach(v => data1D.AddRange(v.Values));
+            return Create(target, data1D.ToArray(), 2);
         }
 
 
         public static ArrayBuffer<float> Create(BufferTarget target, vec3[] data)
         {
 
-            //var data1D = new float[data.Length * 3];
-           // System.Buffer.BlockCopy(data, 0, data1D, 0, data.Length * 3);
-            var data1D = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
-
-            return Create(target, data1D,  3);
+            var data1D = new List<float>();
+            data.ToList().ForEach(v => data1D.AddRange(v.Values));
+            return Create(target, data1D.ToArray(),  3);
 
         }
 
 
         public static ArrayBuffer<float> Create(BufferTarget target, vec4[] data)
         {
-            var data1D = data.Select(v => v.Values).Cast<byte>().Cast<float>().ToArray();
-            return Create(target,  data1D,  4);
+            var data1D = new List<float>();
+            data.ToList().ForEach(v => data1D.AddRange(v.Values));
+            return Create(target, data1D.ToArray(), 4);
         }
 
 
@@ -101,10 +99,6 @@ namespace SharpCG
 
         public override void InitGL()
         {
-            //if(target == BufferTarget.ElementArrayBuffer)
-            //{
-            //    Console.WriteLine("");
-            //}
             DeInitGL();
 
             GL.GenBuffers(1, out handle);
@@ -127,7 +121,6 @@ namespace SharpCG
         {
             GL.BindBuffer(target, handle);
         }
-
 
         
     }

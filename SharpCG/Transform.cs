@@ -18,7 +18,7 @@ namespace SharpCG
 
         private mat4 worldMatrix;
         private mat4 inverseWorldMatrix;
-        // private mat3 normalMatrix;
+        private mat3 normalMatrix;
 
         private bool dirty;
 
