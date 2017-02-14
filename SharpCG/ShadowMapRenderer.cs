@@ -66,7 +66,7 @@ namespace SharpCG.Base.Scenegraph
             var shadowCasters = SceneObject.CollectWhere<Mesh>(sceneObject.Runtime.Root, (obj => obj.HasTag("ShadowCaster")));
             GL.Enable(EnableCap.PolygonOffsetFill);
             GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
+            GL.CullFace(CullFaceMode.Front);
            
             GL.PolygonOffset(1.1f, 4.0f);
        

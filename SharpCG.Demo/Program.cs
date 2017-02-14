@@ -146,7 +146,7 @@ namespace SharpCG.Demo
                 var light = lightObject.AddComponent<DirectionalLight>();
 
                 light.Color = new vec3(1);
-                light.Direction = new vec3(1f, -1f, -1f);
+                light.Direction = new vec3(0f, -1f, 0f);
                 var x = light.Direction;
                 var renderer = lightObject.AddComponent<DeferredRenderer>();
                 renderer.RenderPass = lightingPass;

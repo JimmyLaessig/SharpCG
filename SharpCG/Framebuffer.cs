@@ -213,9 +213,7 @@ namespace SharpCG
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(1));   // Diffuse
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment1, new vec4(0));   // Specular
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment2, new vec4(0));   // Normals
-                gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment,  new vec4(1));    // Depth
-                
-
+                gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment,  new vec4(1));    // Depth               
                 return gBuffer;
             }
         }

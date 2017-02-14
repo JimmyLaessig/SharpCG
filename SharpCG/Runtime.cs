@@ -21,20 +21,22 @@ namespace SharpCG
 
         public List<Action> immediateEvents;
         public List<Action> drawEvents;
-    }     
-    
+    }
+
+    class RenderPassComparer : IComparer<RenderPass>
+    {
+        public int Compare(RenderPass x, RenderPass y)
+        {
+            if (x.SortKey > y.SortKey) return 1;
+            if (x.SortKey < y.SortKey) return -1;
+            return 0;
+        }
+    }
+
 
     public class RenderControl
     {
-        class RenderPassComparer : IComparer<RenderPass>
-        {
-            public int Compare(RenderPass x, RenderPass y)
-            {
-                if (x.SortKey > y.SortKey) return 1;
-                if (x.SortKey < y.SortKey) return -1;
-                return 0;
-            }
-        }
+        
 
         private Rectangle viewport;
         private Color4 clearColor;

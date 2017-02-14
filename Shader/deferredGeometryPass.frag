@@ -1,6 +1,6 @@
 #version 330 core
 
-in vec3 pWorldPosition;
+
 in vec3 pWorldNormal;
 in vec3 pWorldTangent;
 in vec3 pWorldBitangent;
@@ -25,7 +25,6 @@ uniform vec4 vMaterialSpecular;
 layout (location = 0) out vec4 gDiffuseAlbedo;
 layout (location = 1) out vec4 gSpecularAlbedo;
 layout (location = 2) out vec4 gWorldNormal;
-
 
 //--------------------------------------------------------------------------------------
 // Normal mapping
@@ -65,6 +64,5 @@ void main()
 	gDiffuseAlbedo		= vDiffuseColor * vMaterialDiffuse;
 	gDiffuseAlbedo.a	= 1.0f;
 	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular.rgb;
-	gSpecularAlbedo.a	= vMaterialSpecular.a;
-
+	gSpecularAlbedo.a	= vMaterialSpecular.a;	
 }

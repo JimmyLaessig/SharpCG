@@ -14,8 +14,8 @@ namespace SharpCG
     {
 
         private Texture2D diffuseMapTexture;
-        private Texture2D normalMapTexture;
         private Texture2D specularMapTexture;
+        private Texture2D normalMapTexture;
 
 
 
@@ -106,6 +106,7 @@ namespace SharpCG
             set { normalMappingEnabled = value; }
         }
 
+       
 
         protected override void InitUniformLocations()
         {                     
@@ -229,10 +230,12 @@ namespace SharpCG
             set{lightPosition = value;}
         }
 
+
         public bool HasShadowMapTexture
         {
             get { return shadowMapTexture != null; }
         }
+
 
         public vec3 LightColor
         {
@@ -270,26 +273,29 @@ namespace SharpCG
         }
 
 
-
         public mat4 LightViewProjectionMatrix
         {
             get{return lightViewProjectionMatrix;}
             set{lightViewProjectionMatrix = value;}
         }
 
+
         public Texture ShadowMapTexture
         {
             get{return shadowMapTexture;}
             set{shadowMapTexture = value;}
         }
+        
 
         protected override void InitUniformLocations()
         {
             base.InitUniformLocations();
 
-            uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
+           
             uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
             uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
+            uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
+            uniformLocations["texWorldPosition"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldPosition");
             uniformLocations["texDepth"]            = GL.GetUniformLocation(Shader.ProgramHandle, "texDepth");
 
             
@@ -307,9 +313,10 @@ namespace SharpCG
             uniformLocations["mLightBiasVP"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mLightBiasVP");
             uniformLocations["bHasShadowMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasShadowMap");
             uniformLocations["texShadowMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texShadowMap");
+            uniformLocations["iShadowMapSize"]      = GL.GetUniformLocation(Shader.ProgramHandle, "iShadowMapSize");
 
-           
-            
+
+
         }
 
 
@@ -341,23 +348,25 @@ namespace SharpCG
             GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
             GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
 
+
             GL.Uniform1(uniformLocations["bHasShadowMap"], (HasShadowMapTexture) ? 1 : 0);
-           
 
-            if (shadowMapTexture != null)
+            if (HasShadowMapTexture)
             {
-                GL.Uniform1(uniformLocations["texShadowMap"], 4);
-                shadowMapTexture.Bind(TextureUnit.Texture4);
+                GL.Uniform1(uniformLocations["texShadowMap"], 5);
+                shadowMapTexture.Bind(TextureUnit.Texture5);
+
+                GL.Uniform1(uniformLocations["iShadowMapSize"], ShadowMapTexture.Height);
+
+                var biasMatrix = new mat4(
+                    0.5f, 0.0f, 0.0f, 0.0f,
+                    0.0f, 0.5f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.5f, 0.0f,
+                    0.5f, 0.5f, 0.5f, 1.0f);
+
+                var biasLightVP = biasMatrix * lightViewProjectionMatrix;
+                GL.UniformMatrix4(uniformLocations["mLightBiasVP"], 1, false, biasLightVP.Values1D);
             }
-
-            var biasMatrix = new mat4 (
-                0.5f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.5f, 0.0f,
-                0.5f, 0.5f, 0.5f, 1.0f);
-
-            var biasLightVP = biasMatrix * lightViewProjectionMatrix;
-            GL.UniformMatrix4(uniformLocations["mLightBiasVP"], 1, false, biasLightVP.Values1D);
 
             base.Bind(ref textureUnit);
         }
