@@ -80,7 +80,15 @@ namespace SharpCG
             }
             set
             {
-
+                // TODO 
+                if (Parent == null)
+                    rotation = value;
+                else
+                {
+                    rotation = value;
+                    //var angles = value.EulerAngles - Parent.WorldRotation.EulerAngles;
+                    //rotation = new quat((vec3)angles);
+                }
             }
         }
 
@@ -142,7 +150,7 @@ namespace SharpCG
             get
             {
                 if (dirty) UpdateMatrices(); 
-                return WorldMatrix.Inverse;
+                return inverseWorldMatrix;
             }
         }
 
@@ -153,7 +161,7 @@ namespace SharpCG
             get
             {
                 if (dirty) UpdateMatrices();
-                return new mat3(InverseWorldMatrix.Transposed);
+                return normalMatrix;
             }
         }
 
@@ -213,22 +221,22 @@ namespace SharpCG
 
             Fun.Decompose(viewMat, out translation, out rotation, out scale);
 
-            Position    = translation;
-            Rotation    = rotation;
-            Scale       = scale;
+            WorldPosition   = translation;
+            Rotation        = rotation;
+            WorldScale      = scale;
         }
 
 
         private void UpdateMatrices()
         {
-            mat4 T = mat4.Translate(position);
+            mat4 T = mat4.Translate(WorldPosition);
             mat4 R = rotation.ToMat4;
-            mat4 S = mat4.Scale(scale);
+            mat4 S = mat4.Scale(WorldScale);
            
 
             worldMatrix         = T * R * S;
-            //inverseWorldMatrix  = worldMatrix.Inverse;
-            //normalMatrix        = new mat3(inverseWorldMatrix.Transposed);
+            inverseWorldMatrix  = worldMatrix.Inverse;
+            normalMatrix        = new mat3(inverseWorldMatrix.Transposed);
             dirty               = false;
         }
 

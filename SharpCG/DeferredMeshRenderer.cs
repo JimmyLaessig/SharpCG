@@ -188,7 +188,7 @@ namespace SharpCG
             lightingPassMaterial.ViewMatrix         = V;
             lightingPassMaterial.ProjectionMatrix   = P;
 
-            if (light.LightType == 0 || light.LightType == 1)
+            if (light.LightType == 0 || light.LightType == 1 )
             {
                 lightingPassMaterial.WvpMatrix = mat4.Identity;
             }

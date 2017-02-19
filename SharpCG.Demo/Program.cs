@@ -21,6 +21,10 @@ namespace SharpCG.Demo
             
             Shader.InitializeShaders();
 
+            var x = mat4.Translate(1, 2, 3);
+
+
+
             {
                 // Create Camera
                 Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 100000);
@@ -75,23 +79,23 @@ namespace SharpCG.Demo
             window.RenderControl.AddImmediateGLEvent(beforeGeometry, (() => gBuffer.Clear()));
 
             {
-                SceneObject skybox = new SceneObject();
-                skybox.Name = "Skybox";
-                skybox.AddComponent(GeometryExtensions.UnitCube);
-                var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
-                skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
-                                                                "Assets/skybox/skybox_right2048.png",
-                                                                "Assets/skybox/skybox_top2048.png",
-                                                                "Assets/skybox/skybox_bottom2048.png",
-                                                                "Assets/skybox/skybox_front2048.png",
-                                                                "Assets/skybox/skybox_back2048.png");
+                //SceneObject skybox = new SceneObject();
+                //skybox.Name = "Skybox";
+                //skybox.AddComponent(GeometryExtensions.UnitCube);
+                //var skyboxMat = skybox.AddComponent<SkyboxMaterial>();
+                //skyboxMat.CubeMapTexture = TextureCubeMap.Load("Assets/skybox/skybox_left2048.png",
+                //                                                "Assets/skybox/skybox_right2048.png",
+                //                                                "Assets/skybox/skybox_top2048.png",
+                //                                                "Assets/skybox/skybox_bottom2048.png",
+                //                                                "Assets/skybox/skybox_front2048.png",
+                //                                                "Assets/skybox/skybox_back2048.png");
 
-                var renderer = skybox.AddComponent<SkyboxRenderer>();
-                renderer.Framebuffer = gBuffer;
-                renderer.RenderPass = beforeLighting;
+                //var renderer = skybox.AddComponent<SkyboxRenderer>();
+                //renderer.Framebuffer = gBuffer;
+                //renderer.RenderPass = beforeLighting;
 
 
-                window.AddSceneObject(skybox);
+                //window.AddSceneObject(skybox);
             }
 
 
@@ -102,38 +106,38 @@ namespace SharpCG.Demo
             }
 
             {
-                SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx", GeometryExtensions.Materials.Deferred);
-                plane.Name = "plane1";
-                plane.Transform.ToIdentity();
-                plane.Transform.Scale = new vec3(5);
+                //SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx", GeometryExtensions.Materials.Deferred);
+                //plane.Name = "plane1";
+                //plane.Transform.ToIdentity();
+                //plane.Transform.Scale = new vec3(5);
 
 
-                SceneObject.TraverseAndExecute<Geometry>(plane, m =>
-                {
-                    var obj = m.SceneObject;
-                    var scale = obj.Transform.Scale;
-                    obj.Transform.ToIdentity();
+                //SceneObject.TraverseAndExecute<Geometry>(plane, m =>
+                //{
+                //    var obj = m.SceneObject;
+                //    var scale = obj.Transform.Scale;
+                //    obj.Transform.ToIdentity();
 
-                    var renderers = obj.FindComponents<DeferredMeshRenderer>();
-                    renderers.ForEach(r =>
-                    {
-                        r.RenderPass = geometryPass;
-                        r.Framebuffer = gBuffer;
-                    });
+                //    var renderers = obj.FindComponents<DeferredMeshRenderer>();
+                //    renderers.ForEach(r =>
+                //    {
+                //        r.RenderPass = geometryPass;
+                //        r.Framebuffer = gBuffer;
+                //    });
 
-                });
+                //});
 
-                window.AddSceneObject(plane);
+                //window.AddSceneObject(plane);
             }
             {
-                SceneObject figure = GeometryExtensions.Load("Assets/tal16/tal16.fbx", GeometryExtensions.Materials.Deferred);
-                figure.Name = "tal16";
-                figure.Transform.Scale = new vec3(0.01f);
-                figure.Transform.Translate(new vec3(0, 1, 0));
-                SceneObject.TraverseAndExecute<Geometry>(figure, m =>
+                SceneObject fighter = GeometryExtensions.Load("Assets/tal16/tal16.fbx", GeometryExtensions.Materials.Deferred);
+                fighter.Name = "tal16";
+                fighter.Transform.WorldScale = fighter.Transform.WorldScale;
+                //fighter.Transform.Translate(new vec3(0, 1, 0));
+                SceneObject.TraverseAndExecute<Geometry>(fighter, m =>
                 {
                     var obj = m.SceneObject;
-                    var scale = obj.Transform.Scale;
+                    obj.Transform.Scale = vec3.Ones;
                     var renderers = obj.FindComponents<DeferredMeshRenderer>();
                     renderers.ForEach(r =>
                     {
@@ -143,7 +147,7 @@ namespace SharpCG.Demo
                     });
                 });
 
-                window.AddSceneObject(figure);
+                window.AddSceneObject(fighter);
             }
 
 
@@ -195,7 +199,18 @@ namespace SharpCG.Demo
 
                 //window.AddSceneObject(lightObject);
             }
-
+            {
+                SceneObject parent = new SceneObject();
+                parent.Transform.WorldScale = new vec3(0.5f);
+                SceneObject child = new SceneObject();
+                parent.AddChild(child);
+                child.Transform.WorldScale = new vec3(2.0f);
+                var pScale = parent.Transform.Scale;
+                var pWScale = parent.Transform.WorldScale;
+               
+                var cScale = child.Transform.Scale;
+                var cWScale = child.Transform.WorldScale;
+            }
             // Add Point Light
             {
                 SceneObject pointLight = new SceneObject();
@@ -203,14 +218,19 @@ namespace SharpCG.Demo
 
                 var light = pointLight.AddComponent<PointLight>();
 
-                light.Color = new vec3(1, 0, 0);
-                light.Attenuation = new vec3(1.0f, 0.7f, 1.8f);
-                light.Position = new vec3(1, 0, 0);
-                var scale = light.SceneObject.Transform.WorldScale;
-                var renderer = pointLight.AddComponent<DeferredMeshRenderer>();
+                light.Color         = new vec3(1, 0, 0);
+                var scale1 = light.SceneObject.Transform.WorldScale;
+                light.Attenuation   = new vec3(1.0f, 0.7f, 1.8f);
+                
+                var scale2 = light.SceneObject.Transform.WorldScale;
+                light.SceneObject.Transform.WorldScale = light.SceneObject.Transform.WorldScale * 2.0f;
+                var scale3 = light.SceneObject.Transform.WorldScale;
+                light.Position      = new vec3(0, 0.5f, 0);
+
+                var renderer        = pointLight.AddComponent<DeferredMeshRenderer>();
                 renderer.RenderPass = lightingPass;
-                renderer.Stage = Stage.Lighting;
-                renderer.GBuffer = gBuffer;
+                renderer.Stage      = Stage.Lighting;
+                renderer.GBuffer    = gBuffer;
 
                 var material = pointLight.AddComponent<LightingPassMaterial>();
                 renderer.LightingPassMaterial = material;

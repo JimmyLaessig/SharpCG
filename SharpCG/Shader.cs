@@ -273,7 +273,7 @@ namespace SharpCG
             Console.WriteLine("Loading Shaders!");
 
             if (!LoadShader("skybox")) return false;          
-            if (!LoadShader("simpleLighting")) return false;
+           // if (!LoadShader("simpleLighting")) return false;
             if (!LoadShader("deferredGeometryPass")) return false;
             if (!LoadShader("deferredLightingPass")) return false;
             if (!LoadShader("textureToDepth")) return false;

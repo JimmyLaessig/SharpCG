@@ -15,6 +15,7 @@ namespace SharpCG
         public override void OnStart()
         {
             sphere = GeometryExtensions.Sphere(vec3.Zero, 1, 20);
+            //sphere = GeometryExtensions.FullscreenQuad;
             base.OnStart();
         }
 
@@ -81,6 +82,23 @@ namespace SharpCG
                 double discriminant = b * b - 4.0f * a * (c - 1.0f / tolerance);
                 return (-b + Math.Sqrt(discriminant) / (2.0f * a));
             }
+
+            // TODO ARTR2016_A3 Task 1c: SOLVED
+            // Estimate radius of point lights for proper scaling of the geometry.
+            // This method can be reused for the implementation of spot lights.
+
+            //float att = 1.0f / ( vLightAtt.x + vLightAtt.y * d + vLightAtt.z * d * d );
+            // Solve Attenuation formula against d using the 'größe Lösungsformel' for quadratic equations
+            //a = attenuation.z;                       // (quatratic attenuation)
+            //b = attenuation.y;                       // (linear attenuation)
+            //c = attenuation.x - 1.0f / tolerance;    // (constant attenuation - 1/att);
+
+            //double d1 = (-b + Math.Sqrt(b * b - 4 * a * c)) / (2 * a);
+            //double d2 = (-b - Math.Sqrt(b * b - 4 * a * c)) / (2 * a);
+
+            //return Math.Max(d1, d2);
+
+
         }
     }
 }

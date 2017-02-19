@@ -10,18 +10,18 @@ uniform sampler2D texDepth;
 
 
 // Light uniforms
-uniform int iLightType = 0;	
+
+uniform int iLightType;
 // 0 ... Ambient
 // 1 ... Directional
 // 2 ... Point
 // 3 ... Spot
-
-
 uniform vec3 vLightPosition;
 uniform vec3 vLightDirection;
 uniform vec3 vLightColor;
 uniform vec3 vLightAttenuation;
 uniform mat4 mLightBiasVP;
+
 
 // ShadowMap uniforms
 uniform bool bHasShadowMap;
@@ -164,9 +164,9 @@ void main()
 		vec3 Id	= vDiffuseAlbedo.rgb * saturate(dot(N,L));		
 		vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(R, V)),  vSpecularAlbedo.a);
 		//vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(N, H)),  vSpecularAlbedo.a);
-
-		vFragColor.rgb	= ( Id + Is) * vLightColor * calcAttenuation(vLightAttenuation.x, vLightAttenuation.y ,vLightAttenuation.z, d);
-		vFragColor.rgb = vec3(1, 0, 0);
+		float att = calcAttenuation(vLightAttenuation.x, vLightAttenuation.y ,vLightAttenuation.z, d);
+		vFragColor.rgb	= ( Id + Is) * vLightColor * att;
+		//vFragColor.rgb = vec3(1, 0, 0);
 		vFragColor.a	= 1.0f;		
 		
 	}

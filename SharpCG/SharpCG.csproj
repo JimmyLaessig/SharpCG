@@ -61,6 +61,7 @@
     <Compile Include="DirectionalLight.cs" />
     <Compile Include="GLRenderComponent.cs" />
     <Compile Include="GLResourceComponent.cs" />
+    <Compile Include="MatrixExtensions.cs" />
     <Compile Include="PointLight.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="SceneObjectExtensions.cs" />

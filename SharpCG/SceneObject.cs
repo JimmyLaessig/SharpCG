@@ -119,9 +119,14 @@ namespace SharpCG
         public void AddChild(SceneObject child)
         {
             children.Add(child);
-
+            var t = child.transform.WorldPosition;
+            var s = child.transform.WorldScale;
+            var r = child.transform.WorldRotation;
             // register this as parent
             child.parent = this;
+            child.transform.WorldPosition = t;
+            child.transform.WorldScale = s;
+            child.transform.WorldRotation = r;
         }
 
 

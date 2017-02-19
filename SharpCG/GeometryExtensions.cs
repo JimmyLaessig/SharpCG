@@ -229,18 +229,18 @@ namespace SharpCG
 
         private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string directory, Materials materialType)
         {
-           
+            var name = node.Name;
             Assimp.Vector3D t; Assimp.Vector3D s; Assimp.Quaternion r;
             node.Transform.Decompose(out s, out r, out t);
-
-
+            
+            
             SceneObject obj = new SceneObject();
             obj.Name                = node.Name;
             // Add Transform to scene object
-            obj.Transform.Position  = new vec3(t.X, t.Y, t.Z);
-            obj.Transform.Scale     = new vec3(s.X, s.Y, s.Z);
-            obj.Transform.Rotation  = new quat(r.X, r.Y, r.Z, r.W);
-         
+            obj.Transform.WorldPosition = new vec3(t.X, t.Y, t.Z);
+            obj.Transform.WorldScale    = new vec3(s.X, s.Y, s.Z);
+            obj.Transform.WorldRotation = new quat(r.X, r.Y, r.Z, r.W);
+           // obj.Transform.Rotation = quat.Identity;
 
             // Create Meshes
             node.MeshIndices.ForEach(i => 
