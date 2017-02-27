@@ -24,12 +24,18 @@ namespace SharpCG.Core
         private dvec3 position;
 
 
+
+        private dvec3 translationForce   = dvec3.Zero;
+        private dvec3 rotationForce      = dvec3.Zero;
+
+
         public override void OnStart()
         {
             camera = this.sceneObject.FindComponent<Camera>();
-            this.rotation = (vec3)camera.Transform.Rotation.EulerAngles;
+            this.rotation = camera.Transform.Rotation.EulerAngles;
             this.position = camera.Transform.Position;
         }
+
 
         /// <summary>
         /// Sets the camera object to the given camera
@@ -48,8 +54,8 @@ namespace SharpCG.Core
             }
         }
 
-        private dvec3 speed = dvec3.Zero;
-
+       
+        
 
         /// <summary>
         /// Updates the CameraController
@@ -64,67 +70,98 @@ namespace SharpCG.Core
 
             if (Enabled)
             {
-                ControlWASD(deltaT, OpenTK.Input.Keyboard.GetState());
-                ControlPan(delta, mouseState);
-                ControlRotation(delta, mouseState);
+                translationForce += ControlWASD(deltaT, OpenTK.Input.Keyboard.GetState());
+                translationForce += ControlPan(delta, mouseState);
+
+                translationForce = glm.Clamp(translationForce, -dvec3.Ones, dvec3.Ones);
+                
+                camera.Transform.Translate(translationForce * MoveSpeed);
+
+
+
+                //rotationForce += ControlRotation(delta, mouseState);
+                //rotationForce = glm.Clamp(rotationForce, -dvec3.Ones, dvec3.Ones);
+                //rotation += rotationForce * RotationSpeed;
+                //rotation = normalizeAngles(rotation);
+
+
+                rotation += ControlRotation(delta, mouseState) * RotationSpeed;
+                //rotation = rotation.ClampCircular(glm.Radians(85.0), 0, 0);
+                rotation = normalizeAngles(rotation);
+                camera.Transform.Rotation = new dquat(rotation).Normalized;
+
+                rotationForce       /= 1.1;
+                translationForce    /= 1.1;
+
+                if (rotationForce.Length <= 0.0001) rotationForce = dvec3.Zero;               
+                if (translationForce.Length <= 0.0001) translationForce = dvec3.Zero;
+
             }
 
             
             lastMousePos = mousePosX;                    
         }
 
-       
+
+
+        private double translationForceFactor = 0.1f;
+        private double rotationForceFactor = 1.0f;
+        
 
         /// <summary>
-        /// Handles user input for camera movement fom the keyboard
+        /// Returns the acceleration vector from WASD input
         /// </summary>
-        private void ControlWASD(double deltaT, KeyboardState state)
+        private dvec3 ControlWASD(double deltaT, KeyboardState state)
         {
             // Decrease speed
-            speed = speed / 1.1f;
-            if (speed.Length <= 0.0001) speed = dvec3.Zero;
+            var relativeForce = translationForceFactor * deltaT;
 
-            if (state.IsKeyDown(Key.W)) speed.x += 0.1f;           
-            if (state.IsKeyDown(Key.A)) speed.y -= 0.1f;           
-            if (state.IsKeyDown(Key.S)) speed.x -= 0.1f;            
-            if (state.IsKeyDown(Key.D)) speed.y += 0.1f;
+            dvec3 force = vec3.Zero;
+
+            if (state.IsKeyDown(Key.W)) force += camera.Transform.Forward   * relativeForce;           
+            if (state.IsKeyDown(Key.A)) force -= camera.Transform.Right     * relativeForce;           
+            if (state.IsKeyDown(Key.S)) force -= camera.Transform.Forward   * relativeForce;            
+            if (state.IsKeyDown(Key.D)) force += camera.Transform.Right     * relativeForce;
+
+            return force;  
+        }
+
+
+        private dvec3 ControlPan(dvec2 deltaPos, MouseState state)
+        {
+
+            var relativeForce = translationForceFactor * deltaPos;
             
+            dvec3 force = dvec3.Zero;
 
-            speed = glm.Clamp(speed, -dvec3.Ones, dvec3.Ones);
-
-            dvec3 translation = camera.Transform.Forward * speed.x + camera.Transform.Right * speed.y + camera.Transform.Up * speed.z;
-
-            camera.Transform.Translate(translation * (MoveSpeed * deltaT));
-        }
-
-
-        private void ControlPan(dvec2 deltaPos, MouseState state)
-        {
-            if(state[MouseButton.Middle])
+            if (state[MouseButton.Middle])
             {
-                camera.Transform.Translate(camera.Transform.Right * deltaPos.x * (float) MoveSpeed);
-                camera.Transform.Translate(-camera.Transform.Up * deltaPos.y * (float) MoveSpeed);
+                force += camera.Transform.Right * relativeForce.x;
+                force += -camera.Transform.Up   * relativeForce.y;
             }
+            return force;
         }
 
 
-        private void ControlRotation(dvec2 deltaPos, MouseState state)
+        private dvec3 ControlRotation(dvec2 deltaPos, MouseState state)
         {
+            var relativeForce = rotationForceFactor * deltaPos;
+
+            dvec3 force = dvec3.Zero;
             if (state[MouseButton.Right])
             {
-                rotation.x += (glm.Radians(-deltaPos.y * RotationSpeed));
-                rotation.y += (glm.Radians(-deltaPos.x * RotationSpeed));
-                rotation.z = 0;
-                rotation = normalizeAngles(rotation);
-
-                camera.Transform.Rotation = new dquat(rotation).Normalized;
+                force.x += glm.Radians(-relativeForce.y);
+                force.y += glm.Radians(-relativeForce.x);
+                force.z += 0;         
             }
+
+            return force;
         }
 
         private dvec3 normalizeAngles(dvec3 angles)
         {
-            float TWO_PI                = (float)(Math.PI * 2);
-            float MAX_VERTICAL_ANGLE    = glm.Radians(85.0f);
+            float TWO_PI = (float)(Math.PI * 2);
+            float MAX_VERTICAL_ANGLE = glm.Radians(85.0f);
 
 
             angles.x = angles.x % TWO_PI;

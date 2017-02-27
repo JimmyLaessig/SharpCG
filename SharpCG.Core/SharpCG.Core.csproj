@@ -87,6 +87,7 @@
     <Compile Include="Texture2D.cs" />
     <Compile Include="TextureCubeMap.cs" />
     <Compile Include="Transform.cs" />
+    <Compile Include="VecExtensions.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
