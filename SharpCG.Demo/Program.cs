@@ -10,6 +10,8 @@ using SharpCG;
 using GlmSharp;
 using OpenTK;
 using OpenTK.Graphics.OpenGL4;
+using SharpCG.Core;
+using SharpCG.Effects;
 
 namespace SharpCG.Demo
 {
@@ -21,15 +23,13 @@ namespace SharpCG.Demo
             
             Shader.InitializeShaders();
 
-            var x = mat4.Translate(1, 2, 3);
-
-
+           
 
             {
                 // Create Camera
-                Camera.Main.SetProjectionMatrix(60, (float)window.Width / (float)window.Height, 0.1f, 100000);
-                Camera.Main.Transform.Position = new vec3(0f, 2.5f, 5f);
-                Camera.Main.Transform.Rotation = quat.FromAxisAngle(glm.Radians(-30f), vec3.UnitX);
+                Camera.Main.SetProjectionMatrix(60.0, (double)window.Width / (double)window.Height, 0.1, 100000.0);
+                Camera.Main.Transform.Position = new dvec3(0.0, 2.5, 5);
+                Camera.Main.Transform.Rotation = dquat.FromAxisAngle(glm.Radians(-30.0), dvec3.UnitX);
 
                 Camera.Main.SceneObject.AddComponent<CameraController>();
                 window.AddSceneObject(Camera.Main.SceneObject);
@@ -65,18 +65,18 @@ namespace SharpCG.Demo
 
             //    window.AddSceneObject(skybox);
             //}
-            RenderPass geometryPass = RenderPass.Main;
+            //RenderPass geometryPass = RenderPass.Main;
 
-            RenderPass beforeGeometry = RenderPass.Before(geometryPass, "before Geometry");
+            //RenderPass beforeGeometry = RenderPass.Before(geometryPass, "before Geometry");
 
-            RenderPass shadowPass = RenderPass.After(geometryPass, "shadowPass");
+            //RenderPass shadowPass = RenderPass.After(geometryPass, "shadowPass");
 
-            RenderPass lightingPass = RenderPass.After(shadowPass, "LightingPass");
-            RenderPass beforeLighting = RenderPass.Before(lightingPass, "before lighting");
-            RenderPass afterLighting = RenderPass.After(lightingPass, "aftér lighting");
+            //RenderPass lightingPass = RenderPass.After(shadowPass, "LightingPass");
+            //RenderPass beforeLighting = RenderPass.Before(lightingPass, "before lighting");
+            //RenderPass afterLighting = RenderPass.After(lightingPass, "aftér lighting");
 
-            var gBuffer = Framebuffer.GBuffer;
-            window.RenderControl.AddImmediateGLEvent(beforeGeometry, (() => gBuffer.Clear()));
+            //var gBuffer = Framebuffer.GBuffer;
+            //window.RenderControl.AddImmediateGLEvent(beforeGeometry, (() => gBuffer.Clear()));
 
             {
                 //SceneObject skybox = new SceneObject();
@@ -101,71 +101,44 @@ namespace SharpCG.Demo
 
             // Copy depth texture to back buffer
             {
-                var obj = SceneObjectExtensions.CopyDepthBuffer(gBuffer, null, beforeLighting);
-                window.AddSceneObject(obj);
+                //var obj = SceneObjectExtensions.CopyDepthBuffer(gBuffer, null, beforeLighting);
+                //window.AddSceneObject(obj);
             }
 
-            {
-                //SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx", GeometryExtensions.Materials.Deferred);
-                //plane.Name = "plane1";
-                //plane.Transform.ToIdentity();
-                //plane.Transform.Scale = new vec3(5);
+            {               
+
+                SceneObject plane = GeometryExtensions.Load("Assets/stormtrooper/stormtrooper.fbx");
+                plane.Name = "stormtrooper";
+                
+                //plane.Transform.Scale = new dvec3(5);
 
 
-                //SceneObject.TraverseAndExecute<Geometry>(plane, m =>
-                //{
-                //    var obj = m.SceneObject;
-                //    var scale = obj.Transform.Scale;
-                //    obj.Transform.ToIdentity();
-
-                //    var renderers = obj.FindComponents<DeferredMeshRenderer>();
-                //    renderers.ForEach(r =>
-                //    {
-                //        r.RenderPass = geometryPass;
-                //        r.Framebuffer = gBuffer;
-                //    });
-
-                //});
-
-                //window.AddSceneObject(plane);
-            }
-            {
-                SceneObject fighter = GeometryExtensions.Load("Assets/tal16/tal16.fbx", GeometryExtensions.Materials.Deferred);
-                fighter.Name = "tal16";
-                fighter.Transform.WorldScale = fighter.Transform.WorldScale;
-                //fighter.Transform.Translate(new vec3(0, 1, 0));
-                SceneObject.TraverseAndExecute<Geometry>(fighter, m =>
+                SceneObject.TraverseAndExecute<Geometry>(plane, m =>
                 {
                     var obj = m.SceneObject;
-                    obj.Transform.Scale = vec3.Ones;
-                    var renderers = obj.FindComponents<DeferredMeshRenderer>();
-                    renderers.ForEach(r =>
-                    {
-                        r.RenderPass = geometryPass;
-                        r.Framebuffer = gBuffer;
-                        r.GeometryPassMaterial.NormalMappingEnabled = false;
-                    });
+                    obj.AddComponent<MeshRenderer>();
                 });
 
-                window.AddSceneObject(fighter);
+
+                window.AddSceneObject(plane);
             }
 
 
             // Add Ambient Light
             {
-                SceneObject lightObject = new SceneObject();
-                lightObject.Name = "Ambient Light";
-                var light = lightObject.AddComponent<AmbientLight>();
-                light.Color = new vec3(0.25f, 0.25f, 0.25f);
-                var material = lightObject.AddComponent<LightingPassMaterial>();
+                //SceneObject lightObject = new SceneObject();
+                //lightObject.Name = "Ambient Light";
+                //var light = lightObject.AddComponent<AmbientLight>();
+                //light.Color = new dvec3(0.25f, 0.25f, 0.25f);
+                //var material = lightObject.AddComponent<LightingPassMaterial>();
 
-                var renderer = lightObject.AddComponent<DeferredMeshRenderer>();
-                renderer.RenderPass = lightingPass;
-                renderer.Stage = Stage.Lighting;
-                renderer.LightingPassMaterial = material;
-                renderer.GBuffer = gBuffer;
+                //var renderer = lightObject.AddComponent<DeferredMeshRenderer>();
+                //renderer.RenderPass = lightingPass;
+                //renderer.Stage = Stage.Lighting;
+                //renderer.LightingPassMaterial = material;
+                //renderer.GBuffer = gBuffer;
 
-                window.AddSceneObject(lightObject);
+                //window.AddSceneObject(lightObject);
             }
 
 
@@ -176,8 +149,8 @@ namespace SharpCG.Demo
 
                 //var light = lightObject.AddComponent<DirectionalLight>();
 
-                //light.Color = new vec3(1);
-                //light.Direction = new vec3(0f, -1f, 0f);
+                //light.Color = new dvec3(1);
+                //light.Direction = new dvec3(0f, -1f, 0f);
                 //var renderer = lightObject.AddComponent<DeferredMeshRenderer>();
                 //renderer.RenderPass = lightingPass;
                 //renderer.Stage = Stage.Lighting;
@@ -199,52 +172,43 @@ namespace SharpCG.Demo
 
                 //window.AddSceneObject(lightObject);
             }
-            {
-                SceneObject parent = new SceneObject();
-                parent.Transform.WorldScale = new vec3(0.5f);
-                SceneObject child = new SceneObject();
-                parent.AddChild(child);
-                child.Transform.WorldScale = new vec3(2.0f);
-                var pScale = parent.Transform.Scale;
-                var pWScale = parent.Transform.WorldScale;
-               
-                var cScale = child.Transform.Scale;
-                var cWScale = child.Transform.WorldScale;
-            }
+
             // Add Point Light
             {
-                SceneObject pointLight = new SceneObject();
-                pointLight.Name = "Point Light";
+                //SceneObject pointLight = new SceneObject();
+                //pointLight.Name = "Point Light";
 
-                var light = pointLight.AddComponent<PointLight>();
+                //var light = pointLight.AddComponent<PointLight>();
 
-                light.Color         = new vec3(1, 0, 0);
-                var scale1 = light.SceneObject.Transform.WorldScale;
-                light.Attenuation   = new vec3(1.0f, 0.7f, 1.8f);
+                //light.Color         = new dvec3(1, 0, 0);
+                //var scale1 = light.SceneObject.Transform.WorldScale;
+                //light.Attenuation   = new dvec3(1.0f, 0.7f, 1.8f);
                 
-                var scale2 = light.SceneObject.Transform.WorldScale;
-                light.SceneObject.Transform.WorldScale = light.SceneObject.Transform.WorldScale * 2.0f;
-                var scale3 = light.SceneObject.Transform.WorldScale;
-                light.Position      = new vec3(0, 0.5f, 0);
+                //var scale2 = light.SceneObject.Transform.WorldScale;
+                //light.SceneObject.Transform.WorldScale = light.SceneObject.Transform.WorldScale * 2.0f;
+                //var scale3 = light.SceneObject.Transform.WorldScale;
+                //light.Position      = new dvec3(0, 0.5f, 0);
 
-                var renderer        = pointLight.AddComponent<DeferredMeshRenderer>();
-                renderer.RenderPass = lightingPass;
-                renderer.Stage      = Stage.Lighting;
-                renderer.GBuffer    = gBuffer;
+                //var renderer        = pointLight.AddComponent<DeferredMeshRenderer>();
+                //renderer.RenderPass = lightingPass;
+                //renderer.Stage      = Stage.Lighting;
+                //renderer.GBuffer    = gBuffer;
 
-                var material = pointLight.AddComponent<LightingPassMaterial>();
-                renderer.LightingPassMaterial = material;
+                //var material = pointLight.AddComponent<LightingPassMaterial>();
+                //renderer.LightingPassMaterial = material;
 
-                window.AddSceneObject(pointLight);
+                //window.AddSceneObject(pointLight);
             }
 
-
-            Console.WriteLine("---------- Scenegraph ----------");
+            
             printSceneGraph(window.Root, 0);
 
-            window.Run();            
+            window.Run();
         }
 
+
+       
+   
         public static void printSceneGraph(SceneObject obj, int level)
         {
             var oldC = Console.ForegroundColor;

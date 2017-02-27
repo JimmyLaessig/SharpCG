@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shader", "Shader", "{E3654D
 		Shader\uniformColor.vert = Shader\uniformColor.vert
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCG", "SharpCG\SharpCG.csproj", "{BF0203FF-64C1-443F-8534-A91117D863FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCG.Core", "SharpCG.Core\SharpCG.Core.csproj", "{BF0203FF-64C1-443F-8534-A91117D863FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCG.Effects", "SharpCG.Effects\SharpCG.Effects.csproj", "{7287BF99-99F1-4303-A229-153BBE61F619}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BF0203FF-64C1-443F-8534-A91117D863FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF0203FF-64C1-443F-8534-A91117D863FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF0203FF-64C1-443F-8534-A91117D863FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7287BF99-99F1-4303-A229-153BBE61F619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7287BF99-99F1-4303-A229-153BBE61F619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7287BF99-99F1-4303-A229-153BBE61F619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7287BF99-99F1-4303-A229-153BBE61F619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
