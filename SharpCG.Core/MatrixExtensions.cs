@@ -31,6 +31,92 @@ namespace SharpCG.Core
             return new mat3(c0, c1, c2);
         }
 
+        public static mat2 ToMat2(this dmat2 matrix)
+        {
+            var c0 = (vec2)matrix.Column0;
+            var c1 = (vec2)matrix.Column1;
+            return new mat2(c0, c1);
+        }
+
+
+        public static double[] ToArray(this dmat2[] matrices)
+        {
+            var values = new List<double>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+            
+            return values.ToArray();
+        }
+
+
+        public static double[] ToArray(this dmat3[] matrices)
+        {
+            var values = new List<double>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ToArray();
+        }
+
+
+        public static double[] ToArray(this dmat4[] matrices)
+        {
+            var values = new List<double>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ToArray();
+        }
+
+
+        public static float[] ToFloatArray(this dmat2[] matrices)
+        {
+            var values = new List<double>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ConvertAll(x => (float)x).ToArray();
+        }
+
+
+        public static float[] ToFloatArray(this dmat3[] matrices)
+        {
+            var values = new List<double>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ConvertAll(x => (float)x).ToArray();
+        }
+
+
+        public static float[] ToFloatArray(this dmat4[] matrices)
+        {
+            var values = new List<double>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ConvertAll(x => (float)x).ToArray();
+        }
+
+
+        public static float[] ToArray(this mat2[] matrices)
+        {
+            var values = new List<float>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ToArray();
+        }
+
+        public static float[] ToArray(this mat3[] matrices)
+        {
+            var values = new List<float>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ToArray();
+        }
+
+        public static float[] ToArray(this mat4[] matrices)
+        {
+            var values = new List<float>();
+            matrices.ToList().ForEach(m => values.AddRange(m.Values1D));
+
+            return values.ToArray();
+        }
+
         public static dvec3 GetTranslation(this dmat4 matrix)
         {
             return new dvec3(matrix.Column3.xyz);

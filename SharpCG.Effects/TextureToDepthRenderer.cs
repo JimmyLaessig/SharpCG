@@ -47,8 +47,8 @@ namespace SharpCG.Effects
             GL.DepthFunc(DepthFunction.Lequal);
             material.WvpMatrix      = dmat4.Identity;
 
-            uint unit               = 0;
-            material.Bind(ref unit);
+            
+            material.Bind();
 
             fullscreenQuad.Bind();
             GL.DrawElements(BeginMode.Triangles, fullscreenQuad.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);

@@ -26,19 +26,19 @@ namespace SharpCG.Effects
             base.OnStart();
         }
 
-        protected override void InitUniformLocations()
-        {
-            uniformLocations["vColor"] = GL.GetUniformLocation(shader.ProgramHandle, "vColor");
+        //protected override void InitUniformLocations()
+        //{
+        //    uniformLocations["vColor"] = GL.GetUniformLocation(shader.ProgramHandle, "vColor");
 
-            base.InitUniformLocations();
-        }
+        //    base.InitUniformLocations();
+        //}
 
-        public override void Bind(ref uint textureUnit)
-        {
-            shader.bind();
-            GL.Uniform4(uniformLocations["vColor"], 1, color.Values);
-            base.Bind(ref textureUnit);
-        }
+        //public override void Bind(ref uint textureUnit)
+        //{
+        //    shader.bind();
+        //    GL.Uniform4(uniformLocations["vColor"], 1, color.Values);
+        //    base.Bind(ref textureUnit);
+        //}
     }
 
 
@@ -69,8 +69,8 @@ namespace SharpCG.Effects
             material.ViewMatrix         = camera.ViewMatrix;
             material.WvpMatrix          = material.ProjectionMatrix * material.ViewMatrix * material.WorldMatrix;
 
-            uint unit = 0;
-            material.Bind(ref unit);
+            
+            material.Bind();
             mesh.Bind();
             if (mesh.HasIndices)
             {

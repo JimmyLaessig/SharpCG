@@ -109,52 +109,52 @@ namespace SharpCG.Effects
         }
 
 
-        protected override void InitUniformLocations()
-        {                     
-            uniformLocations["bHasDiffuseMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "bHasDiffuseMap");          
-            uniformLocations["bHasSpecularMap"]     = GL.GetUniformLocation(Shader.ProgramHandle, "bHasSpecularMap");
-            uniformLocations["bHasNormalMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasNormalMap");
+        //protected override void InitUniformLocations()
+        //{                     
+        //    uniformLocations["bHasDiffuseMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "bHasDiffuseMap");          
+        //    uniformLocations["bHasSpecularMap"]     = GL.GetUniformLocation(Shader.ProgramHandle, "bHasSpecularMap");
+        //    uniformLocations["bHasNormalMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasNormalMap");
 
-            uniformLocations["texDiffuseMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseMap");
-            uniformLocations["texNormalMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texNormalMap");
-            uniformLocations["texSpecularMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularMap");
+        //    uniformLocations["texDiffuseMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseMap");
+        //    uniformLocations["texNormalMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texNormalMap");
+        //    uniformLocations["texSpecularMap"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularMap");
 
-            uniformLocations["vMaterialDiffuse"]    = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialDiffuse");
-            uniformLocations["vMaterialEmissive"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialEmissive");
-            uniformLocations["vMaterialSpecular"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialSpecular");
+        //    uniformLocations["vMaterialDiffuse"]    = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialDiffuse");
+        //    uniformLocations["vMaterialEmissive"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialEmissive");
+        //    uniformLocations["vMaterialSpecular"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vMaterialSpecular");
 
-            base.InitUniformLocations();
-        }
+        //    base.InitUniformLocations();
+        //}
 
 
-        public override void Bind(ref uint textureUnit)
-        {
-            base.Bind(ref textureUnit);
+        //public override void Bind(ref uint textureUnit)
+        //{
+        //    base.Bind(ref textureUnit);
 
-            GL.Uniform1(uniformLocations["bHasDiffuseMap"], HasDiffuseMap ? 1 : 0);
-            GL.Uniform1(uniformLocations["bHasNormalMap"], (HasNormapMap && normalMappingEnabled) ? 1 : 0);
-            GL.Uniform1(uniformLocations["bHasSpecularMap"], HasSpecularMap ? 1 : 0);
+        //    GL.Uniform1(uniformLocations["bHasDiffuseMap"], HasDiffuseMap ? 1 : 0);
+        //    GL.Uniform1(uniformLocations["bHasNormalMap"], (HasNormapMap && normalMappingEnabled) ? 1 : 0);
+        //    GL.Uniform1(uniformLocations["bHasSpecularMap"], HasSpecularMap ? 1 : 0);
 
-            GL.Uniform3(uniformLocations["vMaterialEmissive"], 1, emissiveAmount.Values);
-            GL.Uniform4(uniformLocations["vMaterialDiffuse"], 1, diffuseAmount.Values);      
-            GL.Uniform4(uniformLocations["vMaterialSpecular"], 1, specularAmount.Values);
+        //    GL.Uniform3(uniformLocations["vMaterialEmissive"], 1, emissiveAmount.Values);
+        //    GL.Uniform4(uniformLocations["vMaterialDiffuse"], 1, diffuseAmount.Values);      
+        //    GL.Uniform4(uniformLocations["vMaterialSpecular"], 1, specularAmount.Values);
 
-            if (HasDiffuseMap)
-            {
-                GL.Uniform1(uniformLocations["texDiffuseMap"], 0);
-                diffuseMapTexture.Bind(TextureUnit.Texture0);
-            }
-            if (HasSpecularMap)
-            {
-                GL.Uniform1(uniformLocations["texSpecularMap"], 1);
-                specularMapTexture.Bind(TextureUnit.Texture1);
-            }
-            if (HasNormapMap)
-            {
-                GL.Uniform1(uniformLocations["texNormalMap"], 2);
-                normalMapTexture.Bind(TextureUnit.Texture2);
-            }
-        }
+        //    if (HasDiffuseMap)
+        //    {
+        //        GL.Uniform1(uniformLocations["texDiffuseMap"], 0);
+        //        diffuseMapTexture.Bind(TextureUnit.Texture0);
+        //    }
+        //    if (HasSpecularMap)
+        //    {
+        //        GL.Uniform1(uniformLocations["texSpecularMap"], 1);
+        //        specularMapTexture.Bind(TextureUnit.Texture1);
+        //    }
+        //    if (HasNormapMap)
+        //    {
+        //        GL.Uniform1(uniformLocations["texNormalMap"], 2);
+        //        normalMapTexture.Bind(TextureUnit.Texture2);
+        //    }
+        //}
     }
 
 
@@ -287,88 +287,88 @@ namespace SharpCG.Effects
         }
         
 
-        protected override void InitUniformLocations()
-        {
-            base.InitUniformLocations();
+        //protected override void InitUniformLocations()
+        //{
+        //    base.InitUniformLocations();
 
            
-            uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
-            uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
-            uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
-            uniformLocations["texWorldPosition"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldPosition");
-            uniformLocations["texDepth"]            = GL.GetUniformLocation(Shader.ProgramHandle, "texDepth");
+        //    uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
+        //    uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
+        //    uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
+        //    uniformLocations["texWorldPosition"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldPosition");
+        //    uniformLocations["texDepth"]            = GL.GetUniformLocation(Shader.ProgramHandle, "texDepth");
 
             
-            uniformLocations["mInvViewProj"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mInvViewProj");
-            uniformLocations["vCameraPosition"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vCameraPosition");
-            uniformLocations["vViewportSize"]       = GL.GetUniformLocation(Shader.ProgramHandle, "vViewportSize");
+        //    uniformLocations["mInvViewProj"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mInvViewProj");
+        //    uniformLocations["vCameraPosition"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vCameraPosition");
+        //    uniformLocations["vViewportSize"]       = GL.GetUniformLocation(Shader.ProgramHandle, "vViewportSize");
 
-            uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
-            uniformLocations["vLightPosition"]      = GL.GetUniformLocation(Shader.ProgramHandle, "vLightPosition");
+        //    uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
+        //    uniformLocations["vLightPosition"]      = GL.GetUniformLocation(Shader.ProgramHandle, "vLightPosition");
 
-            uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
-            uniformLocations["vLightAttenuation"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vLightAttenuation");
-            uniformLocations["iLightType"]          = GL.GetUniformLocation(Shader.ProgramHandle, "iLightType");
+        //    uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
+        //    uniformLocations["vLightAttenuation"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vLightAttenuation");
+        //    uniformLocations["iLightType"]          = GL.GetUniformLocation(Shader.ProgramHandle, "iLightType");
 
-            uniformLocations["mLightBiasVP"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mLightBiasVP");
-            uniformLocations["bHasShadowMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasShadowMap");
-            uniformLocations["texShadowMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texShadowMap");
-            uniformLocations["iShadowMapSize"]      = GL.GetUniformLocation(Shader.ProgramHandle, "iShadowMapSize");
-
-
-
-        }
+        //    uniformLocations["mLightBiasVP"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mLightBiasVP");
+        //    uniformLocations["bHasShadowMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasShadowMap");
+        //    uniformLocations["texShadowMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texShadowMap");
+        //    uniformLocations["iShadowMapSize"]      = GL.GetUniformLocation(Shader.ProgramHandle, "iShadowMapSize");
 
 
-        public override void Bind(ref uint textureUnit)
-        {
+
+        //}
+
+
+        //public override void Bind(ref uint textureUnit)
+        //{
             
-            Shader.bind();
+        //    Shader.bind();
 
-            GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 0);
-            diffuseAlbedoTexture.Bind(TextureUnit.Texture0);
+        //    GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 0);
+        //    diffuseAlbedoTexture.Bind(TextureUnit.Texture0);
 
-            GL.Uniform1(uniformLocations["texSpecularAlbedo"], 1);
-            specularAlbedoTexture.Bind(TextureUnit.Texture1);
+        //    GL.Uniform1(uniformLocations["texSpecularAlbedo"], 1);
+        //    specularAlbedoTexture.Bind(TextureUnit.Texture1);
 
-            GL.Uniform1(uniformLocations["texWorldNormal"], 2);
-            worldNormalTexture.Bind(TextureUnit.Texture2);
+        //    GL.Uniform1(uniformLocations["texWorldNormal"], 2);
+        //    worldNormalTexture.Bind(TextureUnit.Texture2);
 
-            GL.Uniform1(uniformLocations["texDepth"], 3);
-            depthTexture.Bind(TextureUnit.Texture3);
+        //    GL.Uniform1(uniformLocations["texDepth"], 3);
+        //    depthTexture.Bind(TextureUnit.Texture3);
 
-            GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
+        //    GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
 
-            GL.UniformMatrix4(uniformLocations["mInvViewProj"], 1, false, inverseViewProjectionMatrix.Values1D);
+        //    GL.UniformMatrix4(uniformLocations["mInvViewProj"], 1, false, inverseViewProjectionMatrix.Values1D);
 
-            GL.Uniform1(uniformLocations["iLightType"], lightType);
+        //    GL.Uniform1(uniformLocations["iLightType"], lightType);
 
-            GL.Uniform3(uniformLocations["vLightDirection"], 1, lightDirection.Values);
-            GL.Uniform3(uniformLocations["vLightPosition"], 1, lightPosition.Values);            
-            GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
-            GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
+        //    GL.Uniform3(uniformLocations["vLightDirection"], 1, lightDirection.Values);
+        //    GL.Uniform3(uniformLocations["vLightPosition"], 1, lightPosition.Values);            
+        //    GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
+        //    GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
 
 
-            GL.Uniform1(uniformLocations["bHasShadowMap"], (HasShadowMapTexture) ? 1 : 0);
+        //    GL.Uniform1(uniformLocations["bHasShadowMap"], (HasShadowMapTexture) ? 1 : 0);
 
-            if (HasShadowMapTexture)
-            {
-                GL.Uniform1(uniformLocations["texShadowMap"], 5);
-                shadowMapTexture.Bind(TextureUnit.Texture5);
+        //    if (HasShadowMapTexture)
+        //    {
+        //        GL.Uniform1(uniformLocations["texShadowMap"], 5);
+        //        shadowMapTexture.Bind(TextureUnit.Texture5);
 
-                GL.Uniform1(uniformLocations["iShadowMapSize"], ShadowMapTexture.Height);
+        //        GL.Uniform1(uniformLocations["iShadowMapSize"], ShadowMapTexture.Height);
 
-                var biasMatrix = new dmat4(
-                    0.5f, 0.0f, 0.0f, 0.0f,
-                    0.0f, 0.5f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 0.5f, 0.0f,
-                    0.5f, 0.5f, 0.5f, 1.0f);
+        //        var biasMatrix = new dmat4(
+        //            0.5f, 0.0f, 0.0f, 0.0f,
+        //            0.0f, 0.5f, 0.0f, 0.0f,
+        //            0.0f, 0.0f, 0.5f, 0.0f,
+        //            0.5f, 0.5f, 0.5f, 1.0f);
 
-                var biasLightVP = biasMatrix * lightViewProjectionMatrix;
-                GL.UniformMatrix4(uniformLocations["mLightBiasVP"], 1, false, biasLightVP.Values1D);
-            }
+        //        var biasLightVP = biasMatrix * lightViewProjectionMatrix;
+        //        GL.UniformMatrix4(uniformLocations["mLightBiasVP"], 1, false, biasLightVP.Values1D);
+        //    }
 
-            base.Bind(ref textureUnit);
-        }
+        //    base.Bind(ref textureUnit);
+        //}
     }
 }

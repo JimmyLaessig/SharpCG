@@ -126,11 +126,11 @@ namespace SharpCG.Core
             }
             if (aiMaterial.HasColorSpecular)
             {
-                material.SpecularAmount = new dvec3(aiMaterial.ColorSpecular.R, aiMaterial.ColorSpecular.G, aiMaterial.ColorSpecular.B) * 2.0f;
+                material.SpecularAmount = new dvec4(aiMaterial.ColorSpecular.R, aiMaterial.ColorSpecular.G, aiMaterial.ColorSpecular.B, 8) * 2.0f;
             }
             if (aiMaterial.HasShininess)
             {
-                material.SpecularExponent = 1 + (aiMaterial.Shininess) * 5.10f;
+                material.SpecularAmount = new dvec4(material.SpecularAmount.xyz, 1 + (aiMaterial.Shininess) * 5.10f);
             }
             if (aiMaterial.HasTextureDiffuse)
             {

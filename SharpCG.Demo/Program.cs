@@ -23,14 +23,15 @@ namespace SharpCG.Demo
             
             Shader.InitializeShaders();
 
-           
+            
 
+            var shader = Shader.Find("simpleTextured");
             {
                 // Create Camera
+          
                 Camera.Main.SetProjectionMatrix(60.0, (double)window.Width / (double)window.Height, 0.1, 100000.0);
                 Camera.Main.Transform.Position = new dvec3(0.0, 2.5, 5);
                 Camera.Main.Transform.Rotation = dquat.FromAxisAngle(glm.Radians(-30.0), dvec3.UnitX);
-
                 Camera.Main.SceneObject.AddComponent<CameraController>();
                 window.AddSceneObject(Camera.Main.SceneObject);
             }
@@ -104,12 +105,11 @@ namespace SharpCG.Demo
                 //var obj = SceneObjectExtensions.CopyDepthBuffer(gBuffer, null, beforeLighting);
                 //window.AddSceneObject(obj);
             }
+            {
 
-            {               
+                SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx");
+                plane.Name = "plane";
 
-                SceneObject plane = GeometryExtensions.Load("Assets/stormtrooper/stormtrooper.fbx");
-                plane.Name = "stormtrooper";
-                
                 //plane.Transform.Scale = new dvec3(5);
 
 
@@ -121,6 +121,23 @@ namespace SharpCG.Demo
 
 
                 window.AddSceneObject(plane);
+            }
+            {
+
+                SceneObject trooper = GeometryExtensions.Load("Assets/stormtrooper/stormtrooper.fbx");
+                trooper.Name = "stormtrooper";
+
+                //plane.Transform.Scale = new dvec3(5);
+
+
+                SceneObject.TraverseAndExecute<Geometry>(trooper, m =>
+                {
+                    var obj = m.SceneObject;
+                    obj.AddComponent<MeshRenderer>();
+                });
+
+
+                window.AddSceneObject(trooper);
             }
 
 

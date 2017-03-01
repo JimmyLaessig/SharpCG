@@ -44,9 +44,8 @@ namespace SharpCG.Core
             material.WvpMatrix          = material.ProjectionMatrix * material.ViewMatrix * material.WorldMatrix;
             material.NormalMatrix       = sceneObject.Transform.NormalMatrix;
 
-
-            uint unit = 0;
-            material.Bind(ref unit);
+            
+            material.Bind();
 
             mesh.Bind();
             if (mesh.HasIndices)

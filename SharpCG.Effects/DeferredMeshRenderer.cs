@@ -149,8 +149,8 @@ namespace SharpCG.Effects
             geometryPassMaterial.WvpMatrix          = P * V * W;
             geometryPassMaterial.NormalMatrix       = sceneObject.Transform.NormalMatrix;                      
 
-            uint unit = 0;
-            geometryPassMaterial.Bind(ref unit);
+            
+            geometryPassMaterial.Bind();
 
             mesh.Bind();
             GL.DrawElements(BeginMode.Triangles, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
@@ -222,8 +222,8 @@ namespace SharpCG.Effects
                 lightingPassMaterial.LightViewProjectionMatrix = light.ProjectionMatrix * Light.ViewMatrix;
             }
 
-            uint unit = 0;
-            lightingPassMaterial.Bind(ref unit);
+            
+            lightingPassMaterial.Bind();
 
             light.LightGeometry.Bind();
 

@@ -13,4 +13,5 @@ layout (location = 0) out vec4 vFragColor;
 void main()
 {
 	vFragColor = (bHasDiffuseMap) ? texture(texDiffuseMap, pTexcoords) : pColor;	
+	//vFragColor = vec4(1, 0, 0, 1);
 }

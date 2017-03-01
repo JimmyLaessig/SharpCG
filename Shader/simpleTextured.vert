@@ -12,10 +12,11 @@ uniform mat4 mWVP;
 
 
 out vec2 pTexcoords;
-
+out vec4 pColor;
 
 void main() 
 {
     gl_Position		= mWVP * vec4(vPosition, 1.0f);   
 	pTexcoords		= vTexcoords;	
+	pColor			= vColor;
 }

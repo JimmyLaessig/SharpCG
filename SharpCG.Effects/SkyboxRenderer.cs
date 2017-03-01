@@ -48,8 +48,8 @@ namespace SharpCG.Effects
             material.WvpMatrix = P * V * W;
 
 
-            uint unit = 0;
-            material.Bind(ref unit);
+           
+            material.Bind();
 
             mesh.Bind();
             GL.DrawElements(BeginMode.Triangles, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);

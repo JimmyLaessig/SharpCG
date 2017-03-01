@@ -57,11 +57,22 @@ namespace SharpCG.Core
             GL.DeleteShader(computeShader);
         }
 
+        private TextureUnit freeTextureUnit = TextureUnit.Texture0;
+
+
+        public TextureUnit NextFreeTextureUnit
+        {
+            get
+            {
+                return freeTextureUnit++;
+            }
+        }
 
 
         public void bind()
         {
             GL.UseProgram(programHandle);
+            freeTextureUnit = TextureUnit.Texture0;
         }
 
 
