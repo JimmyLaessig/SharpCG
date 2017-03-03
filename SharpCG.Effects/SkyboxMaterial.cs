@@ -15,6 +15,7 @@ namespace SharpCG.Effects
 
         private TextureCubeMap cubeMapTexture;
 
+
         [Uniform(Name = "texCubeMap")]
         public TextureCubeMap CubeMapTexture
         {
@@ -22,25 +23,11 @@ namespace SharpCG.Effects
             set{cubeMapTexture = value;}
         }
 
-
-        //public override void Bind(ref uint textureUnit)
-        //{
-        //   // base.Bind(ref textureUnit);
-
-        //    shader.bind();
-
-        //    GL.UniformMatrix4(uniformLocations["mWVP"], 1, false, this.WvpMatrix.Values1D);
-        //    GL.Uniform1(uniformLocations["texCubeMap"], 0);
-        //    cubeMapTexture.Bind(OpenTK.Graphics.OpenGL4.TextureUnit.Texture0);
-        //}
-  
-
-        //protected override void InitUniformLocations()
-        //{
-        //    Shader = Shader.Find("skybox");
-
-        //    base.InitUniformLocations();
-        //    uniformLocations["texCubeMap"] = GL.GetUniformLocation(Shader.ProgramHandle, "texCubeMap");      
-        //}
+        public override void OnStart()
+        {
+            this.shader = Shader.Find("skybox");
+            base.OnStart();
+        }
+       
     }
 }

@@ -33,9 +33,13 @@ namespace SharpCG.Core
 
             Camera camera = Camera.Main;
 
-            GL.Disable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.DepthTest);
             GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Lequal);
+
+            GL.Disable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
 
             // Default Uniforms for matrices
             material.WorldMatrix        = sceneObject.Transform.WorldMatrix;
@@ -59,10 +63,6 @@ namespace SharpCG.Core
             //GL.BindVertexArray(0);
 
             material.Shader.release();
-
-            //GL.Enable(EnableCap.CullFace);
-            //GL.DepthMask(true);
         }
-
     }
 }

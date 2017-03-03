@@ -114,27 +114,17 @@ namespace SharpCG.Core
                 if(attribute.Location >= 0)
                 {                                                     
                     uniformAttributes.Add(attribute);
-                }
-                               
-                //var action = CompileUniformFun(value, attribute.location, shader);
+                }                             
             });
 
-            //var attributes = (LocalizedDisplayNameAttribute[])
-            //fields.GetCustomAttributes(typeof(LocalizedDisplayNameAttribute), false);
-            
 
-            //uniformLocations["mWorld"] = GL.GetUniformLocation(Shader.ProgramHandle, "mWorld");
-            //uniformLocations["mView"] = GL.GetUniformLocation(Shader.ProgramHandle, "mView");
-            //uniformLocations["mProj"] = GL.GetUniformLocation(Shader.ProgramHandle, "mProj");
-            //uniformLocations["mNormal"] = GL.GetUniformLocation(Shader.ProgramHandle, "mNormal");
-            //uniformLocations["mWVP"] = GL.GetUniformLocation(Shader.ProgramHandle, "mWVP");
         }
 
         private void BindUniform(Object val, int location, Shader shader)
         {
-            Console.WriteLine(val);
+
             if (val == null)
-                Console.WriteLine("WHYYYYYYY");
+                return;
             // elementar datatypes
             if      (val.GetType() == typeof(bool))     { GL.Uniform1(location, ((bool)val) ? 1 : 0); }
             else if (val.GetType() == typeof(int))      { GL.Uniform1(location, (int)val); }
@@ -212,18 +202,22 @@ namespace SharpCG.Core
             // Texture
             else if (val.GetType() == typeof(Texture2D))
             {
-                var tex = (Texture)val;
+                var tex = (Texture2D)val;
+                var unit = shader.NextFreeTextureUnit;
+                tex.Bind(unit);
+                GL.Uniform1(location, unit - TextureUnit.Texture0);
+            }
+            else if (val.GetType() == typeof(TextureCubeMap))
+            {
+                var tex = (TextureCubeMap)val;
                 var unit = shader.NextFreeTextureUnit;
                 tex.Bind(unit);
                 GL.Uniform1(location, unit - TextureUnit.Texture0);
             }
             else
             {
-                Console.WriteLine("Type " + val.GetType().Name + " not supported as uniform!!");
+                Console.WriteLine("Unsupported Uniform Type :" + val.GetType().Name);
             }
-            
-            //var y = val.GetType();
-            //@switch[val.GetType()].Invoke();
         }
         
         public void BindRenderConfig()
@@ -231,11 +225,11 @@ namespace SharpCG.Core
             //
         }
 
+
         /// <summary>
         /// Binds the material properties and the shader
         /// TextureUnit contains the next unactive texture.
         /// </summary>
-
         public void Bind()
         {
             if (shader == null)
@@ -248,22 +242,11 @@ namespace SharpCG.Core
                 var value = attr.Property.GetValue(this);
                 if (value != null) BindUniform(value, attr.Location, shader);
             });
-            //uniformAttributes.ToList().ForEach(uniformAttribute => uniformAttribute.BindUniformFun.Invoke());
-
-            //GL.UniformMatrix4(uniformLocations["mView"], 1, false, ViewMatrix.ToMat4().Values1D);
-            //GL.UniformMatrix4(uniformLocations["mProj"], 1, false, ProjectionMatrix.ToMat4().Values1D);
-            //GL.UniformMatrix4(uniformLocations["mWorld"], 1, false, WorldMatrix.ToMat4().Values1D);
-            //GL.UniformMatrix4(uniformLocations["mWVP"], 1, false, WvpMatrix.ToMat4().Values1D);
-            //GL.UniformMatrix3(uniformLocations["mNormal"], 1, false, NormalMatrix.ToMat3().Values1D);
+            
         }
     }
 
-    //public struct UniformAttribute
-    //{
-    //    public string Name;
-    //    public int Location;
-    //    public object Value;
-    //}
+
 
     [AttributeUsage(AttributeTargets.Property)]
     public class UniformAttribute : Attribute

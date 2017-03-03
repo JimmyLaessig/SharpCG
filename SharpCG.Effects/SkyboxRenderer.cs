@@ -35,17 +35,17 @@ namespace SharpCG.Effects
 
             GL.Disable(EnableCap.CullFace);
             GL.DepthMask(false);
-            
+            //GL.Disable(EnableCap.DepthTest);
 
             dmat4 W = dmat4.Translate(camera.Transform.Position);
             dmat4 V = camera.ViewMatrix;
             dmat4 P = camera.ProjectionMatrix;
 
 
-            material.WorldMatrix = W;
-            material.ViewMatrix = V;
-            material.ProjectionMatrix = P;
-            material.WvpMatrix = P * V * W;
+            material.WorldMatrix        = W;
+            material.ViewMatrix         = V;
+            material.ProjectionMatrix   = P;
+            material.WvpMatrix          = P * V * W;
 
 
            
@@ -54,11 +54,6 @@ namespace SharpCG.Effects
             mesh.Bind();
             GL.DrawElements(BeginMode.Triangles, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
-           
-
-            GL.Enable(EnableCap.CullFace);
-            GL.DepthMask(true);
-
         }
 
         public RenderPass GetRenderPass()

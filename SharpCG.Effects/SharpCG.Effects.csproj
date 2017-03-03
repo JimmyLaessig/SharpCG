@@ -61,6 +61,7 @@
     <Compile Include="DirectionalLight.cs" />
     <Compile Include="MotionBlurTechnique.cs" />
     <Compile Include="PointLight.cs" />
+    <Compile Include="PostprocessingMaterial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneObjectExtensions.cs" />
     <Compile Include="ShadowMapMaterial.cs" />

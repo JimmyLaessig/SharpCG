@@ -65,11 +65,11 @@ namespace SharpCG.Core
         public void AddRenderBuffer()
         {
 
-            //if (depthBuffer != null)
-            //{
-            //    Console.WriteLine("Already depth texture created!");
-            //    return;
-            //}
+            if (depthBuffer != null)
+            {
+                Console.WriteLine("Already depth texture created!");
+                return;
+            }
 
             int width = Width;
             int height = Height;
@@ -136,6 +136,7 @@ namespace SharpCG.Core
 
             GL.ClearDepth(1.0);
             GL.ClearStencil(0);
+            GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

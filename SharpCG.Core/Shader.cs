@@ -289,6 +289,8 @@ namespace SharpCG.Core
             if (!LoadShader("textureToDepth")) return false;
             if (!LoadShader("shadowMap")) return false;
             if (!LoadShader("uniformColor")) return false;
+            if (!LoadShader("postprocessingFXAA")) return false;
+            
             return true;
         }
     }
