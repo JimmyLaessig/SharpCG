@@ -14,7 +14,7 @@ namespace SharpCG.Effects
         private Texture2D depthTexture;
         private Texture2D normalTexture;
         private Texture2D colorTexture;
-        private ivec2 viewportSize;
+        private vec2 viewportSize;
 
 
         public override void OnStart()
@@ -49,7 +49,7 @@ namespace SharpCG.Effects
 
 
         [Uniform(Name = "vViewportSize")]
-        public ivec2 ViewportSize
+        public vec2 ViewportSize
         {
             get{return viewportSize;}
             set{viewportSize = value;}

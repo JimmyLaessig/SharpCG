@@ -76,7 +76,7 @@ namespace SharpCG.Effects.Postprocessing
             material.ViewMatrix         = Camera.Main.ViewMatrix;
             material.ProjectionMatrix   = Camera.Main.ProjectionMatrix;
             material.WvpMatrix          = dmat4.Identity;
-
+            material.ViewportSize       = new vec2(1024, 768);
           
             material.ColorTexture = colorTexture;
             material.DepthTexture = depthTexture; 
