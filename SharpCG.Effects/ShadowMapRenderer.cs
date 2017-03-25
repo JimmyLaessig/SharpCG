@@ -50,14 +50,14 @@ namespace SharpCG.Effects
 
         public Texture2D DepthTexture
         {
-            get{ return framebuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);}
+            get=> framebuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
         }
 
 
         public DirectionalLight Light
         {
-            get{return light;}
-            set {light = value;}
+            get => light;
+            set => light = value;
         }
 
 
@@ -95,7 +95,7 @@ namespace SharpCG.Effects
                 {
                     GL.DrawArrays(mesh.PrimitiveType, 0, mesh.TriangleCount * 3);
                 }
-                material.Shader.release();
+                material.Shader.Release();
             });
 
 
@@ -114,15 +114,15 @@ namespace SharpCG.Effects
 
         public int ShadowMapWidth
         {
-            get { return width; }
-            set { width = value; }
+            get => width; 
+            set => width = value;
         }
 
 
         public int ShadowMaHeight
         {
-            get { return height; }
-            set { height = value; }
+            get => height; 
+            set => height = value; 
         }
     }
 }

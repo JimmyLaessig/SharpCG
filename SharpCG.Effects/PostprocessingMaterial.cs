@@ -27,32 +27,32 @@ namespace SharpCG.Effects
         [Uniform(Name = "texDepth")]
         public Texture2D DepthTexture
         {
-            get{return depthTexture;}
-            set{depthTexture = value;}
+            get => depthTexture;
+            set => depthTexture = value;
         }
 
 
         [Uniform(Name = "texColor")]
         public Texture2D ColorTexture
         {
-            get{return colorTexture;}
-            set{colorTexture = value;}
+            get =>colorTexture;
+            set =>colorTexture = value;
         }
 
 
         [Uniform(Name = "texNormal")]
         public Texture2D NormalTexture
         {
-            get { return normalTexture; }
-            set { normalTexture = value; }
+            get => normalTexture; 
+            set => normalTexture = value;
         }
 
 
         [Uniform(Name = "vViewportSize")]
         public vec2 ViewportSize
         {
-            get{return viewportSize;}
-            set{viewportSize = value;}
+            get => viewportSize;
+            set => viewportSize = value;
         }
     }
 }

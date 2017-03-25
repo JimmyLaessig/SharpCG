@@ -51,7 +51,7 @@ namespace SharpCG.Core
 
         public Transform Transform
         {
-            get { return sceneObject.Transform; }
+            get => sceneObject.Transform; 
         }
 
 
@@ -79,7 +79,7 @@ namespace SharpCG.Core
         /// </summary>
         public dmat4 ProjectionMatrix
         {
-            get { return projectionMatrix; }
+            get => projectionMatrix;
         }
 
 
@@ -89,7 +89,7 @@ namespace SharpCG.Core
         /// </summary>
         public dmat4 ViewMatrix
         {
-            get{ return Transform.InverseWorldMatrix; }
+            get => Transform.InverseWorldMatrix; 
         }
 
         

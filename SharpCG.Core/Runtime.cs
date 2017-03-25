@@ -91,22 +91,22 @@ namespace SharpCG.Core
 
         public Color4 ClearColor
         {
-            get {return clearColor;}
+            get => clearColor;
             set { isDirty = true; clearColor = value;}
         }
 
 
         public double ClearDepth
         {
-            get { return clearDepth;}
+            get => clearDepth;
             set { isDirty = true; clearDepth = value;}
         }
 
 
         public int ClearStencil
         {
-            get {return clearStencil;}
-            set{isDirty = true;clearStencil = value;}
+            get => clearStencil;
+            set { isDirty = true; clearStencil = value; }
         }
     }
 }

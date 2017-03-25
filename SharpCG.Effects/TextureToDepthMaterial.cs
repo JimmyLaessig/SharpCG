@@ -48,8 +48,8 @@ namespace SharpCG.Effects
 
         public Texture2D DepthTexture
         {
-            get{return depthTexture;}
-            set{depthTexture = value;}
+            get => depthTexture;
+            set => depthTexture = value;
         }
     }
 }

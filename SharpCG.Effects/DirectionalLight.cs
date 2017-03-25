@@ -29,58 +29,59 @@ namespace SharpCG.Effects
 
         public override dvec3 Attenuation
         {
-            get{ return dvec3.Zero; }
-            set{ }
+            get => dvec3.Zero;
+            set {}
         }
 
 
         public override dvec3 Direction
         {
-            get{ return direction;}
-            set{ direction = value;}
+            get => direction;
+            set => direction = value;
         }
 
 
         public override Geometry LightGeometry
         {
-            get{ return fullscreenQuad; }
+            get => fullscreenQuad;
         }
 
 
         public override int LightType
         {
-            get{ return 1; }
+            get => 1; 
         }
 
 
         public override dvec3 Position
         {
-            get { return dvec3.Zero; }
+            get => dvec3.Zero; 
             set { }
         }
 
 
         public override dmat4 ProjectionMatrix
         {           
-            get { return dmat4.Ortho(-10, 10, -10, 10, 0.01f, 1000f); }
+            get => dmat4.Ortho(-10, 10, -10, 10, 0.01f, 1000f); 
         }
 
 
         public override dmat4 ViewMatrix
         {
-            get {
+            get
+            {
                 dvec3 up = dvec3.UnitY;
                 if (Math.Abs(dvec3.Dot(direction, up)) > 0.9999f)
                     up = dvec3.UnitZ;
 
                 return dmat4.LookAt(-direction, dvec3.Zero, up);
-                }
+            }
         }
 
 
         public bool HasShadowMap
         {
-            get { return shadowMappingTechnique != null; }
+            get => shadowMappingTechnique != null;
         }
 
 

@@ -22,15 +22,16 @@ namespace SharpCG.Core
             set;
         }       
 
-
         public abstract int LightType
         {
             get;
         }
+
         public abstract dmat4 ViewMatrix
         {
             get;
         }
+
 
         public abstract dmat4 ProjectionMatrix
         {
@@ -54,14 +55,14 @@ namespace SharpCG.Core
 
         public virtual dvec3 Color
         {
-            get { return color; }
-            set { color = value; }
+            get => color; 
+            set => color = value; 
         }
 
 
         public virtual Texture ShadowMap
         {
-            get { return null; }          
+            get => null;         
         }
 
 

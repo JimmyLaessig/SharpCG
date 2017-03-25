@@ -22,12 +22,12 @@ namespace SharpCG.Core
 
         public RenderControl RenderControl
         {
-            get { return renderControl; }
+            get => renderControl; 
         }
 
         public SceneObject Root
         {
-            get { return root; }
+            get => root; 
         }
 
         public static Window CreateSimpleWindow(int width, int height)

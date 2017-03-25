@@ -37,7 +37,7 @@ namespace SharpCG.Core
 
         public virtual bool UseMipMaps
         {
-            get { return useMipMaps; }
+            get => useMipMaps;
         }
     }
 }

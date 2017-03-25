@@ -16,8 +16,8 @@ namespace SharpCG.Effects
 
         public vec4 Color
         {
-            get{return color;  }
-            set{color = value; }
+            get => color;  
+            set => color = value; 
         }
 
         public override void OnStart()
@@ -25,20 +25,6 @@ namespace SharpCG.Effects
             shader = Shader.Find("uniformColor");
             base.OnStart();
         }
-
-        //protected override void InitUniformLocations()
-        //{
-        //    uniformLocations["vColor"] = GL.GetUniformLocation(shader.ProgramHandle, "vColor");
-
-        //    base.InitUniformLocations();
-        //}
-
-        //public override void Bind(ref uint textureUnit)
-        //{
-        //    shader.bind();
-        //    GL.Uniform4(uniformLocations["vColor"], 1, color.Values);
-        //    base.Bind(ref textureUnit);
-        //}
     }
 
 

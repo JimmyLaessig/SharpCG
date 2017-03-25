@@ -38,8 +38,8 @@ namespace SharpCG.Core
             GL.DepthMask(true);
             GL.DepthFunc(DepthFunction.Lequal);
 
-            GL.Disable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
+            //GL.Disable(EnableCap.Blend);
+            //GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
 
             // Default Uniforms for matrices
             material.WorldMatrix        = sceneObject.Transform.WorldMatrix;
@@ -62,7 +62,7 @@ namespace SharpCG.Core
             }
             //GL.BindVertexArray(0);
 
-            material.Shader.release();
+            material.Shader.Release();
         }
     }
 }

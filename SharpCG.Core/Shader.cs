@@ -38,7 +38,7 @@ namespace SharpCG.Core
         /// </summary>
         public int ProgramHandle
         {
-            get { return programHandle; }
+            get => programHandle;
         }
 
 
@@ -62,14 +62,12 @@ namespace SharpCG.Core
 
         public TextureUnit NextFreeTextureUnit
         {
-            get
-            {
-                return freeTextureUnit++;
-            }
+            get => freeTextureUnit++;
+           
         }
 
 
-        public void bind()
+        public void Bind()
         {
             GL.UseProgram(programHandle);
             freeTextureUnit = TextureUnit.Texture0;
@@ -77,7 +75,7 @@ namespace SharpCG.Core
 
 
 
-        public void release()
+        public void Release()
         {
             GL.UseProgram(0);
         }
@@ -88,7 +86,7 @@ namespace SharpCG.Core
         /// Links the shader programs of the shader.
         /// </summary>
         /// <returns>True if the programs were linked successfully</returns>
-        private bool link()
+        private bool Link()
         {
             if (vertexShader != 0)
                 GL.AttachShader(programHandle, vertexShader);
@@ -177,7 +175,7 @@ namespace SharpCG.Core
 
             // Only link shader if compilation successful
             if (!error)
-                error = !shader.link();
+                error = !shader.Link();
 
             // Return if linking failed
             if (error)

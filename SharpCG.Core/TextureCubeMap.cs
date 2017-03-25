@@ -61,7 +61,7 @@ namespace SharpCG.Core
 
         public override int Handle
         {
-            get{return handle;}
+            get => handle;
         }
 
 

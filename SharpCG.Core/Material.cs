@@ -36,42 +36,42 @@ namespace SharpCG.Core
         [Uniform(Name = "mView")]
         public dmat4 ViewMatrix
         {
-            get { return viewMatrix; }
-            set { viewMatrix = value; }
+            get => viewMatrix; 
+            set => viewMatrix = value;
         }
 
         [Uniform(Name = "mProj")]
         public dmat4 ProjectionMatrix
         {
-            get { return projectionMatrix; }
-            set { projectionMatrix = value; }
+            get => projectionMatrix; 
+            set => projectionMatrix = value; 
         }
 
         [Uniform(Name = "mWorld")]
         public dmat4 WorldMatrix
         {
-            get { return worldMatrix; }
-            set { worldMatrix = value; }
+            get => worldMatrix; 
+            set => worldMatrix = value; 
         }
 
         [Uniform(Name = "mWVP")]
         public dmat4 WvpMatrix
         {
-            get { return wvpMatrix; }
-            set { wvpMatrix = value; }
+            get => wvpMatrix; 
+            set => wvpMatrix = value; 
         }
 
         [Uniform(Name = "mNormal")]
         public dmat3 NormalMatrix
         {
-            get { return normalMatrix; }
-            set { normalMatrix = value; }
+            get => normalMatrix; 
+            set => normalMatrix = value; 
         }
 
         public Shader Shader
         {
-            get { return shader; }
-            set { shader = value; }
+            get => shader; 
+            set => shader = value; 
         }
 
 
@@ -235,7 +235,7 @@ namespace SharpCG.Core
             if (shader == null)
                 return;
 
-            shader.bind();
+            shader.Bind();
 
             uniformAttributes.ToList().ForEach(attr => 
             {

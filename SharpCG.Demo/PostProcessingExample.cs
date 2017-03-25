@@ -18,13 +18,14 @@ namespace SharpCG.Demo
 {
     class PostProcessingExample
     {
+
         static void Main(string[] args)
         {
             Window window = Window.CreateSimpleWindow(1024, 768);
-            
+            window.RenderControl.ClearColor = OpenTK.Graphics.Color4.Black;
             Shader.InitializeShaders();
-           
-            
+
+
             {
                 // Create Camera          
                 Camera.Main.SetProjectionMatrix(60.0, (double)window.Width / (double)window.Height, 0.1, 100000.0);
@@ -40,7 +41,7 @@ namespace SharpCG.Demo
             int width = 1024;
             int height = 768;
             Framebuffer framebuffer = new Framebuffer();
-            framebuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(0, 0, 0, 1));
+            framebuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(1, 1, 1, 1));
             framebuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment, new vec4(1));    // Depth  
             window.RenderControl.AddImmediateGLEvent(geometryPass, () => framebuffer.Clear());
             framebuffer.Clear();
@@ -79,20 +80,20 @@ namespace SharpCG.Demo
                 //window.AddSceneObject(skybox);
             }
             {
-                //SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx");
-                //plane.Name = "plane";
+                SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx");
+                plane.Name = "plane";
 
-                ////plane.Transform.Scale = new dvec3(5);
+                //plane.Transform.Scale = new dvec3(5);
 
 
-                //SceneObject.TraverseAndExecute<Geometry>(plane, m =>
-                //{                 
-                //    var renderer            = m.SceneObject.AddComponent<MeshRenderer>();
-                //    renderer.Framebuffer   = framebuffer;
-                //    renderer.RenderPass    = RenderPass.Main;
-                //});
+                SceneObject.TraverseAndExecute<Geometry>(plane, m =>
+                {
+                    var renderer = m.SceneObject.AddComponent<MeshRenderer>();
+                    renderer.Framebuffer = framebuffer;
+                    renderer.RenderPass = RenderPass.Main;
+                });
 
-                //window.AddSceneObject(plane);
+                window.AddSceneObject(plane);
             }
             {
                 SceneObject trooper = GeometryExtensions.Load("Assets/stormtrooper/stormtrooper.fbx");
@@ -111,16 +112,16 @@ namespace SharpCG.Demo
             {
                 SceneObject postprocessing = new SceneObject();
                 postprocessing.AddComponent<PostprocessingMaterial>();
-                var fxaaTechnique           = postprocessing.AddComponent<FXAATechnique>();
-                fxaaTechnique.ColorTexture  = framebuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
-                fxaaTechnique.DepthTexture  = framebuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);               
-                fxaaTechnique.RenderPass    = postprocessingPass;
-                
+                var fxaaTechnique = postprocessing.AddComponent<FXAATechnique>();
+                fxaaTechnique.ColorTexture = framebuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
+                fxaaTechnique.DepthTexture = framebuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
+                fxaaTechnique.RenderPass = postprocessingPass;
+
 
                 window.AddSceneObject(postprocessing);
             }
-                      
+
             window.Run();
-        }     
-    }  
+        }
+    }
 }

@@ -22,7 +22,7 @@ namespace SharpCG.Core
 
         public int Length
         {
-            get { return data.Length; }
+            get => data.Length;
         }
 
 
@@ -73,25 +73,24 @@ namespace SharpCG.Core
 
         public T[] Data
         {
-            get{ return data; }
-            set{ data = value;
-                isDirty = true;
-            }
+            get => data; 
+            set {data = value; isDirty = true; }          
         }
 
 
         public int Handle
         {
-            get{ return handle;}       
+            get => handle;      
         }
 
 
         public int Stride
         {
-            get{ return stride; }
-            set{ stride = value;
-                isDirty = true;
-            }
+            get => stride; 
+            set {
+                    stride = value;
+                    isDirty = true;
+                }
         }
 
 

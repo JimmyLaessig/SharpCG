@@ -38,22 +38,24 @@ namespace SharpCG.Core
             {
                 if (main == null)
                     main = Between(null, null, "Main");
-                    
                 
                 return main;
             }
         }
 
+
         public string Name
         {
-            get{return name;}
-            set{name = value;}
+            get => name;
+            set => name = value;
         }
+
 
         public double SortKey
         {
-            get{return sortKey;}
+            get => sortKey;
         }
+
 
         private static RenderPass Between (RenderPass previous, RenderPass next, string name)
         {

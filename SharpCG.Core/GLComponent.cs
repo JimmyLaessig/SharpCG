@@ -14,7 +14,7 @@ namespace SharpCG.Core
 
         public static List<GLComponent> All
         {
-            get { return allGLComponents; }
+            get => allGLComponents;
         }
 
 
@@ -49,7 +49,7 @@ namespace SharpCG.Core
         /// </summary>
         public bool IsDirty
         {
-            get{ return isDirty; }              
+            get=> isDirty;               
         }
 
 

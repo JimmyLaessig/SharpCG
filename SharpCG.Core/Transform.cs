@@ -126,21 +126,21 @@ namespace SharpCG.Core
 
         public dvec3 Scale
         {
-            get {return scale; }
-            set{ scale = value; dirty = true;}
+            get => scale; 
+            set { scale = value; dirty = true;}
         }
 
     
         public quat Rotation
         {
-            get { return rotation; }
+            get => rotation; 
             set { rotation = value; dirty = true; }
         }
 
 
         public dvec3 Position
         {          
-            get { return position; }
+            get => position; 
             set { position = value; dirty = true;}
         }
 
@@ -184,7 +184,7 @@ namespace SharpCG.Core
         /// </summary>
         public dvec3 Forward
         {
-            get{ return -(rotation.ToMat3 * dvec3.UnitZ).Normalized;}
+            get => -(rotation.ToMat3 * dvec3.UnitZ).Normalized;
         }
 
 
@@ -193,7 +193,7 @@ namespace SharpCG.Core
         /// </summary>
         public dvec3 Up
         {
-            get{ return (rotation.ToMat3 * dvec3.UnitY).Normalized; }
+            get => (rotation.ToMat3 * dvec3.UnitY).Normalized; 
         }
 
 
@@ -202,7 +202,7 @@ namespace SharpCG.Core
         /// </summary>
         public dvec3 Right
         {
-            get{ return (rotation.ToMat3 * dvec3.UnitX).Normalized; }
+            get=> (rotation.ToMat3 * dvec3.UnitX).Normalized;
         }
 
 
@@ -224,9 +224,10 @@ namespace SharpCG.Core
             }            
         }
 
+
         public dmat4 PreviousWorldMatrix
         {
-            get{return previousWorldMatrix;}
+            get => previousWorldMatrix;
         }
 
 

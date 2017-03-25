@@ -19,7 +19,7 @@ namespace SharpCG.Core
 
         public static List<Component> All
         {
-            get { return allComponents; }
+            get => allComponents; 
         }
 
         protected Component()
@@ -29,20 +29,20 @@ namespace SharpCG.Core
 
         public bool Enabled
         {
-            get{ return enabled; }
-            set{ enabled = value; }
+            get => enabled; 
+            set => enabled = value; 
         }
 
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get => name; 
+            set =>  name = value; 
         }
 
         public SceneObject SceneObject
         {
-            get{ return sceneObject; }
-            set{ sceneObject = value; }
+            get => sceneObject; 
+            set => sceneObject = value; 
         }
 
 

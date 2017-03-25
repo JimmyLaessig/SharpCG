@@ -20,26 +20,26 @@ namespace SharpCG.Core
 
         public byte[] Data
         {
-            get{return data;}
+            get => data;
         }
 
 
         public int Height
         {
-            get{return height; }
+            get => height; 
 
         }
 
 
         public int Width
         {
-            get{return width;}
+            get => width;
         }
 
         public string Path
         {
-            get{return path;}
-            set{path = value;}
+           get => path;
+           set => path = value;
         }
 
         public Image(int width, int height, byte[] data)

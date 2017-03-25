@@ -66,15 +66,15 @@ namespace SharpCG.Core
 
         public List<Component> Components
         {
-            get{ return components; }
-            set{ components = value; }
+            get => components; 
+            set => components = value; 
         }
 
 
         public Transform Transform
         {
             
-            get{return transform; }           
+            get => transform;         
         }
 
 
@@ -113,8 +113,8 @@ namespace SharpCG.Core
 
         public string Name
         {
-            get{ return name; }
-            set{ name = value; }
+            get => name; 
+            set => name = value;
         }
 
 
@@ -143,33 +143,29 @@ namespace SharpCG.Core
 
         public List<SceneObject> Children
         {
-            get{return children; }
+            get => children; 
         }
 
 
         public SceneObject Parent
         {
-            get{return parent;}
-            set{parent = value;}
+            get => parent;
+            set => parent = value;
         }
+
 
         public HashSet<string> Tags
         {
-            get{return tags;}
+            get => tags;
         }
+
 
         public Window Runtime
         {
-            get
-            {
-                return runtime;
-            }
-
-            set
-            {
-                runtime = value;
-            }
+            get => runtime;          
+            set => runtime = value;
         }
+
 
         public void AddTag(string tag)
         {

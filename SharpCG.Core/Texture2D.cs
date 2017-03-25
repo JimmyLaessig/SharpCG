@@ -22,7 +22,7 @@ namespace SharpCG.Core
 
         public Image Image
         {
-            get { return image; }
+            get => image; 
             set
             {
                 image   = value;
@@ -33,19 +33,19 @@ namespace SharpCG.Core
 
         public override int Width
         {
-            get{ return image.Width; }
+            get => image.Width; 
         }
 
 
         public override int Height
         {
-            get{ return image.Height; }
+            get => image.Height; 
         }
 
 
         public override int Handle
         {
-            get{return handle;}
+            get => handle;
         }
 
 

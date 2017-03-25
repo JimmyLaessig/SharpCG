@@ -48,13 +48,13 @@ namespace SharpCG.Core
 
         public bool HasIndices
         {
-            get{return indices != null;}
+            get => indices != null;
         }
 
 
         public int Handle
         {
-            get{return VAO;}          
+            get => VAO;        
         }
 
 
@@ -118,7 +118,7 @@ namespace SharpCG.Core
 
         public ArrayBuffer<uint> Indices
         {
-            get { return indices; }
+            get => indices; 
             set
             {
                 indices = value;
@@ -165,15 +165,15 @@ namespace SharpCG.Core
 
         public PrimitiveType PrimitiveType
         {
-            get{return primitiveType; }
-            set{ primitiveType = value;}
+            get => primitiveType; 
+            set => primitiveType = value;
         }
 
 
         public Material Material
         {
-            get{return material;}
-            set{material = value;}
+            get => material;
+            set => material = value;
         }
     }
 }

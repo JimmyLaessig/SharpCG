@@ -19,8 +19,8 @@ namespace SharpCG.Effects
         [Uniform(Name = "texCubeMap")]
         public TextureCubeMap CubeMapTexture
         {
-            get{return cubeMapTexture;}
-            set{cubeMapTexture = value;}
+            get => cubeMapTexture;
+            set => cubeMapTexture = value;
         }
 
         public override void OnStart()

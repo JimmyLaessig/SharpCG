@@ -22,22 +22,22 @@ namespace SharpCG.Effects.Postprocessing
 
         public Texture2D DepthTexture
         {
-            get{return depthTexture;}
-            set{depthTexture = value;}
+            get => depthTexture;
+            set => depthTexture = value;
         }
 
 
         public Texture2D ColorTexture
         {
-            get{return colorTexture;}
-            set{colorTexture = value;}
+            get => colorTexture;
+            set => colorTexture = value;
         }
 
 
         public PostprocessingMaterial Material
         {
-            get{return material;}
-            set{material = value;}
+            get => material;
+            set => material = value;
         }
 
 

@@ -33,98 +33,98 @@ namespace SharpCG.Core
         [Uniform(Name = "bHasDiffuseMap")]
         public bool HasDiffuseMap
         {
-            get { return (diffuseMapTexture != null); }
+            get => (diffuseMapTexture != null);
         }
 
 
         [Uniform(Name = "bHasNormalMap")]
         public bool HasNormapMap
         {
-            get { return (normalMapTexture != null); }
+            get => (normalMapTexture != null); 
         }
 
 
         [Uniform(Name = "bHasSpecularMap")]
         public bool HasSpecularMap
         {
-            get { return (SpecularMapTexture != null); }
+            get => (SpecularMapTexture != null); 
         }
 
 
         [Uniform(Name = "bHasDisplacementMap")]
         public bool HasDisplacementMap
         {
-            get { return (displacementMapTexture != null); }
+            get => (displacementMapTexture != null); 
         }
 
 
         public bool IsTransparent
         {
-            get { return (diffuseAmount.a >= 1.0); }
+            get => (diffuseAmount.a >= 1.0); 
         }
 
 
         [Uniform(Name = "texDiffuseMap")]
         public Texture2D DiffuseMapTexture
         {
-            get { return diffuseMapTexture; }
-            set { diffuseMapTexture = value; }
+            get => diffuseMapTexture;
+            set => diffuseMapTexture = value; 
         }
 
 
         [Uniform(Name = "texNormalMap")]
         public Texture2D NormalMapTexture
         {
-            get { return normalMapTexture; }
-            set { normalMapTexture = value; }
+            get => normalMapTexture;
+            set => normalMapTexture = value; 
         }
 
 
         [Uniform(Name = "texSpecularMap")]
         public Texture2D SpecularMapTexture
         {
-            get { return specularMapTexture; }
-            set { specularMapTexture = value; }
+            get => specularMapTexture;
+            set => specularMapTexture = value; 
         }
 
 
         [Uniform(Name = "texDisplacementMap")]
         public Texture2D DisplacementMapTexture
         {
-            get { return displacementMapTexture; }
-            set { displacementMapTexture = value; }
+            get => displacementMapTexture;
+            set => displacementMapTexture = value; 
         }
 
 
         [Uniform(Name = "vMaterialDiffuse")]
         public dvec4 DiffuseAmount
         {
-            get { return diffuseAmount; }
-            set { diffuseAmount = value; }
+            get => diffuseAmount;
+            set => diffuseAmount = value; 
         }
 
 
         [Uniform(Name = "vMaterialSpecular")]
         public dvec4 SpecularAmount
         {
-            get { return specularAmount; }
-            set { specularAmount = value; }
+            get => specularAmount;
+            set => specularAmount = value; 
         }
 
 
         [Uniform(Name = "vMaterialEmissive")]
         public dvec3 EmissiveAmount
         {
-            get { return emissiveAmount; }
-            set { emissiveAmount = value; }
+            get => emissiveAmount;
+            set => emissiveAmount = value; 
         }
 
 
         [Uniform(Name = "texBumpMap")]
         public Texture2D BumpMapTexture
         {
-            get{ return bumpMapTexture;}
-            set{bumpMapTexture = value;}
+            get => bumpMapTexture;
+            set => bumpMapTexture = value;
         }        
     }   
 }

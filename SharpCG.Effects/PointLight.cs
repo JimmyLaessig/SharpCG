@@ -23,46 +23,49 @@ namespace SharpCG.Effects
 
         public override dvec3 Attenuation
         {
-            get{ return attenuation; }
-            set{ attenuation = value;
+            get => attenuation; 
+            set
+            {
+                attenuation = value;
                 sceneObject.Transform.WorldScale = new dvec3(EstimateRadius(attenuation));
             }
+            
         }
 
         public override dvec3 Direction
         {
-            get{ return dvec3.Zero; }
-            set{}
+            get => dvec3.Zero;
+            set { }
         }
 
         public override Geometry LightGeometry
         {
-            get{return sphere;}
+            get => sphere;
         }
 
 
         public override int LightType
         {
-            get{return 2;}
+            get => 2;
         }
 
 
         public override dvec3 Position
         {
-            get{ return this.sceneObject.Transform.WorldPosition; }
-            set{ this.sceneObject.Transform.WorldPosition = value; }
+            get => this.sceneObject.Transform.WorldPosition; 
+            set => this.sceneObject.Transform.WorldPosition = value; 
         }
 
 
         public override dmat4 ProjectionMatrix
         {
-            get{return dmat4.Identity;}
+            get => dmat4.Identity;
         }
 
 
         public override dmat4 ViewMatrix
         {
-            get{ return this.sceneObject.Transform.WorldMatrix.Inverse; }
+            get => this.sceneObject.Transform.WorldMatrix.Inverse;
         }
 
 

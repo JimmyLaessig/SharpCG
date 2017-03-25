@@ -12,26 +12,32 @@ namespace SharpCG.Core
         protected Framebuffer framebuffer;
         protected RenderPass renderPass = RenderPass.Main;
 
-        
+        private GLState glState;
+
         public virtual Framebuffer Framebuffer
         {
-            get { return framebuffer; } 
-            set { framebuffer = value; }
+            get => framebuffer; 
+            set => framebuffer = value;
         }
 
 
         public RenderPass RenderPass
         {
-            get { return renderPass; }
-            set { renderPass = value; }
+            get => renderPass; 
+            set => renderPass = value; 
+        }
+
+
+        protected GLState GlState
+        {
+            get => glState;
+            set => glState = value;
         }
 
 
         /// <summary>
         /// Method to execute OpenGL render commands. This will be called once per frame. 
         /// </summary>
-        public abstract void RenderGL();
-
-    
+        public abstract void RenderGL(); 
     }
 }

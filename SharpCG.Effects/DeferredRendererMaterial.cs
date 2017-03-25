@@ -11,13 +11,12 @@ using SharpCG.Core;
 namespace SharpCG.Effects
 {
 
-    public class GeometryPassMaterial : Material
+    public class DeferredGeometryMaterial : Material
     {
 
         private Texture2D diffuseMapTexture;
         private Texture2D specularMapTexture;
         private Texture2D normalMapTexture;
-
 
 
         private dvec3 emissiveAmount     = new dvec3(0, 0, 0);
@@ -35,77 +34,89 @@ namespace SharpCG.Effects
         }
 
 
+        public void ConvertFrom(AssimpMaterial material)
+        {
+            diffuseMapTexture   = material.DiffuseMapTexture;
+            specularMapTexture  = material.SpecularMapTexture;
+            normalMapTexture    = material.NormalMapTexture;
+
+            emissiveAmount  = material.EmissiveAmount;
+            diffuseAmount   = material.DiffuseAmount;
+            specularAmount  = material.SpecularAmount;
+
+        }
+
         public bool HasDiffuseMap
         {
-            get { return (diffuseMapTexture != null); }
+            get => (diffuseMapTexture != null);
         }
 
 
         public bool HasNormapMap
         {
-            get { return (normalMapTexture != null); }
+            get => (normalMapTexture != null); 
         }
 
 
         public bool HasSpecularMap
         {
-            get { return (SpecularMapTexture != null); }
+            get => (SpecularMapTexture != null); 
         }
 
 
         public Texture2D DiffuseMapTexture
         {
-            get { return diffuseMapTexture; }
-            set { diffuseMapTexture = value; }
+            get => diffuseMapTexture; 
+            set => diffuseMapTexture = value; 
         }
 
 
         public Texture2D NormalMapTexture
         {
-            get { return normalMapTexture; }
-            set { normalMapTexture = value; }
+            get => normalMapTexture; 
+            set => normalMapTexture = value; 
         }
 
 
         public Texture2D SpecularMapTexture
         {
-            get { return specularMapTexture; }
-            set { specularMapTexture = value; }
+            get => specularMapTexture; 
+            set => specularMapTexture = value; 
         }
 
 
         public dvec4 DiffuseAmount
-        {
-            get { return diffuseAmount; }
-            set { diffuseAmount = value; }
+        { 
+            get => diffuseAmount; 
+            set => diffuseAmount = value; 
         }
 
 
         public dvec3 SpecularAmount
         {
-            get { return specularAmount.rgb; }
-            set { specularAmount.rgb = value; }
+            get => specularAmount.rgb; 
+            set => specularAmount.rgb = value; 
         }
 
 
         public dvec3 EmissiveAmount
         {
-            get { return emissiveAmount; }
-            set { emissiveAmount = value; }
+            get => emissiveAmount; 
+            set => emissiveAmount = value; 
         }
 
 
         public double SpecularExponent
         {
-            get { return specularAmount.a; }
-            set { specularAmount.a = value; }
+            get => specularAmount.a; 
+            set => specularAmount.a = value; 
         }
 
 
         public bool NormalMappingEnabled
         {
-            get { return normalMappingEnabled; }
-            set { normalMappingEnabled = value; }
+            get => normalMappingEnabled; 
+            set => normalMappingEnabled = value; 
         }
 
 
@@ -158,7 +169,7 @@ namespace SharpCG.Effects
     }
 
 
-    public class LightingPassMaterial : Material
+    public class DeferredLightMaterial : Material
     {
         // GBuffer
         private Texture2D diffuseAlbedoTexture;
@@ -190,100 +201,99 @@ namespace SharpCG.Effects
 
         public Texture2D WorldNormalTexture
         {
-            get{ return worldNormalTexture; }
-            set{worldNormalTexture = value;}
+            get => worldNormalTexture; 
+            set => worldNormalTexture = value;
         }
 
 
         public Texture2D DiffuseAlbedoTexture
         {
-            get{return diffuseAlbedoTexture;}
-            set{diffuseAlbedoTexture = value;}
+            get => diffuseAlbedoTexture;
+            set => diffuseAlbedoTexture = value;
         }
 
 
         public Texture2D SpecularAlbedoTexture
         {
-            get{return specularAlbedoTexture;}
-            set{ specularAlbedoTexture = value;}
+            get => specularAlbedoTexture;
+            set => specularAlbedoTexture = value;
         }
 
 
         public dvec3 CameraPosition
         {
-            get { return cameraPosition; }
+            get => cameraPosition; 
 
-            set{cameraPosition = value;}
+            set => cameraPosition = value;
         }
 
 
         public dvec3 LightDirection
         {
-            get{ return lightDirection;}
-            set{lightDirection = value;}
+            get => lightDirection;
+            set => lightDirection = value;
         }
 
 
         public dvec3 LightPosition
         {
-            get{return lightPosition;}
-            set{lightPosition = value;}
+            get => lightPosition;
+            set => lightPosition = value;
         }
 
 
         public bool HasShadowMapTexture
         {
-            get { return shadowMapTexture != null; }
+            get => shadowMapTexture != null; 
         }
 
 
         public dvec3 LightColor
         {
-            get{return lightColor; }
-
-            set{ lightColor = value;}
+            get => lightColor; 
+            set => lightColor = value;
         }
 
 
         public dvec3 LightAttenuation
         {
-            get{return lightAttenuation;}
-            set{lightAttenuation = value;}
+            get =>lightAttenuation;
+            set =>lightAttenuation = value;
         }
 
 
         public int LightType
         {
-            get{ return lightType;}
-            set{lightType = value;}
+            get => lightType;
+            set => lightType = value;
         }
 
 
         public dmat4 InverseViewProjectionMatrix
         {
-            get{return inverseViewProjectionMatrix;}
-            set{inverseViewProjectionMatrix = value;}
+            get => inverseViewProjectionMatrix;
+            set => inverseViewProjectionMatrix = value;
         }
 
 
         public Texture2D DepthTexture
         {
-            get{return depthTexture;}
-            set{ depthTexture = value;}
+            get => depthTexture;
+            set => depthTexture = value;
         }
 
 
         public dmat4 LightViewProjectionMatrix
         {
-            get{return lightViewProjectionMatrix;}
-            set{lightViewProjectionMatrix = value;}
+            get => lightViewProjectionMatrix;
+            set => lightViewProjectionMatrix = value;
         }
 
 
         public Texture ShadowMapTexture
         {
-            get{return shadowMapTexture;}
-            set{shadowMapTexture = value;}
+            get => shadowMapTexture;
+            set  => shadowMapTexture = value;
         }
         
 

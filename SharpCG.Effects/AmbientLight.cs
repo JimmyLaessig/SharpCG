@@ -22,51 +22,47 @@ namespace SharpCG.Effects
 
         public override dvec3 Attenuation
         {
-            get{return dvec3.Zero;}
+            get => dvec3.Zero;
             set { }
         }
 
 
         public override int LightType
         {
-            get{return 0;}
+            get => 0;
         }
 
         
 
         public override dvec3 Direction
         {
-            get{return dvec3.Zero;}
+            get => dvec3.Zero;
             set { }
         }
 
 
         public override Geometry LightGeometry
         {
-            get{return fullscreenQuad;}
+            get => fullscreenQuad;
         }
 
 
         public override dvec3 Position
         {
-            get {return dvec3.Zero;}
+            get => dvec3.Zero;
             set { }
         }
 
+
         public override dmat4 ViewMatrix
         {
-            get
-            {
-                return dmat4.Identity;
-            }
+            get => dmat4.Identity;        
         }
+
 
         public override dmat4 ProjectionMatrix
         {
-            get
-            {
-                return dmat4.Identity;
-            }
+            get => dmat4.Identity;
         }
     }
 }
