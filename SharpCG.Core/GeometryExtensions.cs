@@ -227,9 +227,8 @@ namespace SharpCG.Core
         private static SceneObject Traverse(Assimp.Scene scene, Assimp.Node node, string path)
         {
             var name = node.Name;
-            Assimp.Vector3D t; Assimp.Vector3D s; Assimp.Quaternion r;
-            node.Transform.Decompose(out s, out r, out t);
-                        
+            node.Transform.Decompose(out Assimp.Vector3D s, out Assimp.Quaternion r, out Assimp.Vector3D t);
+
             SceneObject obj         = new SceneObject();
             obj.Name                = node.Name;
             // Add Transform to scene object

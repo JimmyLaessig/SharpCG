@@ -17,6 +17,7 @@ namespace SharpCG.Core
         // DepthTestMode
         public bool DepthTestEnabled;
         public DepthFunction DepthFunction;
+        public bool DepthWriteEnabled;
         
         // CullMode
         public bool FaceCullingEnabled;
@@ -32,17 +33,18 @@ namespace SharpCG.Core
             BlendFactorDest = BlendingFactorDest.OneMinusSrc1Alpha;
 
             // Default Face Culling State
-            FaceCullingEnabled  = false;
+            FaceCullingEnabled  = true;
             CullFaceMode        = CullFaceMode.Back;
 
             // Default Depth Test State
-            DepthTestEnabled = true;
+            DepthTestEnabled    = true;
             DepthFunction       = DepthFunction.Lequal;
+            DepthWriteEnabled   = true;
             
         }
 
 
-        public void ApplyState()
+        public void Bind()
         {
             // Blending
             if (BlendingEnabled)
@@ -66,6 +68,9 @@ namespace SharpCG.Core
             {
                 GL.Disable(EnableCap.CullFace);
             }
+
+            
+            GL.DepthMask(DepthWriteEnabled);
 
             // DepthTestMode
             if(DepthTestEnabled)

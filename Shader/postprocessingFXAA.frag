@@ -69,4 +69,5 @@ void main()
   vec3 c = FXAA(vTexcoords, texColor, invViewportSize);
 
   vFragColor = vec4(c, 1);
+  //vFragColor = vec4(1, 0, 0, 1);
 }

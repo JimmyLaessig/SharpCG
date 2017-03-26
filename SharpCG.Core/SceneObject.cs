@@ -12,7 +12,7 @@ namespace SharpCG.Core
     {
         private Window runtime;
         
-
+        
         private HashSet<string> tags;
 
         private Transform transform;

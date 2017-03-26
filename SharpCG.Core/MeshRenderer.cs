@@ -14,15 +14,18 @@ namespace SharpCG.Core
 
         private Geometry mesh;
         private Material material;
-
+        
 
         public override void OnStart()
         {
+            
             if (mesh == null)
                 mesh = sceneObject.FindComponent<Geometry>();
 
             if(mesh != null)
                 material = mesh.Material;
+            if(material == null)          
+                material = sceneObject.FindComponent<Material>();           
         }
 
 
@@ -31,27 +34,30 @@ namespace SharpCG.Core
             if (material == null)
                 return;
 
-            Camera camera = Camera.Main;
-
-            GL.Enable(EnableCap.CullFace);
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthMask(true);
-            GL.DepthFunc(DepthFunction.Lequal);
-
-            //GL.Disable(EnableCap.Blend);
-            //GL.BlendFunc(BlendingFactorSrc.Src1Alpha, BlendingFactorDest.OneMinusSrc1Alpha);
-
+           
             // Default Uniforms for matrices
-            material.WorldMatrix        = sceneObject.Transform.WorldMatrix;
-            material.ProjectionMatrix   = camera.ProjectionMatrix;
-            material.ViewMatrix         = camera.ViewMatrix;
-            material.WvpMatrix          = material.ProjectionMatrix * material.ViewMatrix * material.WorldMatrix;
-            material.NormalMatrix       = sceneObject.Transform.NormalMatrix;
-
+            if (Camera == null)
+            {          
+                material.ProjectionMatrix   = dmat4.Identity;
+                material.ViewMatrix         = dmat4.Identity;              
+            }
+            else
+            {
+                material.ProjectionMatrix   = Camera.ProjectionMatrix;
+                material.ViewMatrix         = Camera.ViewMatrix;
+            }
             
-            material.Bind();
+            material.ViewportSize = (framebuffer == null) ? new vec2(this.sceneObject.Runtime.Width, this.sceneObject.Runtime.Height) : material.ViewportSize = new vec2(framebuffer.Width, framebuffer.Height);
+ 
+            material.WorldMatrix    = sceneObject.Transform.WorldMatrix;
+            material.NormalMatrix   = sceneObject.Transform.NormalMatrix;
+            material.WvpMatrix      = material.ProjectionMatrix * material.ViewMatrix * material.WorldMatrix;
 
+
+            GLState.Bind();
+            material.Bind();
             mesh.Bind();
+
             if (mesh.HasIndices)
             {
                 GL.DrawElements(mesh.PrimitiveType, mesh.TriangleCount * 3, DrawElementsType.UnsignedInt, 0);
@@ -60,9 +66,6 @@ namespace SharpCG.Core
             {
                 GL.DrawArrays(mesh.PrimitiveType, 0, mesh.TriangleCount * 3);
             }
-            //GL.BindVertexArray(0);
-
-            material.Shader.Release();
         }
     }
 }

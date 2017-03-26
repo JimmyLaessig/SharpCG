@@ -13,7 +13,6 @@ void main(void)
 	gl_Position = vec4(vPosition, 1);
 
 	vec2 invViewportSize	= 1.0 / vViewportSize;
-	vTexcoords.xy		= vPosition.xy * 0.5 + 0.5;
-	vTexcoords.zw		= (vPosition.xy * 0.5 + 0.5) - (invViewportSize * (0.5 + FXAA_SUBPIX_SHIFT));
-
+	vTexcoords.xy			= vPosition.xy * 0.5 + 0.5;
+	vTexcoords.zw			= (vPosition.xy * 0.5 + 0.5) - (invViewportSize * (0.5 + FXAA_SUBPIX_SHIFT));
 }

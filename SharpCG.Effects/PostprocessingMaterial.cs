@@ -46,13 +46,5 @@ namespace SharpCG.Effects
             get => normalTexture; 
             set => normalTexture = value;
         }
-
-
-        [Uniform(Name = "vViewportSize")]
-        public vec2 ViewportSize
-        {
-            get => viewportSize;
-            set => viewportSize = value;
-        }
     }
 }

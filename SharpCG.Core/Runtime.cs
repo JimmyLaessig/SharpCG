@@ -6,107 +6,169 @@ using System.Threading.Tasks;
 using OpenTK;
 using System.Drawing;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL4;
 
 
 namespace SharpCG.Core
-{ 
-    
-    public class RenderPassEvents
+{
+
+    public class RenderTask
     {
-        public RenderPassEvents()
+        public RenderTask()
         {
-            drawEvents      = new List<Action>();
-            immediateEvents = new List<Action>();
+            DrawEvents      = new List<Action>();
+            ImmediateEvents = new List<Action>();
         }
 
-        public List<Action> immediateEvents;
-        public List<Action> drawEvents;
-    }
-
-    class RenderPassComparer : IComparer<RenderPass>
-    {
-        public int Compare(RenderPass x, RenderPass y)
-        {
-            if (x.SortKey > y.SortKey) return 1;
-            if (x.SortKey < y.SortKey) return -1;
-            return 0;
-        }
+        public List<Action> ImmediateEvents;
+        public List<Action> DrawEvents;
     }
 
 
-    public class RenderControl
+    public class Runtime
     {
-        
 
         private Rectangle viewport;
         private Color4 clearColor;
         private double clearDepth;
         private int clearStencil;
 
-        public bool ClearColorFlag;
-        public bool ClearDepthFlag;
-        public bool ClearStencilFlag;
-
-        public bool isDirty;
+        private bool clearColorFlag;
+        private bool clearDepthFlag;
+        private bool clearStencilFlag;
 
 
-        public SortedDictionary<RenderPass, RenderPassEvents> renderEvents = new SortedDictionary<RenderPass, RenderPassEvents>(new RenderPassComparer());
+        public SortedDictionary<RenderPass, RenderTask> renderTasks = new SortedDictionary<RenderPass, RenderTask>(new RenderPass.Comparer());
 
-        
 
-        public Rectangle Viewport
+        public void Render()
         {
-            get {return viewport;}
-            set { isDirty = true; viewport = value;}
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            GL.Viewport(viewport);
+            GL.ClearColor(clearColor);
+            GL.ClearDepth(clearDepth);
+            GL.ClearStencil(clearStencil);
+
+
+            ClearBufferMask         mask = ClearBufferMask.None;
+            if (clearColorFlag)     mask |= ClearBufferMask.ColorBufferBit;
+            if (clearDepthFlag)     mask |= ClearBufferMask.DepthBufferBit;
+            if (clearStencilFlag)   mask |= ClearBufferMask.StencilBufferBit;
+            GL.Clear(mask);
+
+
+            //var events = renderControl.renderEvents.ToList();
+
+            renderTasks.Values.ToList().ForEach(renderTask =>
+            {
+                // Execute all immediate events on renderpass change
+                renderTask.ImmediateEvents.ForEach(a => a.Invoke());
+                // Execute Draw Calls
+                renderTask.DrawEvents.ForEach(a => a.Invoke());
+            });
+
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            var err = GL.GetError();
+        }
+
+
+        private void OnRenderGL(Renderer renderer)
+        {            
+            var fb = renderer.Framebuffer;
+            //Bind Framebuffer
+            if (fb != null)
+            {
+                fb.BindForWriting();
+            }
+            //Bind Default (Back)Buffer
+            else
+            {
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            }
+            // Execute GLCommand
+            renderer.RenderGL();
         }
 
 
         /// <summary>
-        /// Adds a Action that contains GL calls to the be executed in the given render pass (e.g. Draw-Functions)
+        /// Adds a Renderer to the runtime to execute the draw code
         /// </summary>
-        public void AddRenderGLEvent(RenderPass renderPass, Action drawEvent)
+        public void AddRenderer(Renderer renderer)
         {
-            if (!renderEvents.ContainsKey(renderPass))
+            var renderPass = renderer.RenderPass;
+
+            if (!renderTasks.ContainsKey(renderPass))
             {
-                var events = new RenderPassEvents();
-                renderEvents[renderPass] = events;
+                renderTasks[renderPass] = new RenderTask();
             }
-            renderEvents[renderPass].drawEvents.Add(drawEvent);
+
+            renderTasks[renderPass].DrawEvents.Add(() => OnRenderGL(renderer));
         }
 
 
         /// <summary>
         /// Adds a Action that contains GL calls to the be executed immediately when this Renderpass begins (e.g. Clear-Functions, State functions)
         /// </summary>
-        public void AddImmediateGLEvent(RenderPass renderPass, Action immediateEvent)
+        public void AddRenderEvent(RenderPass renderPass, Action renderEvent)
         {
-            if (!renderEvents.ContainsKey(renderPass))
+            if (!renderTasks.ContainsKey(renderPass))
             {
-                var events = new RenderPassEvents();
-                renderEvents[renderPass] = events;
+                var events = new RenderTask();
+                renderTasks[renderPass] = events;
             }
-            renderEvents[renderPass].immediateEvents.Add(immediateEvent);
+            renderTasks[renderPass].ImmediateEvents.Add(renderEvent);
+        }
+
+
+
+        public Rectangle Viewport
+        {
+            get => viewport;
+            set => viewport = value;
         }
 
 
         public Color4 ClearColor
         {
             get => clearColor;
-            set { isDirty = true; clearColor = value;}
+            set => clearColor = value;
         }
 
 
         public double ClearDepth
         {
             get => clearDepth;
-            set { isDirty = true; clearDepth = value;}
+            set => clearDepth = value;
         }
 
 
         public int ClearStencil
         {
             get => clearStencil;
-            set { isDirty = true; clearStencil = value; }
+            set => clearStencil = value;
+        }
+
+
+        public bool ClearColorFlag
+        {
+            get => clearColorFlag;
+            set => clearColorFlag = value;
+        }
+
+
+        public bool ClearDepthFlag
+        {
+            get => clearDepthFlag;
+            set => clearDepthFlag = value;
+        }
+
+
+        public bool ClearStencilFlag
+        {
+            get => clearStencilFlag;
+            set => clearStencilFlag = value;
         }
     }
 }

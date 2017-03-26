@@ -18,12 +18,13 @@ namespace SharpCG.Core
         protected Dictionary<string, int> uniformLocations = new Dictionary<string, int>();
         protected HashSet<UniformAttribute> uniformAttributes = new HashSet<UniformAttribute>();
 
-        private RenderConfig renderConfig;               
+             
         private dmat4 viewMatrix;        
         private dmat4 projectionMatrix;       
         private dmat4 worldMatrix;      
         private dmat4 wvpMatrix;       
         private dmat3 normalMatrix;
+        private vec2 viewportSize;
 
 
         public override void OnStart()
@@ -33,12 +34,14 @@ namespace SharpCG.Core
             InitUniformLocations();
         }
 
+
         [Uniform(Name = "mView")]
         public dmat4 ViewMatrix
         {
             get => viewMatrix; 
             set => viewMatrix = value;
         }
+
 
         [Uniform(Name = "mProj")]
         public dmat4 ProjectionMatrix
@@ -47,12 +50,14 @@ namespace SharpCG.Core
             set => projectionMatrix = value; 
         }
 
+
         [Uniform(Name = "mWorld")]
         public dmat4 WorldMatrix
         {
             get => worldMatrix; 
             set => worldMatrix = value; 
         }
+
 
         [Uniform(Name = "mWVP")]
         public dmat4 WvpMatrix
@@ -61,6 +66,7 @@ namespace SharpCG.Core
             set => wvpMatrix = value; 
         }
 
+
         [Uniform(Name = "mNormal")]
         public dmat3 NormalMatrix
         {
@@ -68,11 +74,20 @@ namespace SharpCG.Core
             set => normalMatrix = value; 
         }
 
+
+        [Uniform(Name = "vViewportSize")]
+        public vec2 ViewportSize
+        {
+            get => viewportSize;
+            set => viewportSize = value;
+        }
+
+
         public Shader Shader
         {
             get => shader; 
             set => shader = value; 
-        }
+        } 
 
 
         public Material()

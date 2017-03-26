@@ -11,8 +11,9 @@ namespace SharpCG.Core
     {
         protected Framebuffer framebuffer;
         protected RenderPass renderPass = RenderPass.Main;
+        private Camera camera           = Camera.Main;
+        private GLState glState         = new GLState();
 
-        private GLState glState;
 
         public virtual Framebuffer Framebuffer
         {
@@ -28,10 +29,17 @@ namespace SharpCG.Core
         }
 
 
-        protected GLState GlState
+        public GLState GLState
         {
             get => glState;
             set => glState = value;
+        }
+
+
+        public Camera Camera
+        {
+            get => camera;
+            set => camera = value;
         }
 
 

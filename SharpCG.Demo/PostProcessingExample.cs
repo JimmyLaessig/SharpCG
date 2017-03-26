@@ -12,7 +12,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using SharpCG.Core;
 using SharpCG.Effects;
-using SharpCG.Effects.Postprocessing;
+//using SharpCG.Effects.Postprocessing;
 
 namespace SharpCG.Demo
 {
@@ -22,7 +22,7 @@ namespace SharpCG.Demo
         static void Main(string[] args)
         {
             Window window = Window.CreateSimpleWindow(1024, 768);
-            window.RenderControl.ClearColor = OpenTK.Graphics.Color4.Black;
+            window.Runtime.ClearColor = OpenTK.Graphics.Color4.Black;
             Shader.InitializeShaders();
 
 
@@ -43,19 +43,20 @@ namespace SharpCG.Demo
             Framebuffer framebuffer = new Framebuffer();
             framebuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(1, 1, 1, 1));
             framebuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment, new vec4(1));    // Depth  
-            window.RenderControl.AddImmediateGLEvent(geometryPass, () => framebuffer.Clear());
-            framebuffer.Clear();
-            //{
-            //    var sphereObj = new SceneObject();
-            //    sphereObj.Name = "TesselatedSphere";
-            //    sphereObj.AddComponent(GeometryExtensions.Sphere(vec3.Zero, 1, 20));
-            //    //sphereObj.AddComponent(GeometryExtensions.FullscreenQuad);
-            //    sphereObj.AddComponent<SimpleRenderer>();
-            //    var mat = sphereObj.AddComponent<ColoredMaterial>();
-            //    mat.Color = new vec4(1, 0, 0, 1);
 
-            //    window.AddSceneObject(sphereObj);
-            //}
+
+            window.Runtime.AddRenderEvent(geometryPass, () => framebuffer.Clear());
+            {
+                //var sphereObj = new SceneObject();
+                //sphereObj.Name = "TesselatedSphere";
+                //sphereObj.AddComponent(GeometryExtensions.Sphere(vec3.Zero, 1, 20));
+                ////sphereObj.AddComponent(GeometryExtensions.FullscreenQuad);
+                //sphereObj.AddComponent<SimpleRenderer>();
+                //var mat = sphereObj.AddComponent<ColoredMaterial>();
+                //mat.Color = new vec4(1, 0, 0, 1);
+
+                //window.AddSceneObject(sphereObj);
+            }
 
 
 
@@ -72,9 +73,9 @@ namespace SharpCG.Demo
                 //                                                "Assets/skybox/skybox_front2048.png",
                 //                                                "Assets/skybox/skybox_back2048.png");
 
-                //var renderer            = skybox.AddComponent<SkyboxRenderer>();
-                //renderer.Framebuffer    = framebuffer;
-                //renderer.RenderPass     = RenderPass.Main;
+                //var renderer = skybox.AddComponent<SkyboxRenderer>();
+                //renderer.Framebuffer = framebuffer;
+                //renderer.RenderPass = RenderPass.Main;
 
 
                 //window.AddSceneObject(skybox);
@@ -83,7 +84,7 @@ namespace SharpCG.Demo
                 SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx");
                 plane.Name = "plane";
 
-                //plane.Transform.Scale = new dvec3(5);
+                plane.Transform.Scale = new dvec3(2);
 
 
                 SceneObject.TraverseAndExecute<Geometry>(plane, m =>
@@ -109,14 +110,27 @@ namespace SharpCG.Demo
 
                 window.AddSceneObject(trooper);
             }
+
+
+
             {
                 SceneObject postprocessing = new SceneObject();
-                postprocessing.AddComponent<PostprocessingMaterial>();
-                var fxaaTechnique = postprocessing.AddComponent<FXAATechnique>();
-                fxaaTechnique.ColorTexture = framebuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
-                fxaaTechnique.DepthTexture = framebuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
-                fxaaTechnique.RenderPass = postprocessingPass;
+                var geometry = postprocessing.AddComponent(GeometryExtensions.FullscreenQuad);
 
+                var material            = postprocessing.AddComponent<PostprocessingMaterial>();
+                //geometry.Material       = material;
+                material.ColorTexture   = framebuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
+                material.DepthTexture   = framebuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
+
+                var renderer = postprocessing.AddComponent<MeshRenderer>();
+                renderer.RenderPass = postprocessingPass;
+                renderer.Camera = null;
+                renderer.GLState.FaceCullingEnabled = false;
+                renderer.GLState.DepthTestEnabled   = false;
+                renderer.GLState.DepthWriteEnabled  = false;
+                renderer.GLState.BlendingEnabled    = true;
+                renderer.GLState.BlendFactorSrc     = BlendingFactorSrc.One;
+                renderer.GLState.BlendFactorDest    = BlendingFactorDest.One;
 
                 window.AddSceneObject(postprocessing);
             }

@@ -52,7 +52,7 @@ namespace SharpCG.Effects.Postprocessing
 
         public override void RenderGL()
         {
-            GL.Viewport(0, 0, 1024, 768);
+            //GL.Viewport(0, 0, 1024, 768);
             Camera camera = Camera.Main;
 
 
