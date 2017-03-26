@@ -103,6 +103,10 @@
       <Project>{7287bf99-99f1-4303-a229-153bbe61f619}</Project>
       <Name>SharpCG.Effects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SharpCG.Templates\SharpCG.Templates.csproj">
+      <Project>{3d9a4d43-3592-480c-98ff-fd3b6bf76c67}</Project>
+      <Name>SharpCG.Templates</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.3.3.2\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.3.3.2\build\AssimpNet.targets')" />

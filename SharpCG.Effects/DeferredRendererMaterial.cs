@@ -220,14 +220,6 @@ namespace SharpCG.Effects
         }
 
 
-        public dvec3 CameraPosition
-        {
-            get => cameraPosition; 
-
-            set => cameraPosition = value;
-        }
-
-
         public dvec3 LightDirection
         {
             get => lightDirection;

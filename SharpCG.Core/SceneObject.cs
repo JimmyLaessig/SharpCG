@@ -53,7 +53,6 @@ namespace SharpCG.Core
 
         public T AddComponent<T>() where T : Component, new()
         {
-
             var component = new T();
 
             components.Add(component);
@@ -63,6 +62,11 @@ namespace SharpCG.Core
             
         }
         
+
+        public void RemoveComponents<T>() where T: Component
+        {            
+            components.RemoveAll(c => c is T);
+        }
 
         public List<Component> Components
         {

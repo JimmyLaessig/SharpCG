@@ -8,9 +8,11 @@ using OpenTK.Graphics.OpenGL4;
 
 using SharpCG.Core;
 
-namespace SharpCG.Effects
+
+namespace SharpCG.Templates
 {
-    public class TextureToDepthMaterial : Material
+
+    public class RenderDepthMaterial : Material
     {
 
         private Texture2D depthTexture;
@@ -18,14 +20,14 @@ namespace SharpCG.Effects
 
         public override void OnStart()
         {
-            
+
             shader = Shader.Find("textureToDepth");
 
             base.OnStart();
         }
 
 
-        [Uniform (Name = "texDepth")]
+        [Uniform(Name = "texDepth")]
         public Texture2D DepthTexture
         {
             get => depthTexture;

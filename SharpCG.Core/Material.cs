@@ -24,6 +24,8 @@ namespace SharpCG.Core
         private dmat4 worldMatrix;      
         private dmat4 wvpMatrix;       
         private dmat3 normalMatrix;
+
+        private vec3 cameraPosition;
         private vec2 viewportSize;
 
 
@@ -83,13 +85,20 @@ namespace SharpCG.Core
         }
 
 
+        [Uniform(Name = "vCameraPosition")]
+        public vec3 CameraPosition
+        {
+            get => cameraPosition;
+            set => cameraPosition = value;
+        }
+
+
         public Shader Shader
         {
             get => shader; 
             set => shader = value; 
-        } 
-
-
+        }
+       
         public Material()
         {
 

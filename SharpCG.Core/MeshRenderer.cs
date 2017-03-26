@@ -14,7 +14,19 @@ namespace SharpCG.Core
 
         private Geometry mesh;
         private Material material;
-        
+
+
+        public Material Material
+        {
+            get => material;
+            set => material = value;
+        }
+
+        public Geometry Mesh
+        {
+            get => mesh;
+            set => mesh = value;
+        }
 
         public override void OnStart()
         {
