@@ -34,7 +34,7 @@ namespace SharpCG.Effects
         public override dvec3 Direction
         {
             get => dvec3.Zero;
-            set { }
+
         }
 
 
@@ -47,7 +47,7 @@ namespace SharpCG.Effects
         public override dvec3 Position
         {
             get => dvec3.Zero;
-            set { }
+
         }
 
 
@@ -61,8 +61,5 @@ namespace SharpCG.Effects
         {
             get => dmat4.Identity;
         }
-
-
-
     }
 }

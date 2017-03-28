@@ -28,6 +28,8 @@ namespace SharpCG.Core
     public class Runtime
     {
 
+		private int currentFramebuffer = 0;
+
         private Rectangle viewport;
         private Color4 clearColor;
         private double clearDepth;
@@ -44,6 +46,7 @@ namespace SharpCG.Core
         public void Render()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            currentFramebuffer = 0;
 
             GL.Viewport(viewport);
             GL.ClearColor(clearColor);
@@ -80,12 +83,17 @@ namespace SharpCG.Core
             //Bind Framebuffer
             if (fb != null)
             {
-                fb.BindForWriting();
+				if(fb.Handle != currentFramebuffer)
+				{
+					fb.BindForWriting();
+					currentFramebuffer = fb.Handle;
+				}
             }
             //Bind Default (Back)Buffer
             else
             {
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+				currentFramebuffer = 0;
             }
             // Execute GLCommand
             renderer.RenderGL();

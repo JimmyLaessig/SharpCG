@@ -16,8 +16,6 @@ namespace SharpCG.Core
         private Light light;
 
 
-                
-
         [Uniform(Name = "vLightDirection")]
         public dvec3 LightDirection
         {
@@ -67,7 +65,6 @@ namespace SharpCG.Core
         public abstract dvec3 Direction
         {
             get;
-            set;
         }       
 
 
@@ -86,14 +83,12 @@ namespace SharpCG.Core
         public abstract dmat4 ProjectionMatrix
         {
             get;
-
         }
 
 
         public abstract dvec3 Position
         {
             get;
-            set;
         }
 
 

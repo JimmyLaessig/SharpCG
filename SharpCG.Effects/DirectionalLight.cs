@@ -12,18 +12,16 @@ namespace SharpCG.Effects
 {
     public class DirectionalLight : Light
     {        
-        private Geometry fullscreenQuad;
 
-        private ShadowMapRenderer shadowMappingTechnique;
-        private dvec3 direction;
+        //private ShadowMapRenderer shadowMappingTechnique;
+
         public override void OnStart()
         {
-            fullscreenQuad = GeometryExtensions.FullscreenQuad;
 
-            if(shadowMappingTechnique == null)
-            {
-                shadowMappingTechnique = sceneObject.FindComponent<ShadowMapRenderer>();
-            }
+            //if(shadowMappingTechnique == null)
+            //{
+            //    shadowMappingTechnique = sceneObject.FindComponent<ShadowMapRenderer>();
+            //}
         }
 
 
@@ -36,14 +34,13 @@ namespace SharpCG.Effects
 
         public override dvec3 Direction
         {
-            get => direction;
-            set => direction = value;
+            get => this.sceneObject.Transform.Forward.Normalized;
         }
 
 
         public override Geometry LightGeometry
         {
-            get => fullscreenQuad;
+            get => GeometryExtensions.FullscreenQuad;
         }
 
 
@@ -55,8 +52,7 @@ namespace SharpCG.Effects
 
         public override dvec3 Position
         {
-            get => dvec3.Zero; 
-            set { }
+            get => this.sceneObject.Transform.Position; 
         }
 
 
@@ -70,6 +66,7 @@ namespace SharpCG.Effects
         {
             get
             {
+                dvec3 direction = this.sceneObject.Transform.Forward;
                 dvec3 up = dvec3.UnitY;
                 if (Math.Abs(dvec3.Dot(direction, up)) > 0.9999f)
                     up = dvec3.UnitZ;
@@ -79,20 +76,20 @@ namespace SharpCG.Effects
         }
 
 
-        public bool HasShadowMap
-        {
-            get => shadowMappingTechnique != null;
-        }
+        //public bool HasShadowMap
+        //{
+        //    get => shadowMappingTechnique != null;
+        //}
 
 
-        public override Texture ShadowMap
-        {
-            get
-            {
-                if (shadowMappingTechnique != null)
-                    return shadowMappingTechnique.DepthTexture;
-                return null;
-            }
-        }
+        //public override Texture ShadowMap
+        //{
+        //    get
+        //    {
+        //        if (shadowMappingTechnique != null)
+        //            return shadowMappingTechnique.DepthTexture;
+        //        return null;
+        //    }
+        //}
     }
 }

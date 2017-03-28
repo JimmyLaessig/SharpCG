@@ -202,7 +202,7 @@ namespace SharpCG.Core
         /// </summary>
         public dvec3 Right
         {
-            get=> (rotation.ToMat3 * dvec3.UnitX).Normalized;
+            get => (rotation.ToMat3 * dvec3.UnitX).Normalized;
         }
 
 
@@ -235,12 +235,9 @@ namespace SharpCG.Core
         {
             
             var viewMat = dmat4.LookAt(eye, target, up);
-            
-            var translation = dvec3.Zero;
-            var rotation = quat.Identity;
-            var scale = dvec3.Ones;
+            var inv = viewMat.Inverse;
 
-            viewMat.Decompose(out translation, out rotation, out scale);
+            viewMat.Inverse.Decompose(out dvec3 translation, out quat rotation, out dvec3 scale);
 
             WorldPosition   = translation;
             Rotation        = rotation;

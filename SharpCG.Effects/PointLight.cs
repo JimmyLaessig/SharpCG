@@ -35,7 +35,6 @@ namespace SharpCG.Effects
         public override dvec3 Direction
         {
             get => dvec3.Zero;
-            set { }
         }
 
         public override Geometry LightGeometry
@@ -53,7 +52,6 @@ namespace SharpCG.Effects
         public override dvec3 Position
         {
             get => this.sceneObject.Transform.WorldPosition; 
-            set => this.sceneObject.Transform.WorldPosition = value; 
         }
 
 

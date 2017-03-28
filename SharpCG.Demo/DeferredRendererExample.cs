@@ -37,6 +37,7 @@ namespace SharpCG.Demo
                 Camera.Main.SetProjectionMatrix(60.0, (double)window.Width / (double)window.Height, 0.1, 100000.0);
                 Camera.Main.Transform.Position = new dvec3(0.0, 2.5, 5);
                 Camera.Main.Transform.Rotation = dquat.FromAxisAngle(glm.Radians(-30.0), dvec3.UnitX);
+                Camera.Main.Transform.LookAt(new dvec3(10,10, 10), dvec3.Zero, dvec3.UnitY);
                 Camera.Main.SceneObject.AddComponent<CameraController>();
                 window.AddSceneObject(Camera.Main.SceneObject);
             }
@@ -66,36 +67,22 @@ namespace SharpCG.Demo
 
             // Copy depth texture to back buffer
             {
-                //   window.AddSceneObject(Templates.Templates.RenderDepthTexture(gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment), null, preLightingPass));
+              // window.AddSceneObject(Templates.Templates.RenderDepthTexture(gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment), null, preLightingPass));
             }
 
             //Add Ambient Light
             {
-                SceneObject lightObject = Templates.Templates.AmbientLight(new dvec3(0.25f, 0.25f, 0.25f), gBuffer, lightingPass);
-                lightObject.Name = "Ambient Light";
-                window.AddSceneObject(lightObject);
+                //SceneObject lightObject = Templates.Templates.AmbientLight(new dvec3(0.25f, 0.25f, 0.25f), gBuffer, lightingPass);
+                //lightObject.Name        = "Ambient Light";
+                //window.AddSceneObject(lightObject);
             }
-
 
             //Add Directional Light
             {
-                //SceneObject lightObject = new SceneObject();
-                //lightObject.Name = "Directional Light";
-
-                //var light = lightObject.AddComponent<DirectionalLight>();
-
-                //light.Color = new dvec3(1);
-                //light.Direction = new dvec3(0f, -1f, 0f);
-                //var renderer = lightObject.AddComponent<DeferredMeshRenderer>();
-                //renderer.RenderPass = lightingPass;
-                //renderer.Stage = Stage.Lighting;
-                //renderer.GBuffer = gBuffer;
-
-                //var material = lightObject.AddComponent<DeferredLightMaterial>();
-                //renderer.LightingPassMaterial = material;
-
-
-                //// Shadows
+                //SceneObject light1 = Templates.Templates.AmbientLight(new dvec3(0.25f, 0.25f, 0.25f), gBuffer, lightingPass);
+                SceneObject light1  = Templates.Templates.DirectionalLight(new dvec3(1.0, 1.0, 1.0), new dvec3(1.0, -1.0, 1.0), gBuffer, lightingPass);
+                light1.Name         = "Directional Light";
+                // Shadows
                 //var framebuffer = new Framebuffer();
                 //framebuffer.AddRenderTarget(Texture2D.Depth(2000, 2000), FramebufferAttachment.DepthAttachment, vec4.Ones);
                 //window.RenderControl.AddImmediateGLEvent(shadowPass, (() => framebuffer.Clear()));
@@ -105,7 +92,7 @@ namespace SharpCG.Demo
                 //shadows.RenderPass = shadowPass;
                 //shadows.Framebuffer = framebuffer;
 
-                //window.AddSceneObject(lightObject);
+                window.AddSceneObject(light1);
             }
 
             //Add Point Light

@@ -107,7 +107,7 @@ void main()
     vec3 vWorldPosition		= calcWorldPosition(vec3(vTexcoords, depth) * 2.0 - 1.0);    
 	vec4 vDiffuseAlbedo		= texture(texDiffuseAlbedo, vTexcoords);
     vec4 vSpecularAlbedo	= texture(texSpecularAlbedo, vTexcoords);
-	
+
 	// Ambient Light
 	if(iLightType == 0)
 	{
@@ -119,8 +119,8 @@ void main()
 		vFragColor.rgb	= vDiffuseAlbedo.rgb * vLightColor;
 
 		vFragColor.a = 1;
-	}
-	
+		
+	}	
 	// Directional Light (with ShadowMapping)
 	else if(iLightType == 1)
 	{		
@@ -143,7 +143,7 @@ void main()
 
 		vFragColor.rgb	= ( Id + Is) * vLightColor * visibility;
 		vFragColor.a	= 1.0f;		
-		
+			
 	}
 	// Point light
 	else if(iLightType == 2)
@@ -171,4 +171,6 @@ void main()
 		//vFragColor.rgb = vec3(1, 0, 0);
 		vFragColor.a	= 1.0f;				
 	}
+
+	//vFragColor = vec4(0.5, 0.0, 0.0, 1.0);
 }

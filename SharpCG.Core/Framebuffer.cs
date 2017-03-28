@@ -30,7 +30,10 @@ namespace SharpCG.Core
 
         private int renderBufferHandle;
 
-
+		public int Handle 
+		{
+			get => handle;
+		}
 
         public int Width
         {

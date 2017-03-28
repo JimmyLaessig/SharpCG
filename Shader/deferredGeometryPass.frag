@@ -65,4 +65,5 @@ void main()
 	gDiffuseAlbedo.a	= 1.0f;
 	gSpecularAlbedo.rgb = vSpecularColor.rgb * vMaterialSpecular.rgb;
 	gSpecularAlbedo.a	= vMaterialSpecular.a;	
+
 }

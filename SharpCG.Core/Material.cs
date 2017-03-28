@@ -228,7 +228,9 @@ namespace SharpCG.Core
             {
                 var tex = (Texture2D)val;
                 var unit = shader.NextFreeTextureUnit;
+                var shaderLocation = unit - TextureUnit.Texture0;
                 tex.Bind(unit);
+
                 GL.Uniform1(location, unit - TextureUnit.Texture0);
             }
             else if (val.GetType() == typeof(TextureCubeMap))

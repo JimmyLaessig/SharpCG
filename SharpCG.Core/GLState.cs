@@ -23,6 +23,7 @@ namespace SharpCG.Core
         public bool FaceCullingEnabled;
         public CullFaceMode CullFaceMode;
 
+        public bool ColorWriteEnabled;
 
         public GLState()
         {
@@ -40,7 +41,8 @@ namespace SharpCG.Core
             DepthTestEnabled    = true;
             DepthFunction       = DepthFunction.Lequal;
             DepthWriteEnabled   = true;
-            
+
+            ColorWriteEnabled = true;
         }
 
 
@@ -71,7 +73,7 @@ namespace SharpCG.Core
 
             
             GL.DepthMask(DepthWriteEnabled);
-
+            GL.ColorMask(ColorWriteEnabled, ColorWriteEnabled, ColorWriteEnabled, ColorWriteEnabled);
             // DepthTestMode
             if(DepthTestEnabled)
             {

@@ -46,71 +46,66 @@ namespace SharpCG.Effects
 
         }
 
+        [Uniform (Name = "bHasDiffuseMap")]
         public bool HasDiffuseMap
         {
             get => (diffuseMapTexture != null);
         }
 
-
-        public bool HasNormapMap
+        [Uniform(Name = "bHasNormalMap")]
+        public bool HasNormalMap
         {
-            get => (normalMapTexture != null); 
+            get => (normalMapTexture != null) && normalMappingEnabled; 
         }
 
-
+        [Uniform(Name = "bHasSpecularMap")]
         public bool HasSpecularMap
         {
             get => (SpecularMapTexture != null); 
         }
 
-
+        [Uniform(Name = "texDiffuseMap")]
         public Texture2D DiffuseMapTexture
         {
             get => diffuseMapTexture; 
             set => diffuseMapTexture = value; 
         }
 
-
+        [Uniform(Name = "texNormalMap")]
         public Texture2D NormalMapTexture
         {
             get => normalMapTexture; 
             set => normalMapTexture = value; 
         }
 
-
+        [Uniform(Name = "texSpecularMap")]
         public Texture2D SpecularMapTexture
         {
             get => specularMapTexture; 
             set => specularMapTexture = value; 
         }
 
-
+        [Uniform(Name = "vMaterialDiffuse")] 
         public dvec4 DiffuseAmount
         { 
             get => diffuseAmount; 
             set => diffuseAmount = value; 
         }
 
-
-        public dvec3 SpecularAmount
+        [Uniform(Name = "vMaterialSpecular")]
+        public dvec4 SpecularAmount
         {
-            get => specularAmount.rgb; 
-            set => specularAmount.rgb = value; 
+            get => specularAmount; 
+            set => specularAmount = value; 
         }
 
-
+        [Uniform(Name = "vMaterialEmissive")]
         public dvec3 EmissiveAmount
         {
             get => emissiveAmount; 
             set => emissiveAmount = value; 
         }
 
-
-        public double SpecularExponent
-        {
-            get => specularAmount.a; 
-            set => specularAmount.a = value; 
-        }
 
 
         public bool NormalMappingEnabled

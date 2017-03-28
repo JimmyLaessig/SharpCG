@@ -50,8 +50,8 @@ namespace SharpCG.Core
             // Default Uniforms for matrices
             if (Camera == null)
             {          
-                material.ProjectionMatrix   = dmat4.Identity;
-                material.ViewMatrix         = dmat4.Identity;              
+                material.ProjectionMatrix   = Camera.Main.ProjectionMatrix;
+                material.ViewMatrix         = Camera.Main.ViewMatrix;
             }
             else
             {
