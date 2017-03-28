@@ -45,17 +45,17 @@
 
 
 //            window.Runtime.AddRenderEvent(geometryPass, () => framebuffer.Clear());
-//            {
-//                var sphereObj = new SceneObject();
-//                sphereObj.Name = "TesselatedSphere";
-//                sphereObj.AddComponent(GeometryExtensions.Sphere(vec3.Zero, 1, 20));
-//                //sphereObj.AddComponent(GeometryExtensions.FullscreenQuad);
-//                sphereObj.AddComponent<SimpleRenderer>();
-//                var mat = sphereObj.AddComponent<ColoredMaterial>();
-//                mat.Color = new vec4(1, 0, 0, 1);
+//            //{
+//            //    var sphereObj = new SceneObject();
+//            //    sphereObj.Name = "TesselatedSphere";
+//            //    sphereObj.AddComponent(GeometryExtensions.Sphere(vec3.Zero, 1, 20));
+//            //    //sphereObj.AddComponent(GeometryExtensions.FullscreenQuad);
+//            //    sphereObj.AddComponent<SimpleRenderer>();
+//            //    var mat = sphereObj.AddComponent<ColoredMaterial>();
+//            //    mat.Color = new vec4(1, 0, 0, 1);
 
-//                window.AddSceneObject(sphereObj);
-//            }
+//            //    window.AddSceneObject(sphereObj);
+//            //}
 
 
 
@@ -89,7 +89,7 @@
 //                SceneObject.TraverseAndExecute<Geometry>(plane, m =>
 //                {
 //                    var renderer = m.SceneObject.AddComponent<MeshRenderer>();
-//                    renderer.Framebuffer = framebuffer;
+//                    //renderer.Framebuffer = framebuffer;
 //                    renderer.RenderPass = RenderPass.Main;
 //                });
 
@@ -102,7 +102,7 @@
 //                SceneObject.TraverseAndExecute<Geometry>(trooper, m =>
 //                {
 //                    var renderer = m.SceneObject.AddComponent<MeshRenderer>();
-//                    renderer.Framebuffer = framebuffer;
+//                    //renderer.Framebuffer = framebuffer;
 //                    renderer.RenderPass = geometryPass;
 //                });
 

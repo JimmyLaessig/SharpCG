@@ -13,31 +13,48 @@ namespace SharpCG.Core
 {
     public abstract class LightMaterial : Material
     {
-        private dvec3 lightDirection;
-        private dvec3 lightPosition;
-        private dvec3 lightAttenuation;
-        private dvec3 lightColor;
-        private int lightType;
+        private Light light;
+
+
                 
 
         [Uniform(Name = "vLightDirection")]
-        public dvec3 LightDirection { get => lightDirection; set => lightDirection = value; }
+        public dvec3 LightDirection
+        {
+            get => light.Direction;
+        }
 
 
         [Uniform(Name = "vLightPosition")]
-        public dvec3 LightPosition { get => lightPosition; set => lightPosition = value; }
-
-
-        [Uniform(Name = "vLightColor")]
-        public dvec3 LightAttenuation { get => lightAttenuation; set => lightAttenuation = value; }
+        public dvec3 LightPosition
+        {
+            get => light.Position;
+        }
 
 
         [Uniform(Name = "vLightAttenuation")]
-        public dvec3 LightColor { get => lightColor; set => lightColor = value; }
+        public dvec3 LightAttenuation
+        {
+            get => light.Attenuation;
+        }
 
 
-        [Uniform(Name = "lightType")]
-        public int LightType { get => lightType; set => lightType = value; }
+        [Uniform(Name = "vLightColor")]
+        public dvec3 LightColor
+        {
+            get => light.Color;
+        }
+
+
+        [Uniform(Name = "iLightType")]
+        public int LightType
+        {
+            get => light.LightType;
+        }
+
+
+
+        public Light Light { get => light; set => light = value; }
     }
 
     public abstract class Light : Component
@@ -46,16 +63,19 @@ namespace SharpCG.Core
 
         private LightMaterial material;
 
+
         public abstract dvec3 Direction
         {
             get;
             set;
         }       
 
+
         public abstract int LightType
         {
             get;
         }
+
 
         public abstract dmat4 ViewMatrix
         {
@@ -68,6 +88,7 @@ namespace SharpCG.Core
             get;
 
         }
+
 
         public abstract dvec3 Position
         {
@@ -106,16 +127,6 @@ namespace SharpCG.Core
         {
             get => material;
             set => material = value;
-        }
-
-
-        public override void Update(double deltaTime)
-        {
-            material.LightColor         = color;
-            material.LightDirection     = this.sceneObject.Transform.Forward;
-            material.LightPosition      = this.sceneObject.Transform.Position;
-            material.LightAttenuation   = this.Attenuation;
-            material.LightType          = this.LightType;
         }
     }
 }

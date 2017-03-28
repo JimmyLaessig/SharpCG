@@ -193,22 +193,22 @@ namespace SharpCG.Core
         }
 
 
-        public static Framebuffer GBuffer
+        public static Framebuffer GBuffer(Window window)
         {
-            get
-            {
+            
                 var gBuffer = new Framebuffer();
 
                 // TODO CHANGE THIS
-                int width = 1024;
-                int height = 758;
+                int width   = window.Width;
+                int height  = window.Height;
 
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment0, new vec4(1));   // Diffuse
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment1, new vec4(0));   // Specular
                 gBuffer.AddRenderTarget(Texture2D.Empty(width, height), FramebufferAttachment.ColorAttachment2, new vec4(0));   // Normals
                 gBuffer.AddRenderTarget(Texture2D.Depth(width, height), FramebufferAttachment.DepthAttachment, new vec4(1));    // Depth               
-                return gBuffer;
-            }
+
+            return gBuffer;
+           
         }
     }
 }

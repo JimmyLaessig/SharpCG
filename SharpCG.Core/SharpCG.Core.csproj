@@ -60,7 +60,7 @@
     <Compile Include="AssimpConverter.cs" />
     <Compile Include="AssimpMaterial.cs" />
     <Compile Include="GLState.cs" />
-    <Compile Include="MatrixExtensions.cs" />
+    <Compile Include="GlmExtensions.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Component.cs" />

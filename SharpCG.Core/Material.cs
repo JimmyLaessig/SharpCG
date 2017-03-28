@@ -156,11 +156,11 @@ namespace SharpCG.Core
             else if (val.GetType() == typeof(double))   { GL.Uniform1(location, (double)val); }
             // Vectors
             else if (val.GetType() == typeof(vec2))     { GL.Uniform2(location, 1, ((vec2)val).Values);}
-            else if (val.GetType() == typeof(dvec2))    { GL.Uniform2(location, 1, ((vec2)val).Values);}
+            else if (val.GetType() == typeof(dvec2))    { GL.Uniform2(location, 1, ((dvec2)val).ToVec2().Values);}
             else if (val.GetType() == typeof(vec3))     { GL.Uniform3(location, 1, ((vec3)val).Values);}
-            else if (val.GetType() == typeof(dvec3))    { GL.Uniform3(location, 1, ((vec3)val).Values);}
+            else if (val.GetType() == typeof(dvec3))    { GL.Uniform3(location, 1, ((dvec3)val).ToVec3().Values);}
             else if (val.GetType() == typeof(vec4))     { GL.Uniform4(location, 1, ((vec4)val).Values);}
-            else if (val.GetType() == typeof(dvec4))    { GL.Uniform4(location, 1, ((vec4)val).Values);}
+            else if (val.GetType() == typeof(dvec4))    { GL.Uniform4(location, 1, ((dvec4)val).ToVec4().Values);}
             // Matrices               {
             else if (val.GetType() == typeof(mat2))     { GL.UniformMatrix2(location, 1, false, ((mat2)val).Values1D); }
             else if (val.GetType() == typeof(dmat2))    { GL.UniformMatrix2(location, 1, false, ((dmat2)val).ToMat2().Values1D); }

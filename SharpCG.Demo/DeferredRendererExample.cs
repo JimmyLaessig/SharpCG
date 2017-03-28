@@ -26,61 +26,54 @@ namespace SharpCG.Demo
             Shader.InitializeShaders();
 
 
-
-            var geometryPass    = RenderPass.Main;
-            var shadowPass      = RenderPass.After(geometryPass, "Shadows");
-            var lightingPass    = RenderPass.After(geometryPass, "Lighting");
+            var geometryPass = RenderPass.Main;
+            var shadowPass = RenderPass.After(geometryPass, "Shadows");
+            var lightingPass = RenderPass.After(geometryPass, "Lighting");
             var preLightingPass = RenderPass.Before(lightingPass, "beforeLighting");
 
 
-            // Create GBuffer
-            var gBuffer = Framebuffer.GBuffer;
-            // Clear GBuffer before geometryPass
+            {
+                // Create Camera
+                Camera.Main.SetProjectionMatrix(60.0, (double)window.Width / (double)window.Height, 0.1, 100000.0);
+                Camera.Main.Transform.Position = new dvec3(0.0, 2.5, 5);
+                Camera.Main.Transform.Rotation = dquat.FromAxisAngle(glm.Radians(-30.0), dvec3.UnitX);
+                Camera.Main.SceneObject.AddComponent<CameraController>();
+                window.AddSceneObject(Camera.Main.SceneObject);
+            }
+
+
+            //Create GBuffer
+            var gBuffer = Framebuffer.GBuffer(window);
+            //Clear GBuffer before geometryPass
             window.Runtime.AddRenderEvent(geometryPass, (() => gBuffer.Clear()));
 
             {
                 SceneObject plane = GeometryExtensions.Load("Assets/plane/plane.fbx");
                 plane.Name = "plane";
 
-                //plane.Transform.Scale = new dvec3(5);
+                plane.Transform.Scale = new dvec3(2);
                 plane = Templates.Templates.CreateDeferred(plane, gBuffer, geometryPass);
 
                 window.AddSceneObject(plane);
-            }
+            }       
             {
                 SceneObject trooper = GeometryExtensions.Load("Assets/stormtrooper/stormtrooper.fbx");
-                trooper.Name    = "stormtrooper";
-                trooper         = Templates.Templates.CreateDeferred(trooper, gBuffer, geometryPass);    
+                trooper.Name = "stormtrooper";
+                trooper = Templates.Templates.CreateDeferred(trooper, gBuffer, geometryPass);
                 window.AddSceneObject(trooper);
             }
 
 
             // Copy depth texture to back buffer
             {
-                window.AddSceneObject(Templates.Templates.RenderDepthTexture(gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment), null, preLightingPass));
+                //   window.AddSceneObject(Templates.Templates.RenderDepthTexture(gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment), null, preLightingPass));
             }
 
             //Add Ambient Light
             {
-                //SceneObject lightObject = new SceneObject();
-                //lightObject.Name        = "Ambient Light";
-                //var light               = lightObject.AddComponent<AmbientLight>();
-                //light.Color             = new dvec3(0.25f, 0.25f, 0.25f);
-                //var renderer            = lightObject.AddComponent<MeshRenderer>();
-                //var material            = lightObject.AddComponent<DeferredLightMaterial>();
-                //material.DiffuseAlbedoTexture   = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
-                //material.SpecularAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
-                //material.WorldNormalTexture     = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
-                //material.DepthTexture           = gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
-                
-                //renderer.Material       = material;
-
-                //renderer.RenderPass     = lightingPass;
-                
-                
-                ////renderer.Framebuffer    = gBuffer;
-
-                //window.AddSceneObject(lightObject);
+                SceneObject lightObject = Templates.Templates.AmbientLight(new dvec3(0.25f, 0.25f, 0.25f), gBuffer, lightingPass);
+                lightObject.Name = "Ambient Light";
+                window.AddSceneObject(lightObject);
             }
 
 

@@ -12,12 +12,9 @@ namespace SharpCG.Effects
 {
     public class AmbientLight : Light
     {
-        private Geometry fullscreenQuad;
 
         public override void OnStart()
         {
-            fullscreenQuad = GeometryExtensions.FullscreenQuad;
-
         }
 
         public override dvec3 Attenuation
@@ -43,7 +40,7 @@ namespace SharpCG.Effects
 
         public override Geometry LightGeometry
         {
-            get => fullscreenQuad;
+            get => GeometryExtensions.FullscreenQuad;
         }
 
 
@@ -64,5 +61,8 @@ namespace SharpCG.Effects
         {
             get => dmat4.Identity;
         }
+
+
+
     }
 }

@@ -151,10 +151,33 @@ namespace SharpCG.Core
         public static void Decompose(this dmat4 matrix, out dvec3 position, out dquat rotation, out dvec3 scale)
         {
             position    = matrix.GetTranslation();
-
+            
             var rt      = matrix.GetOrthoNormalOrientation();
             rotation    = rt.ToQuaternion;
             scale       = matrix.GetScale();                          
         }
+    }
+
+
+    public static class VectorExtensions
+    {
+        public static vec2 ToVec2(this dvec2 vec)
+        {
+            return new vec2((float)vec.x, (float)vec.y);
+        }
+
+
+        public static vec3 ToVec3(this dvec3 vec)
+        {
+            return new vec3((float)vec.x, (float)vec.y, (float)vec.z);
+        }
+
+
+        public static vec4 ToVec4(this dvec4 vec)
+        {
+            return new vec4((float)vec.x, (float)vec.y, (float)vec.z, (float)vec.a);
+        }
+
+
     }
 }

@@ -169,8 +169,9 @@ namespace SharpCG.Effects
     }
 
 
-    public class DeferredLightMaterial : Material
+    public class DeferredLightMaterial : LightMaterial
     {
+
         // GBuffer
         private Texture2D diffuseAlbedoTexture;
         private Texture2D specularAlbedoTexture;
@@ -178,19 +179,12 @@ namespace SharpCG.Effects
         private Texture2D depthTexture;
 
         // CameraParams
-        private dvec3 cameraPosition;
         private dmat4 inverseViewProjectionMatrix;
 
-        // Light Params
-        private dvec3 lightDirection;
-        private dvec3 lightPosition;
-        private dvec3 lightColor;
-        private dvec3 lightAttenuation;
-        private int lightType;
-        
+
         // ShadowMappingParams
-        private dmat4 lightViewProjectionMatrix;
         private Texture shadowMapTexture;
+
 
         public override void OnStart()
         {
@@ -198,7 +192,9 @@ namespace SharpCG.Effects
             base.OnStart();
         }
 
+        #region GBuffer
 
+        [Uniform(Name = "texWorldNormal")] 
         public Texture2D WorldNormalTexture
         {
             get => worldNormalTexture; 
@@ -206,6 +202,7 @@ namespace SharpCG.Effects
         }
 
 
+        [Uniform(Name = "texDiffuseAlbedo")] 
         public Texture2D DiffuseAlbedoTexture
         {
             get => diffuseAlbedoTexture;
@@ -213,6 +210,7 @@ namespace SharpCG.Effects
         }
 
 
+        [Uniform(Name = "texSpecularAlbedo")]
         public Texture2D SpecularAlbedoTexture
         {
             get => specularAlbedoTexture;
@@ -220,54 +218,7 @@ namespace SharpCG.Effects
         }
 
 
-        public dvec3 LightDirection
-        {
-            get => lightDirection;
-            set => lightDirection = value;
-        }
-
-
-        public dvec3 LightPosition
-        {
-            get => lightPosition;
-            set => lightPosition = value;
-        }
-
-
-        public bool HasShadowMapTexture
-        {
-            get => shadowMapTexture != null; 
-        }
-
-
-        public dvec3 LightColor
-        {
-            get => lightColor; 
-            set => lightColor = value;
-        }
-
-
-        public dvec3 LightAttenuation
-        {
-            get =>lightAttenuation;
-            set =>lightAttenuation = value;
-        }
-
-
-        public int LightType
-        {
-            get => lightType;
-            set => lightType = value;
-        }
-
-
-        public dmat4 InverseViewProjectionMatrix
-        {
-            get => inverseViewProjectionMatrix;
-            set => inverseViewProjectionMatrix = value;
-        }
-
-
+        [Uniform(Name = "texDepth")]
         public Texture2D DepthTexture
         {
             get => depthTexture;
@@ -275,102 +226,47 @@ namespace SharpCG.Effects
         }
 
 
-        public dmat4 LightViewProjectionMatrix
+        [Uniform(Name = "mInvViewProj")]
+        public dmat4 InverseViewProjectionMatrix
         {
-            get => lightViewProjectionMatrix;
-            set => lightViewProjectionMatrix = value;
+            get => inverseViewProjectionMatrix;
+            set => inverseViewProjectionMatrix = value;
+        }
+
+        #endregion
+
+
+        #region ShadowMapping
+
+        [Uniform(Name = "mLightBiasVP")]
+        public dmat4 LightBiasViewProjectionMatrix
+        {
+            get
+            {     
+                var biasMatrix = new dmat4(
+                    0.5f, 0.0f, 0.0f, 0.0f,
+                    0.0f, 0.5f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.5f, 0.0f,
+                    0.5f, 0.5f, 0.5f, 1.0f);
+
+                return biasMatrix * Light.ProjectionMatrix * Light.ViewMatrix;
+            }
         }
 
 
+        [Uniform(Name = "texShadowMap")]
         public Texture ShadowMapTexture
         {
             get => shadowMapTexture;
             set  => shadowMapTexture = value;
         }
-        
-
-        //protected override void InitUniformLocations()
-        //{
-        //    base.InitUniformLocations();
-
-           
-        //    uniformLocations["texDiffuseAlbedo"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texDiffuseAlbedo");
-        //    uniformLocations["texSpecularAlbedo"]   = GL.GetUniformLocation(Shader.ProgramHandle, "texSpecularAlbedo");
-        //    uniformLocations["texWorldNormal"]      = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldNormal");
-        //    uniformLocations["texWorldPosition"]    = GL.GetUniformLocation(Shader.ProgramHandle, "texWorldPosition");
-        //    uniformLocations["texDepth"]            = GL.GetUniformLocation(Shader.ProgramHandle, "texDepth");
-
-            
-        //    uniformLocations["mInvViewProj"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mInvViewProj");
-        //    uniformLocations["vCameraPosition"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vCameraPosition");
-        //    uniformLocations["vViewportSize"]       = GL.GetUniformLocation(Shader.ProgramHandle, "vViewportSize");
-
-        //    uniformLocations["vLightDirection"]     = GL.GetUniformLocation(Shader.ProgramHandle, "vLightDirection");
-        //    uniformLocations["vLightPosition"]      = GL.GetUniformLocation(Shader.ProgramHandle, "vLightPosition");
-
-        //    uniformLocations["vLightColor"]         = GL.GetUniformLocation(Shader.ProgramHandle, "vLightColor");
-        //    uniformLocations["vLightAttenuation"]   = GL.GetUniformLocation(Shader.ProgramHandle, "vLightAttenuation");
-        //    uniformLocations["iLightType"]          = GL.GetUniformLocation(Shader.ProgramHandle, "iLightType");
-
-        //    uniformLocations["mLightBiasVP"]        = GL.GetUniformLocation(Shader.ProgramHandle, "mLightBiasVP");
-        //    uniformLocations["bHasShadowMap"]       = GL.GetUniformLocation(Shader.ProgramHandle, "bHasShadowMap");
-        //    uniformLocations["texShadowMap"]        = GL.GetUniformLocation(Shader.ProgramHandle, "texShadowMap");
-        //    uniformLocations["iShadowMapSize"]      = GL.GetUniformLocation(Shader.ProgramHandle, "iShadowMapSize");
 
 
-
-        //}
-
-
-        //public override void Bind(ref uint textureUnit)
-        //{
-            
-        //    Shader.bind();
-
-        //    GL.Uniform1(uniformLocations["texDiffuseAlbedo"], 0);
-        //    diffuseAlbedoTexture.Bind(TextureUnit.Texture0);
-
-        //    GL.Uniform1(uniformLocations["texSpecularAlbedo"], 1);
-        //    specularAlbedoTexture.Bind(TextureUnit.Texture1);
-
-        //    GL.Uniform1(uniformLocations["texWorldNormal"], 2);
-        //    worldNormalTexture.Bind(TextureUnit.Texture2);
-
-        //    GL.Uniform1(uniformLocations["texDepth"], 3);
-        //    depthTexture.Bind(TextureUnit.Texture3);
-
-        //    GL.Uniform3(uniformLocations["vCameraPosition"], 1, cameraPosition.Values);
-
-        //    GL.UniformMatrix4(uniformLocations["mInvViewProj"], 1, false, inverseViewProjectionMatrix.Values1D);
-
-        //    GL.Uniform1(uniformLocations["iLightType"], lightType);
-
-        //    GL.Uniform3(uniformLocations["vLightDirection"], 1, lightDirection.Values);
-        //    GL.Uniform3(uniformLocations["vLightPosition"], 1, lightPosition.Values);            
-        //    GL.Uniform3(uniformLocations["vLightColor"], 1, lightColor.Values);
-        //    GL.Uniform3(uniformLocations["vLightAttenuation"], 1, lightAttenuation.Values);
-
-
-        //    GL.Uniform1(uniformLocations["bHasShadowMap"], (HasShadowMapTexture) ? 1 : 0);
-
-        //    if (HasShadowMapTexture)
-        //    {
-        //        GL.Uniform1(uniformLocations["texShadowMap"], 5);
-        //        shadowMapTexture.Bind(TextureUnit.Texture5);
-
-        //        GL.Uniform1(uniformLocations["iShadowMapSize"], ShadowMapTexture.Height);
-
-        //        var biasMatrix = new dmat4(
-        //            0.5f, 0.0f, 0.0f, 0.0f,
-        //            0.0f, 0.5f, 0.0f, 0.0f,
-        //            0.0f, 0.0f, 0.5f, 0.0f,
-        //            0.5f, 0.5f, 0.5f, 1.0f);
-
-        //        var biasLightVP = biasMatrix * lightViewProjectionMatrix;
-        //        GL.UniformMatrix4(uniformLocations["mLightBiasVP"], 1, false, biasLightVP.Values1D);
-        //    }
-
-        //    base.Bind(ref textureUnit);
-        //}
+        [Uniform(Name = "bHasShadowMap")]
+        public bool HasShadowMapTexture
+        {
+            get => shadowMapTexture != null;
+        }
+        #endregion
     }
 }

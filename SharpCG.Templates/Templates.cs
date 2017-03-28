@@ -44,9 +44,34 @@ namespace SharpCG.Templates
         }
 
 
-        public static SceneObject AmbientLight()
+        public static SceneObject AmbientLight(dvec3 lightColor, Framebuffer gBuffer, RenderPass renderPass)
         {
-            return null;
+            SceneObject obj     = new SceneObject();
+            var light           = obj.AddComponent<AmbientLight>();
+            light.Color         = lightColor; 
+
+            var lightMaterial                   = obj.AddComponent<DeferredLightMaterial>();
+            lightMaterial.Light                 = light;
+            lightMaterial.DiffuseAlbedoTexture  = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment0);
+            lightMaterial.SpecularAlbedoTexture = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment1);
+            lightMaterial.WorldNormalTexture    = gBuffer.GetRenderTarget(FramebufferAttachment.ColorAttachment2);
+            lightMaterial.DepthTexture          = gBuffer.GetRenderTarget(FramebufferAttachment.DepthAttachment);
+
+            var geometry = obj.AddComponent(light.LightGeometry);
+            var renderer = obj.AddComponent<MeshRenderer>();
+
+            renderer.Material   = lightMaterial;  
+            renderer.Mesh       = geometry;
+            renderer.Camera     = null;
+            renderer.RenderPass = renderPass;
+            renderer.GLState.BlendFactorSrc     = BlendingFactorSrc.One;
+            renderer.GLState.BlendFactorDest    = BlendingFactorDest.One;
+            renderer.GLState.BlendingEnabled    = true;
+            renderer.GLState.FaceCullingEnabled = false;
+            renderer.GLState.DepthTestEnabled   = false;
+            renderer.GLState.DepthWriteEnabled  = false;
+
+            return obj;
         }
 
 

@@ -240,7 +240,7 @@ namespace SharpCG.Core
             var rotation = quat.Identity;
             var scale = dvec3.Ones;
 
-            MatrixExtensions.Decompose(viewMat, out translation, out rotation, out scale);
+            viewMat.Decompose(out translation, out rotation, out scale);
 
             WorldPosition   = translation;
             Rotation        = rotation;

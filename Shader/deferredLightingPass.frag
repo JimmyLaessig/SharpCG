@@ -28,6 +28,7 @@ uniform bool bHasShadowMap;
 uniform int iShadowMapSize;
 uniform sampler2D texShadowMap;
 
+
 // Camera uniforms
 uniform mat4 mProj;
 uniform mat4 mInvViewProj;
@@ -106,18 +107,20 @@ void main()
     vec3 vWorldPosition		= calcWorldPosition(vec3(vTexcoords, depth) * 2.0 - 1.0);    
 	vec4 vDiffuseAlbedo		= texture(texDiffuseAlbedo, vTexcoords);
     vec4 vSpecularAlbedo	= texture(texSpecularAlbedo, vTexcoords);
-
+	
 	// Ambient Light
 	if(iLightType == 0)
 	{
 		if(normal.w <= 0)
 		{
-			vFragColor = vDiffuseAlbedo;		
+			vFragColor = vDiffuseAlbedo;
 			return;
 		}
-		vFragColor.rgb = vDiffuseAlbedo.rgb * vLightColor;
+		vFragColor.rgb	= vDiffuseAlbedo.rgb * vLightColor;
+
 		vFragColor.a = 1;
 	}
+	
 	// Directional Light (with ShadowMapping)
 	else if(iLightType == 1)
 	{		
@@ -145,7 +148,6 @@ void main()
 	// Point light
 	else if(iLightType == 2)
 	{
-
 		if(normal.w <= 0)
 		{
 			vFragColor = vec4(0);		
@@ -167,8 +169,6 @@ void main()
 		float att = calcAttenuation(vLightAttenuation.x, vLightAttenuation.y ,vLightAttenuation.z, d);
 		vFragColor.rgb	= ( Id + Is) * vLightColor * att;
 		//vFragColor.rgb = vec3(1, 0, 0);
-		vFragColor.a	= 1.0f;		
-		
+		vFragColor.a	= 1.0f;				
 	}
-
 }
