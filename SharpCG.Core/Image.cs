@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
+using DevILSharp;
+using GlmSharp;
 
 namespace SharpCG.Core
 {
@@ -87,6 +89,42 @@ namespace SharpCG.Core
 
         public static Image FromFile(string path, bool flipped = true)
         {
+
+            //var img = IL.GenImage();
+            //IL.LoadImage(path);
+            //var size = new ivec2(IL.GetInteger(IntName.ImageWidth), IL.GetInteger(IntName.ImageHeight));
+            //var dataType = IL.GetDataType();
+            //var format = IL.GetFormat();
+            //var channels = IL.GetInteger(IntName.ImageChannels);
+
+
+            //// if the image has a lower-left origin flip it
+            //var mode = (OriginMode)IL.GetInteger((IntName)0x0603);
+            //if (mode == OriginMode.LowerLeft && !ILU.FlipImage())
+            //    return null;
+
+            //var ptr = IL.GetData();
+
+            ////byte[] data = new byte[Math.Abs(bitmapData.Stride * bmp.Height)];
+            ////Marshal.Copy(ptr, img.data, 0, data.Length);
+            ////bmp.UnlockBits(bitmapData);
+
+
+
+            //// unbind and delete the DevIL image
+            //IL.BindImage(0);
+            //IL.DeleteImage(img);
+
+            //return pix;
+
+
+
+            //i.Path = path;
+
+            //return i;
+
+
+
             var i = FromBitmap(System.Drawing.Image.FromFile(path) as Bitmap, flipped);
             i.Path = path;
             

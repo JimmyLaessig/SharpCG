@@ -17,7 +17,7 @@ namespace SharpCG.Core
         dvec2 lastMousePos;
        
 
-        public double MoveSpeed      = 10.0f;
+        public double MoveSpeed      = 200.0;
         public double RotationSpeed  = 90.0f;
 
         private dvec3 rotation;

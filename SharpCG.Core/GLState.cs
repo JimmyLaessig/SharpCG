@@ -25,6 +25,10 @@ namespace SharpCG.Core
 
         public bool ColorWriteEnabled;
 
+
+        public DrawBuffersEnum[] Drawbuffers;
+
+
         public GLState()
         {
             // Default Blend State
@@ -42,7 +46,9 @@ namespace SharpCG.Core
             DepthFunction       = DepthFunction.Lequal;
             DepthWriteEnabled   = true;
 
-            ColorWriteEnabled = true;
+            ColorWriteEnabled   = true;
+
+            Drawbuffers         = new DrawBuffersEnum[] { DrawBuffersEnum.ColorAttachment0};
         }
 
 
@@ -74,6 +80,7 @@ namespace SharpCG.Core
             
             GL.DepthMask(DepthWriteEnabled);
             GL.ColorMask(ColorWriteEnabled, ColorWriteEnabled, ColorWriteEnabled, ColorWriteEnabled);
+            
             // DepthTestMode
             if(DepthTestEnabled)
             {
@@ -83,6 +90,12 @@ namespace SharpCG.Core
             else
             {
                 GL.Disable(EnableCap.DepthTest);
+            }
+            if (Drawbuffers.Length == 0)
+                GL.DrawBuffer(DrawBufferMode.None);
+            else
+            {
+                GL.DrawBuffers(Drawbuffers.Length, Drawbuffers);
             }
         }
 

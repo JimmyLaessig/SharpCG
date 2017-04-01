@@ -61,7 +61,7 @@ namespace SharpCG.Core
         }
 
 
-        [Uniform(Name = "mWVP")]
+        [Uniform(Name = "mWVP")] 
         public dmat4 WvpMatrix
         {
             get => wvpMatrix; 

@@ -19,13 +19,13 @@ void main()
 {
 	vec4 position;
 
-	if(iLightType == 0 || iLightType ==1 )
+	if(iLightType == 0 || iLightType == 1 )
 	{
 		position = vec4(vPosition, 1.0f);
 	}
 	else
 	{
-		vec4 position	= mWVP * vec4(vPosition, 1.0f);
+		position	= mWVP * vec4(vPosition, 1.0f);
 	}
 	vTexcoords		= (position.xy / position.w) * 0.5 + 0.5;
     gl_Position		= position;

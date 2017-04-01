@@ -15,11 +15,10 @@ namespace SharpCG.Effects
         private Geometry sphere;
 
         public override void OnStart()
-        {
-            sphere = GeometryExtensions.Sphere(vec3.Zero, 1, 20);
-            //sphere = GeometryExtensions.FullscreenQuad;
+        {       
             base.OnStart();
         }
+
 
         public override dvec3 Attenuation
         {
@@ -32,14 +31,22 @@ namespace SharpCG.Effects
             
         }
 
+
         public override dvec3 Direction
         {
             get => dvec3.Zero;
         }
 
+
         public override Geometry LightGeometry
         {
-            get => sphere;
+            get {
+                if (sphere == null)
+                    {
+                        sphere = GeometryExtensions.Sphere(vec3.Zero, 1, 20);
+                    }
+                return sphere;
+                }
         }
 
 

@@ -36,6 +36,9 @@
       <HintPath>..\packages\AssimpNet.3.3.2\lib\net45\AssimpNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DevILSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevILSharp.0.0.13\lib\net45\DevILSharp.dll</HintPath>
+    </Reference>
     <Reference Include="GlmSharp, Version=0.9.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlmSharp.0.9.8\lib\Net45\GlmSharp.dll</HintPath>
       <Private>True</Private>
@@ -69,7 +72,7 @@
     <Compile Include="SimpleLightingMaterial.cs" />
     <Compile Include="SimpleRenderer.cs" />
     <Compile Include="SkyboxMaterial.cs" />
-    <Compile Include="SkyboxRenderer.cs" />
+    <Compile Include="Skybox.cs" />
     <Compile Include="TextureToDepthMaterial.cs" />
     <Compile Include="TextureToDepthRenderer.cs" />
   </ItemGroup>

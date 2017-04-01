@@ -143,17 +143,19 @@ void main()
 
 		vFragColor.rgb	= ( Id + Is) * vLightColor * visibility;
 		vFragColor.a	= 1.0f;		
-			
+		
 	}
 	// Point light
 	else if(iLightType == 2)
 	{
+		
+		
 		if(normal.w <= 0)
 		{
-			vFragColor = vec4(0);		
+			vFragColor = vec4(0);	
 			return;
 		}
-
+		
 		vec3 N = vWorldNormal;
 
 		vec3 V = normalize( vCameraPosition - vWorldPosition);
@@ -168,9 +170,8 @@ void main()
 		//vec3 Is = vSpecularAlbedo.rgb * pow(max(0.0, dot(N, H)),  vSpecularAlbedo.a);
 		float att = calcAttenuation(vLightAttenuation.x, vLightAttenuation.y ,vLightAttenuation.z, d);
 		vFragColor.rgb	= ( Id + Is) * vLightColor * att;
-		//vFragColor.rgb = vec3(1, 0, 0);
-		vFragColor.a	= 1.0f;				
-	}
-
-	//vFragColor = vec4(0.5, 0.0, 0.0, 1.0);
+		vFragColor.a	= 1.0f;	
+		//vFragColor.rgb = vLightColor;
+		
+	}	
 }

@@ -34,7 +34,7 @@ namespace SharpCG.Effects
 
         public override dvec3 Direction
         {
-            get => this.sceneObject.Transform.Forward.Normalized;
+            get => sceneObject.Transform.Forward;
         }
 
 
